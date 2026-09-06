@@ -11,6 +11,8 @@ var crop_data: Dictionary = {}
 
 
 func _ready() -> void:
+	# 农田属于地面层，不能遮挡角色、作物交互提示或建筑。
+	z_index = -5
 	add_to_group("interactables")
 	add_to_group("farm_plots")
 	queue_redraw()
