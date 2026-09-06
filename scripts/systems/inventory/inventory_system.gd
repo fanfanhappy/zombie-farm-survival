@@ -26,6 +26,11 @@ func initialize(starting_items: Dictionary) -> void:
 	inventory_changed.emit()
 
 
+func reset_for_new_game(starting_items: Dictionary) -> void:
+	_reset_hotbar()
+	initialize(starting_items)
+
+
 func add_item(item_id: String, amount: int) -> int:
 	if amount <= 0:
 		return 0

@@ -73,10 +73,37 @@ func _ready() -> void:
 	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Load.pressed.connect(load_game)
 	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Quit.pressed.connect(get_tree().quit)
 	_update_hud()
-	if SaveSystem.consume_load_request():
-		load_game()
-	else:
-		show_message("第一天：熟悉家园，采集资源并开垦土地")
+	var start_mode := SaveSystem.consume_start_mode()
+	if start_mode == "continue": load_game()
+	else: reset_for_new_game()
+
+
+func reset_for_new_game() -> void:
+	day = 1
+	day_progress = 0.25
+	last_hour = -1
+	night_spawned = false
+	kills = 0
+	hordes_survived = 0
+	horde_system.cancel_horde()
+	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
+	for defense in get_tree().get_nodes_in_group("defenses"): defense.queue_free()
+	for chest in get_tree().get_nodes_in_group("storage_chests"): chest.queue_free()
+	for trap in get_tree().get_nodes_in_group("snare_traps"): trap.queue_free()
+	for ground_item in get_tree().get_nodes_in_group("ground_items"): ground_item.queue_free()
+	for plot in get_tree().get_nodes_in_group("farm_plots"): (plot as FarmPlot).reset_for_new_game()
+	inventory.reset_for_new_game(STARTING_ITEMS)
+	objective_system.reset_for_new_game()
+	player.reset_for_new_game(PLAYER_HOME)
+	if is_instance_valid(homestead): homestead.restore_full()
+	weather_system.choose_weather_for_day(day)
+	inventory_ui.close_backpack()
+	storage_ui.close_storage()
+	crafting_panel.visible = false
+	placement_system.cancel_placement()
+	_set_player_control(true)
+	_update_hud()
+	show_message("新游戏已重置：第一天，从零开始建设家园")
 
 
 func _process(delta: float) -> void:

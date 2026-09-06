@@ -77,6 +77,15 @@ func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
 	queue_redraw()
 
 
+func reset_for_new_game() -> void:
+	state = PlotState.EMPTY
+	watered = false
+	growth_days = 0
+	crop_id = ""
+	crop_data = {}
+	queue_redraw()
+
+
 func get_crop_name() -> String:
 	return crop_data.get("name", "作物")
 

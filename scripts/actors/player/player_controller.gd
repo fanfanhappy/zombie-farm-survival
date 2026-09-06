@@ -121,6 +121,26 @@ func revive(at_position: Vector2) -> void:
 	thirst_changed.emit(thirst, max_thirst)
 
 
+func reset_for_new_game(at_position: Vector2) -> void:
+	global_position = at_position
+	level = 1
+	experience = 0
+	max_health = 100.0
+	health = max_health
+	max_stamina = 100.0
+	stamina = max_stamina
+	hunger = max_hunger
+	thirst = max_thirst
+	well_fed_time = 0.0
+	environment_thirst_multiplier = 1.0
+	equip_weapon("wooden_club", "木棒", 25.0)
+	health_changed.emit(health, max_health)
+	stamina_changed.emit(stamina, max_stamina)
+	hunger_changed.emit(hunger, max_hunger)
+	thirst_changed.emit(thirst, max_thirst)
+	level_changed.emit(level, experience, get_next_level_experience())
+
+
 func heal(amount: float) -> void:
 	health = minf(health + amount, max_health)
 	health_changed.emit(health, max_health)

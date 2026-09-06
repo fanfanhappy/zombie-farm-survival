@@ -35,6 +35,13 @@ func create_save_data() -> Dictionary:
 	return {"current_index": current_index, "completed_ids": completed_ids.duplicate()}
 
 
+func reset_for_new_game() -> void:
+	current_index = 0
+	completed_ids.clear()
+	evaluation_time = 0.0
+	_emit_current_text()
+
+
 func restore_save_data(data: Dictionary) -> void:
 	current_index = clampi(int(data.get("current_index", 0)), 0, objectives.size())
 	completed_ids.clear()

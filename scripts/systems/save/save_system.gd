@@ -2,7 +2,7 @@ class_name SaveSystem
 extends RefCounted
 
 const SAVE_PATH := "user://prototype_save.json"
-static var load_on_game_start := false
+static var pending_start_mode := ""
 
 
 static func has_save() -> bool:
@@ -10,19 +10,19 @@ static func has_save() -> bool:
 
 
 static func delete_save() -> bool:
-	load_on_game_start = false
+	pending_start_mode = ""
 	if not has_save(): return true
 	return DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH)) == OK
 
 
 static func request_start(load_existing_save: bool) -> void:
-	load_on_game_start = load_existing_save
+	pending_start_mode = "continue" if load_existing_save else "new"
 
 
-static func consume_load_request() -> bool:
-	var requested := load_on_game_start
-	load_on_game_start = false
-	return requested
+static func consume_start_mode() -> String:
+	var mode := pending_start_mode
+	pending_start_mode = ""
+	return mode
 
 
 static func save_game(data: Dictionary) -> bool:
