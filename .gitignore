@@ -1,0 +1,28 @@
+# Godot 4 generated cache
+.godot/
+
+# Local/exported builds
+/android/
+/build/
+/builds/
+/dist/
+/export/
+/exports/
+*.apk
+*.aab
+*.exe
+*.pck
+*.zip
+
+# Logs, temporary files, and OS metadata
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example

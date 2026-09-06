@@ -1,0 +1,419 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://scripts/core/game_controller.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/actors/player/player_controller.gd" id="2_player"]
+[ext_resource type="Script" path="res://scripts/systems/crafting/crafting_system.gd" id="3_crafting"]
+[ext_resource type="Script" path="res://scripts/systems/inventory/inventory_system.gd" id="4_inventory"]
+[ext_resource type="Script" path="res://scripts/ui/inventory_ui.gd" id="5_inventory_ui"]
+[ext_resource type="Script" path="res://scripts/systems/building/placement_system.gd" id="6_placement"]
+[ext_resource type="Script" path="res://scripts/systems/horde/horde_system.gd" id="7_horde"]
+[ext_resource type="Script" path="res://scripts/systems/farming/farming_system.gd" id="8_farming"]
+[ext_resource type="Script" path="res://scripts/systems/objectives/objective_system.gd" id="9_objectives"]
+[ext_resource type="Script" path="res://scripts/ui/storage_ui.gd" id="10_storage_ui"]
+[ext_resource type="Script" path="res://scripts/systems/weather/weather_system.gd" id="11_weather"]
+[ext_resource type="Script" path="res://scripts/systems/building/defense_upgrade_system.gd" id="12_defense_upgrade"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+radius = 10.0
+height = 30.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.0745, 0.0941, 0.0863, 0.86)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_main")
+
+[node name="Darkness" type="CanvasModulate" parent="."]
+
+[node name="CraftingSystem" type="Node" parent="."]
+script = ExtResource("3_crafting")
+
+[node name="InventorySystem" type="Node" parent="."]
+script = ExtResource("4_inventory")
+
+[node name="PlacementSystem" type="Node2D" parent="."]
+z_index = 20
+script = ExtResource("6_placement")
+
+[node name="DefenseUpgradeSystem" type="Node" parent="."]
+script = ExtResource("12_defense_upgrade")
+
+[node name="HordeSystem" type="Node" parent="."]
+script = ExtResource("7_horde")
+
+[node name="FarmingSystem" type="Node" parent="."]
+script = ExtResource("8_farming")
+
+[node name="ObjectiveSystem" type="Node" parent="."]
+script = ExtResource("9_objectives")
+
+[node name="WeatherSystem" type="Node" parent="."]
+script = ExtResource("11_weather")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(640, 460)
+script = ExtResource("2_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(0, 2)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(0, -20)
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
+limit_left = 0
+limit_top = 0
+limit_right = 1280
+limit_bottom = 800
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="StatusPanel" type="PanelContainer" parent="HUD"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 218.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="HUD/StatusPanel"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="Status" type="Label" parent="HUD/StatusPanel/Margin"]
+theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
+theme_override_font_sizes/font_size = 16
+text = "状态"
+
+[node name="HelpPanel" type="PanelContainer" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -385.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 112.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="HUD/HelpPanel"]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Help" type="Label" parent="HUD/HelpPanel/Margin"]
+theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
+theme_override_font_sizes/font_size = 14
+text = "操作说明"
+horizontal_alignment = 2
+
+[node name="Prompt" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.95, 0.72, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Message" type="Label" parent="HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 250.0
+offset_top = 20.0
+offset_right = -250.0
+offset_bottom = 62.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HordeStatus" type="Label" parent="HUD"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 330.0
+offset_top = 68.0
+offset_right = -330.0
+offset_bottom = 102.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.76, 0.46, 1)
+theme_override_font_sizes/font_size = 17
+text = "距离尸潮：6天"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ObjectiveStatus" type="Label" parent="HUD"]
+offset_left = 20.0
+offset_top = 228.0
+offset_right = 430.0
+offset_bottom = 264.0
+theme_override_colors/font_color = Color(1, 0.91, 0.62, 1)
+theme_override_constants/outline_size = 5
+theme_override_colors/font_outline_color = Color(0.08, 0.1, 0.09, 0.9)
+theme_override_font_sizes/font_size = 17
+text = "当前目标"
+vertical_alignment = 1
+
+[node name="WeatherStatus" type="Label" parent="HUD"]
+offset_left = 20.0
+offset_top = 268.0
+offset_right = 300.0
+offset_bottom = 300.0
+theme_override_colors/font_color = Color(0.72, 0.88, 0.94, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 16
+text = "天气：晴朗"
+
+[node name="PrototypeBadge" type="Label" parent="HUD"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = -46.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.65)
+theme_override_font_sizes/font_size = 14
+text = "Vertical Slice 0.2"
+horizontal_alignment = 2
+
+[node name="CraftingPanel" type="PanelContainer" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -175.0
+offset_right = 210.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="PauseOverlay" type="ColorRect" parent="HUD"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.023, 0.72)
+mouse_filter = 0
+
+[node name="PausePanel" type="PanelContainer" parent="HUD/PauseOverlay"]
+layout_mode = 0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -145.0
+offset_right = 170.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="HUD/PauseOverlay/PausePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="Buttons" type="VBoxContainer" parent="HUD/PauseOverlay/PausePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="HUD/PauseOverlay/PausePanel/Margin/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "游戏暂停"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="HUD/PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "继续游戏"
+
+[node name="Save" type="Button" parent="HUD/PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "保存游戏"
+
+[node name="Load" type="Button" parent="HUD/PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "读取存档"
+
+[node name="Quit" type="Button" parent="HUD/PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "退出游戏"
+
+[node name="Margin" type="MarginContainer" parent="HUD/CraftingPanel"]
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="HUD/CraftingPanel/Margin"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="HUD/CraftingPanel/Margin/Content"]
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 24
+text = "工作台"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="HUD/CraftingPanel/Margin/Content"]
+theme_override_colors/font_color = Color(1, 1, 1, 0.65)
+text = "选择要制作的物品"
+horizontal_alignment = 1
+
+[node name="RecipeList" type="VBoxContainer" parent="HUD/CraftingPanel/Margin/Content"]
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Close" type="Button" parent="HUD/CraftingPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 42)
+text = "关闭（Esc）"
+
+[node name="InventoryUI" type="CanvasLayer" parent="."]
+layer = 2
+script = ExtResource("5_inventory_ui")
+
+[node name="StorageUI" type="CanvasLayer" parent="."]
+layer = 3
+script = ExtResource("10_storage_ui")
+
+[node name="HotbarPanel" type="PanelContainer" parent="InventoryUI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -390.0
+offset_top = -60.0
+offset_right = 390.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="InventoryUI/HotbarPanel"]
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 4
+
+[node name="Hotbar" type="HBoxContainer" parent="InventoryUI/HotbarPanel/Margin"]
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="BackpackPanel" type="PanelContainer" parent="InventoryUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -330.0
+offset_top = -235.0
+offset_right = 330.0
+offset_bottom = 235.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="InventoryUI/BackpackPanel"]
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="InventoryUI/BackpackPanel/Margin"]
+theme_override_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="InventoryUI/BackpackPanel/Margin/Content"]
+
+[node name="Title" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/Header"]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 26
+text = "背包"
+
+[node name="Capacity" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/Header"]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 0.68)
+text = "0 / 24 格"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/Header"]
+custom_minimum_size = Vector2(44, 36)
+text = "×"
+
+[node name="Separator" type="HSeparator" parent="InventoryUI/BackpackPanel/Margin/Content"]
+
+[node name="ItemGrid" type="GridContainer" parent="InventoryUI/BackpackPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 185)
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
+
+[node name="DetailPanel" type="PanelContainer" parent="InventoryUI/BackpackPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 125)
+
+[node name="Margin" type="MarginContainer" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Detail" type="VBoxContainer" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin"]
+theme_override_constants/separation = 6
+
+[node name="ItemName" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 18
+text = "选择一个物品"
+
+[node name="Description" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
+size_flags_vertical = 3
+text = "点击物品格查看说明。"
+autowrap_mode = 2
+
+[node name="UseButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
+visible = false
+custom_minimum_size = Vector2(0, 36)
+text = "使用"
+
+[node name="DropButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
+visible = false
+custom_minimum_size = Vector2(0, 36)
+text = "丢弃 1 个"

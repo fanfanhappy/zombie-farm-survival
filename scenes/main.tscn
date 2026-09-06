@@ -1,0 +1,129 @@
+[gd_scene format=3 uid="uid://blcdlykbgxsbo"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="2_player"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_player"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.0745, 0.0941, 0.0863, 0.86)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Main" type="Node2D" unique_id=1694462690]
+script = ExtResource("1_main")
+
+[node name="Darkness" type="CanvasModulate" parent="." unique_id=994275454]
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=1739681809]
+position = Vector2(640, 460)
+script = ExtResource("2_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=346854584]
+position = Vector2(0, 2)
+shape = SubResource("CapsuleShape2D_player")
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=82552918]
+position = Vector2(0, -20)
+limit_left = 0
+limit_top = 0
+limit_right = 1280
+limit_bottom = 800
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1850494214]
+
+[node name="StatusPanel" type="PanelContainer" parent="HUD" unique_id=677997849]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 159.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="HUD/StatusPanel" unique_id=1717170835]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="Status" type="Label" parent="HUD/StatusPanel/Margin" unique_id=179580088]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
+theme_override_font_sizes/font_size = 16
+text = "状态"
+
+[node name="HelpPanel" type="PanelContainer" parent="HUD" unique_id=1763717229]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -385.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 112.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="HUD/HelpPanel" unique_id=920236889]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Help" type="Label" parent="HUD/HelpPanel/Margin" unique_id=1495405019]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
+theme_override_font_sizes/font_size = 14
+text = "操作说明"
+horizontal_alignment = 2
+
+[node name="Prompt" type="Label" parent="HUD" unique_id=1466763831]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -100.0
+offset_right = 180.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 0.95, 0.72, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Message" type="Label" parent="HUD" unique_id=1390564239]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 250.0
+offset_top = 20.0
+offset_right = -250.0
+offset_bottom = 62.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 17
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PrototypeBadge" type="Label" parent="HUD" unique_id=1590743304]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = -46.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 0.65)
+theme_override_font_sizes/font_size = 14
+text = "Vertical Slice 0.2"
+horizontal_alignment = 2
