@@ -114,7 +114,10 @@ func _apply_terrain_peering_bits(tile_data: TileData, image: Image, atlas_coord:
 
 
 func _tile_center_is_filled(image: Image, atlas_coord: Vector2i) -> bool:
-	return _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE + Vector2i(5, 5), Vector2i(6, 6))) >= 0.35
+	# Terrain center tiles in this atlas have a fully opaque middle. Inner-corner
+	# transition pieces only cover roughly 35%-40% of this area and must not be
+	# registered as terrain centers, or solid tilled fields develop grass holes.
+	return _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE + Vector2i(5, 5), Vector2i(6, 6))) >= 0.80
 
 
 func _alpha_coverage(image: Image, area: Rect2i) -> float:
