@@ -9,6 +9,12 @@ static func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 
+static func delete_save() -> bool:
+	load_on_game_start = false
+	if not has_save(): return true
+	return DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH)) == OK
+
+
 static func request_start(load_existing_save: bool) -> void:
 	load_on_game_start = load_existing_save
 
