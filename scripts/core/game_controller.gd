@@ -2,6 +2,7 @@ extends Node2D
 
 const PLAYER_HOME := Vector2(640, 460)
 const DAY_LENGTH_SECONDS := 90.0
+const WATERING_CAN_CAPACITY := 5
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -27,7 +28,7 @@ const DAY_LENGTH_SECONDS := 90.0
 @onready var weather_label: Label = $HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $HUD/PauseOverlay
 
-const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
+const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
 var day_progress := 0.25
 var last_hour := -1
@@ -38,6 +39,7 @@ var homestead: HomesteadCore
 var hordes_survived := 0
 var mouse_action_held := false
 var mouse_action_cooldown := 0.0
+var watering_can_water := WATERING_CAN_CAPACITY
 
 
 func _ready() -> void:
@@ -97,6 +99,8 @@ func reset_for_new_game() -> void:
 	inventory.reset_for_new_game(STARTING_ITEMS)
 	inventory.assign_hotbar_item(0, "wooden_club")
 	inventory.assign_hotbar_item(1, "stone_hoe")
+	inventory.assign_hotbar_item(2, "watering_can")
+	watering_can_water = WATERING_CAN_CAPACITY
 	objective_system.reset_for_new_game()
 	player.reset_for_new_game(PLAYER_HOME)
 	if is_instance_valid(homestead): homestead.restore_full()
@@ -463,6 +467,8 @@ func _update_hud() -> void:
 	help_label.text = "WASD 移动　Shift 冲刺　鼠标操作/攻击　Esc 暂停　F11 全屏\nE 使用设施　B 背包　数字键快捷栏　U 升级　X 拆除\n鼠标：点击或长按目标　放置：左键确认 R旋转 右键取消"
 	if player.well_fed_time > 0.0:
 		status_label.text += "\n饱餐：%d秒（攻击+20%% / 恢复+35%%）" % int(ceil(player.well_fed_time))
+	if get_active_tool_type() == "watering_can":
+		status_label.text += "\n水壶：%d/%d" % [watering_can_water, WATERING_CAN_CAPACITY]
 	if horde_system.active:
 		horde_label.text = horde_system.get_status_text()
 	else:
@@ -537,8 +543,9 @@ func _eat_potato() -> void:
 func save_game() -> void:
 	if horde_system.active: show_message("尸潮期间不能保存"); return
 	var data := {"version": 15, "day": day, "day_progress": day_progress, "weather": weather_system.current_weather_id, "inventory": inventory.create_save_data(), "player_position": {"x": player.position.x, "y": player.position.y}, "health": player.health, "max_health": player.max_health, "stamina": player.stamina, "max_stamina": player.max_stamina, "hunger": player.hunger, "thirst": player.thirst, "level": player.level, "experience": player.experience, "well_fed_time": player.well_fed_time, "homestead_health": homestead.health, "equipped_weapon_id": player.equipped_weapon_id, "weapon": player.equipped_weapon, "attack_damage": player.attack_damage, "kills": kills, "hordes_survived": hordes_survived, "defenses": _serialize_defenses(), "storage_chests": _serialize_storage_chests(), "ground_items": _serialize_ground_items(), "farm_plots": _serialize_farm_plots(), "objectives": objective_system.create_save_data()}
-	data["version"] = 16
+	data["version"] = 17
 	data["snare_traps"] = _serialize_snare_traps()
+	data["watering_can_water"] = watering_can_water
 	show_message("游戏已保存" if SaveSystem.save_game(data) else "保存失败")
 
 
@@ -560,6 +567,7 @@ func load_game() -> void:
 	player.level = int(data.get("level", 1))
 	player.experience = int(data.get("experience", 0))
 	player.well_fed_time = float(data.get("well_fed_time", 0.0))
+	watering_can_water = clampi(int(data.get("watering_can_water", WATERING_CAN_CAPACITY)), 0, WATERING_CAN_CAPACITY)
 	var weapon_id := str(data.get("equipped_weapon_id", "wooden_club"))
 	if not inventory.has_item(weapon_id): inventory.add_item(weapon_id, 1)
 	var weapon_data := inventory.get_item_data(weapon_id)
@@ -816,6 +824,31 @@ func drink_from_water_pump() -> void:
 		return
 	player.restore_thirst(player.max_thirst)
 	show_message("饮用了干净的井水，口渴完全恢复")
+
+
+func refill_watering_can() -> void:
+	if not inventory.has_item("watering_can"):
+		show_message("背包里没有浇水壶")
+		return
+	if watering_can_water >= WATERING_CAN_CAPACITY:
+		show_message("浇水壶已经装满")
+		return
+	watering_can_water = WATERING_CAN_CAPACITY
+	show_message("浇水壶已经装满：%d/%d" % [watering_can_water, WATERING_CAN_CAPACITY])
+
+
+func can_water_crop() -> bool:
+	if get_active_tool_type() != "watering_can":
+		show_message("需要先把浇水壶放入快捷栏并选中")
+		return false
+	if watering_can_water <= 0:
+		show_message("浇水壶空了，去取水泵旁按E装水")
+		return false
+	return true
+
+
+func use_watering_can() -> void:
+	watering_can_water = maxi(watering_can_water - 1, 0)
 
 
 func _advance_to_next_day() -> void:

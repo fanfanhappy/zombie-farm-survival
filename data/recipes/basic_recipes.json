@@ -23,6 +23,12 @@
     "ingredients": { "wood": 3, "stone": 2 },
     "results": { "stone_hoe": 1 }
   },
+  "watering_can": {
+    "name": "简易浇水壶",
+    "station": "workbench",
+    "ingredients": { "wood": 3, "stone": 2 },
+    "results": { "watering_can": 1 }
+  },
   "repair_hammer": {
     "name": "维修锤",
     "station": "workbench",

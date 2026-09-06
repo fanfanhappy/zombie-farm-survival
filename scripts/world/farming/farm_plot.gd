@@ -53,6 +53,11 @@ func can_interact(game: Node) -> bool:
 		if selected_item_id.is_empty() or game.inventory.get_item_data(selected_item_id).get("category", "") != "seed":
 			game.show_message("需要先把种子放入快捷栏并选中")
 			return false
+	if state in [PlotState.PLANTED, PlotState.GROWING]:
+		if watered:
+			game.show_message("%s今天已经浇过水了" % get_crop_name())
+			return false
+		if not game.can_water_crop(): return false
 	return true
 
 
@@ -66,8 +71,10 @@ func interact(game: Node) -> void:
 			_try_plant_selected_seed(game)
 		PlotState.PLANTED, PlotState.GROWING:
 			if not watered:
+				game.player.play_tool_action("water")
+				game.use_watering_can()
 				watered = true
-				game.show_message("给%s浇水完成" % get_crop_name())
+				game.show_message("给%s浇水完成，水壶剩余%d/%d" % [get_crop_name(), game.watering_can_water, game.WATERING_CAN_CAPACITY])
 		PlotState.READY:
 			_harvest(game)
 	queue_redraw()

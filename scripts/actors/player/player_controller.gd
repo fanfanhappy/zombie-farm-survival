@@ -264,7 +264,10 @@ func get_next_level_experience() -> int:
 
 func play_tool_action(action_type: String) -> void:
 	# 动作表第1组是锄地（0-3行），第2组是砍树（4-7行）。
-	tool_action_row_offset = 4 if action_type == "axe" else 0
+	match action_type:
+		"axe": tool_action_row_offset = 4
+		"water": tool_action_row_offset = 8
+		_: tool_action_row_offset = 0
 	tool_action_time_left = TOOL_ACTION_DURATION
 	velocity = Vector2.ZERO
 	_update_character_sprite(Vector2.ZERO)

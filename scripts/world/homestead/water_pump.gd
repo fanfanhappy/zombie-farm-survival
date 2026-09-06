@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func get_interaction_prompt() -> String:
-	return "E 使用取水泵饮水"
+	return "E 使用取水泵饮水 / 给水壶装水"
 
 
 func get_stamina_cost() -> float:
@@ -23,7 +23,8 @@ func get_stamina_cost() -> float:
 
 
 func interact(game: Node) -> void:
-	game.drink_from_water_pump()
+	if game.get_active_tool_type() == "watering_can": game.refill_watering_can()
+	else: game.drink_from_water_pump()
 
 
 func _draw() -> void:
