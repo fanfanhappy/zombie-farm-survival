@@ -19,7 +19,7 @@ func setup(type: String) -> void:
 		"stone": display_name = "石块"; yield_amount = 3; work_required = 4.0
 		"herb": display_name = "草药"; yield_amount = 2; work_required = 1.0
 	work_remaining = work_required
-	add_to_group("interactables")
+	add_to_group("mouse_action_targets")
 	var shape := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
 	circle.radius = 15.0 if type == "wood" else (17.0 if type == "stone" else 8.0)
@@ -31,7 +31,15 @@ func setup(type: String) -> void:
 func get_interaction_prompt() -> String:
 	if depleted: return ""
 	var progress := int((1.0 - work_remaining / work_required) * 100.0)
-	return "E 采集%s%s" % [display_name, "（%d%%）" % progress if progress > 0 else ""]
+	return "左键/长按采集%s%s" % [display_name, "（%d%%）" % progress if progress > 0 else ""]
+
+
+func can_mouse_interact(game: Node) -> bool:
+	var required_tool := "axe" if resource_type == "wood" else ("pickaxe" if resource_type == "stone" else "")
+	if not required_tool.is_empty() and game.get_active_tool_type() != required_tool:
+		game.show_message("砍树需要选中石斧" if resource_type == "wood" else "采石需要选中石镐")
+		return false
+	return true
 
 
 func get_stamina_cost() -> float:
@@ -50,7 +58,7 @@ func interact(game: Node) -> void:
 	else:
 		depleted = true
 		game.add_resource(resource_type, yield_amount)
-		remove_from_group("interactables")
+		remove_from_group("mouse_action_targets")
 		get_tree().create_timer(20.0).timeout.connect(_respawn)
 	queue_redraw()
 
@@ -58,7 +66,7 @@ func interact(game: Node) -> void:
 func _respawn() -> void:
 	depleted = false
 	work_remaining = work_required
-	add_to_group("interactables")
+	add_to_group("mouse_action_targets")
 	queue_redraw()
 
 

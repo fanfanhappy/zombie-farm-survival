@@ -13,17 +13,17 @@ var crop_data: Dictionary = {}
 func _ready() -> void:
 	# 农田属于地面层，不能遮挡角色、作物交互提示或建筑。
 	z_index = -5
-	add_to_group("interactables")
+	add_to_group("mouse_action_targets")
 	add_to_group("farm_plots")
 	queue_redraw()
 
 
 func get_interaction_prompt() -> String:
 	match state:
-		PlotState.EMPTY: return "E 使用石锄开垦土地"
-		PlotState.TILLED: return "E 播种（先在快捷栏选择种子）"
-		PlotState.PLANTED, PlotState.GROWING: return "E 浇水" if not watered else "%s今天已浇水" % get_crop_name()
-		PlotState.READY: return "E 收获%s" % get_crop_name()
+		PlotState.EMPTY: return "左键/长按使用石锄开垦"
+		PlotState.TILLED: return "左键播种（先选择种子）"
+		PlotState.PLANTED, PlotState.GROWING: return "左键浇水" if not watered else "%s今天已浇水" % get_crop_name()
+		PlotState.READY: return "左键收获%s" % get_crop_name()
 	return ""
 
 

@@ -36,6 +36,8 @@ var message_time := 0.0
 var kills := 0
 var homestead: HomesteadCore
 var hordes_survived := 0
+var mouse_action_held := false
+var mouse_action_cooldown := 0.0
 
 
 func _ready() -> void:
@@ -107,6 +109,7 @@ func reset_for_new_game() -> void:
 
 
 func _process(delta: float) -> void:
+	_update_held_mouse_action(delta)
 	if not (horde_system.active and day_progress >= 0.98):
 		day_progress += delta / DAY_LENGTH_SECONDS
 	if day_progress >= 1.0:
@@ -171,6 +174,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		close_crafting(); get_viewport().set_input_as_handled(); return
 	if crafting_panel.visible:
 		get_viewport().set_input_as_handled(); return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		mouse_action_held = event.pressed
+		if event.pressed:
+			mouse_action_cooldown = 0.0
+			_try_mouse_world_action(get_global_mouse_position())
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("ui_cancel"):
 		_set_paused(true); get_viewport().set_input_as_handled(); return
 	if event.is_action_pressed("use_bandage"): _use_bandage()
@@ -231,6 +241,65 @@ func _on_attack_requested() -> void:
 	if best_target: best_target.take_damage(player.get_attack_damage(), player)
 
 
+func _update_held_mouse_action(delta: float) -> void:
+	if not mouse_action_held: return
+	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		mouse_action_held = false
+		return
+	if pause_overlay.visible or storage_ui.is_open() or inventory_ui.is_backpack_open() or crafting_panel.visible or placement_system.is_placing(): return
+	mouse_action_cooldown = maxf(mouse_action_cooldown - delta, 0.0)
+	if mouse_action_cooldown <= 0.0:
+		_try_mouse_world_action(get_global_mouse_position())
+
+
+func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
+	if player.global_position.distance_to(mouse_world_position) > 78.0:
+		show_message("目标太远")
+		mouse_action_cooldown = 0.35
+		return
+	var target := _nearest_mouse_target(mouse_world_position)
+	if target:
+		if target is Zombie:
+			if player.try_mouse_attack(target.global_position): mouse_action_cooldown = player.attack_cooldown
+			else: mouse_action_cooldown = 0.1
+			return
+		if target.has_method("can_mouse_interact") and not target.can_mouse_interact(self):
+			mouse_action_cooldown = 0.55
+			return
+		if target.has_method("can_interact") and not target.can_interact(self):
+			mouse_action_cooldown = 0.55
+			return
+		var stamina_cost := float(target.get_stamina_cost()) if target.has_method("get_stamina_cost") else 0.0
+		if stamina_cost > 0.0 and not player.try_spend_stamina(stamina_cost):
+			show_message("体力不足，无法继续操作")
+			mouse_action_cooldown = 0.55
+			return
+		player.facing_direction = player.global_position.direction_to(target.global_position)
+		target.interact(self)
+		mouse_action_cooldown = 0.55
+		return
+	if player.try_mouse_attack(mouse_world_position): mouse_action_cooldown = player.attack_cooldown
+	else: mouse_action_cooldown = 0.1
+
+
+func _nearest_mouse_target(mouse_world_position: Vector2) -> Node2D:
+	var nearest: Node2D
+	var nearest_cursor_distance := 28.0
+	for node in get_tree().get_nodes_in_group("mouse_action_targets"):
+		var target := node as Node2D
+		var cursor_distance := mouse_world_position.distance_to(target.global_position)
+		if cursor_distance < nearest_cursor_distance and player.global_position.distance_to(target.global_position) <= 64.0:
+			nearest = target
+			nearest_cursor_distance = cursor_distance
+	for node in get_tree().get_nodes_in_group("zombies"):
+		var zombie := node as Zombie
+		var cursor_distance := mouse_world_position.distance_to(zombie.global_position)
+		if cursor_distance < nearest_cursor_distance and player.global_position.distance_to(zombie.global_position) <= 70.0:
+			nearest = zombie
+			nearest_cursor_distance = cursor_distance
+	return nearest
+
+
 func _on_player_died() -> void:
 	show_message("你倒下了。清晨醒来时，部分物资遗失了。")
 	if inventory.has_item("potato"): inventory.remove_item("potato", 1)
@@ -253,6 +322,13 @@ func _nearest_interactable() -> Node:
 func _update_prompt() -> void:
 	if placement_system.is_placing():
 		prompt_label.text = "左键放置　R旋转　右键/Esc取消"
+		return
+	var mouse_target := _nearest_mouse_target(get_global_mouse_position())
+	if mouse_target is Zombie:
+		prompt_label.text = "左键/长按攻击感染者"
+		return
+	if mouse_target and mouse_target.has_method("get_interaction_prompt"):
+		prompt_label.text = mouse_target.get_interaction_prompt()
 		return
 	var target := _nearest_interactable()
 	prompt_label.text = target.get_interaction_prompt() if target else ""
@@ -372,7 +448,7 @@ func _update_hud() -> void:
 	status_label.text = "第 %d 天  %02d:%02d　等级 %d（%d/%d经验）\n生命 %d/%d　体力 %d/%d\n饥饿 %d/%d　口渴 %d/%d\n农舍 %d/%d　武器 %s\n背包 %d/%d 格　击杀 %d" % [day, total_minutes / 60, total_minutes % 60, player.level, player.experience, player.get_next_level_experience(), int(player.health), int(player.max_health), int(player.stamina), int(player.max_stamina), int(player.hunger), int(player.max_hunger), int(player.thirst), int(player.max_thirst), home_health, home_max, player.equipped_weapon, inventory.get_used_slots(), inventory.slot_capacity, kills]
 	if player.hunger <= 20.0: status_label.text += "\n⚠ 非常饥饿"
 	if player.thirst <= 20.0: status_label.text += "\n⚠ 严重口渴"
-	help_label.text = "WASD 移动　Shift 冲刺　空格 攻击　Esc 暂停　F11 全屏\nE 交互　B 背包　数字键快捷栏　U 升级　X 拆除\n放置：左键确认 R旋转 右键取消"
+	help_label.text = "WASD 移动　Shift 冲刺　鼠标操作/攻击　Esc 暂停　F11 全屏\nE 使用设施　B 背包　数字键快捷栏　U 升级　X 拆除\n鼠标：点击或长按目标　放置：左键确认 R旋转 右键取消"
 	if player.well_fed_time > 0.0:
 		status_label.text += "\n饱餐：%d秒（攻击+20%% / 恢复+35%%）" % int(ceil(player.well_fed_time))
 	if horde_system.active:

@@ -102,12 +102,19 @@ func _unhandled_input(event: InputEvent) -> void:
 	if tool_action_time_left > 0.0: return
 	if event.is_action_pressed("interact"):
 		interaction_requested.emit()
-	if event.is_action_pressed("attack") and attack_time_left <= 0.0:
-		if try_spend_stamina(attack_stamina_cost):
-			attack_time_left = attack_cooldown
-			attack_requested.emit()
-		else:
-			action_failed.emit("体力不足，无法攻击")
+
+
+func try_mouse_attack(target_position: Vector2) -> bool:
+	if attack_time_left > 0.0 or tool_action_time_left > 0.0: return false
+	var direction := global_position.direction_to(target_position)
+	if direction != Vector2.ZERO: facing_direction = direction
+	if not try_spend_stamina(attack_stamina_cost):
+		action_failed.emit("体力不足，无法攻击")
+		return false
+	attack_time_left = attack_cooldown
+	attack_requested.emit()
+	queue_redraw()
+	return true
 
 
 func take_damage(amount: float) -> void:
