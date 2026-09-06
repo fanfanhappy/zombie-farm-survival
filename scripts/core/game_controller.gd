@@ -417,7 +417,7 @@ func _spawn_world_objects() -> void:
 		var node := HarvestableResource.new(); node.position = data[1]; add_child(node); node.setup(data[0])
 	for row in 6:
 		for column in 12:
-			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * 32, 428 + row * 32); add_child(plot)
+			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * 32, 448 + row * 32); add_child(plot)
 	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
 	var kitchen := CraftingStation.new(); kitchen.position = Vector2(1040, 325); add_child(kitchen); kitchen.setup("kitchen")
 	var sleep_point := SleepPoint.new(); sleep_point.position = Vector2(930, 425); add_child(sleep_point)

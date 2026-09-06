@@ -7,20 +7,24 @@ const WORLD_SIZE := Vector2i(41, 26)
 const GRASS_TEXTURE := preload("res://assets/art/environment/terrain/terrain_grass_tileset.png")
 const WATER_TEXTURE := preload("res://assets/art/environment/terrain/terrain_water_tileset.png")
 const PATH_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_clean_tileset.png")
+const FARMING_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_detailed_tileset.png")
 const FENCE_TEXTURE := preload("res://assets/art/environment/defenses/defense_fence_tileset.png")
 
 var ground_layer: TileMapLayer
 var water_layer: TileMapLayer
 var path_layer: TileMapLayer
+var farming_layer: TileMapLayer
 var fence_layer: TileMapLayer
 var grid_cursor: WorldGridCursor
 var cursor_hint := ""
+var connected_farm_cells: Array[Vector2i] = []
 
 
 func _ready() -> void:
 	ground_layer = _create_layer("GroundLayer", GRASS_TEXTURE, Vector2i(11, 7), -20)
 	water_layer = _create_layer("WaterLayer", WATER_TEXTURE, Vector2i(4, 1), -19)
 	path_layer = _create_layer("PathLayer", PATH_TEXTURE, Vector2i(11, 7), -18)
+	farming_layer = _create_farming_terrain_layer()
 	fence_layer = _create_layer("FenceLayer", FENCE_TEXTURE, Vector2i(4, 4), -2)
 	_build_ground()
 	_build_pond()
@@ -34,6 +38,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	_refresh_farming_terrain()
 	_update_grid_cursor()
 
 
@@ -56,6 +61,86 @@ func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i,
 	layer.tile_set = tiles
 	add_child(layer)
 	return layer
+
+
+func _create_farming_terrain_layer() -> TileMapLayer:
+	var layer := TileMapLayer.new()
+	layer.name = "FarmingTerrainLayer"
+	layer.position = Vector2(-16.0, -16.0)
+	layer.scale = Vector2(2.0, 2.0)
+	layer.z_index = -16
+	var tiles := TileSet.new()
+	tiles.tile_size = TILE_SIZE
+	tiles.add_terrain_set(0)
+	tiles.set_terrain_set_mode(0, TileSet.TERRAIN_MODE_MATCH_CORNERS_AND_SIDES)
+	tiles.add_terrain(0)
+	tiles.set_terrain_name(0, 0, "tilled_dirt")
+	var atlas := TileSetAtlasSource.new()
+	atlas.texture = FARMING_TEXTURE
+	atlas.texture_region_size = TILE_SIZE
+	var image := FARMING_TEXTURE.get_image()
+	for y in 7:
+		for x in 11:
+			var atlas_coord := Vector2i(x, y)
+			if _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE, TILE_SIZE)) <= 0.01:
+				continue
+			atlas.create_tile(atlas_coord)
+			var tile_data := atlas.get_tile_data(atlas_coord, 0)
+			tile_data.terrain_set = 0
+			tile_data.terrain = 0 if _tile_center_is_filled(image, atlas_coord) else -1
+			_apply_terrain_peering_bits(tile_data, image, atlas_coord)
+	tiles.add_source(atlas, 0)
+	layer.tile_set = tiles
+	add_child(layer)
+	return layer
+
+
+func _apply_terrain_peering_bits(tile_data: TileData, image: Image, atlas_coord: Vector2i) -> void:
+	var origin := atlas_coord * TILE_SIZE
+	var checks := {
+		TileSet.CELL_NEIGHBOR_TOP_SIDE: Rect2i(origin + Vector2i(5, 0), Vector2i(6, 2)),
+		TileSet.CELL_NEIGHBOR_RIGHT_SIDE: Rect2i(origin + Vector2i(14, 5), Vector2i(2, 6)),
+		TileSet.CELL_NEIGHBOR_BOTTOM_SIDE: Rect2i(origin + Vector2i(5, 14), Vector2i(6, 2)),
+		TileSet.CELL_NEIGHBOR_LEFT_SIDE: Rect2i(origin + Vector2i(0, 5), Vector2i(2, 6)),
+		TileSet.CELL_NEIGHBOR_TOP_LEFT_CORNER: Rect2i(origin, Vector2i(3, 3)),
+		TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER: Rect2i(origin + Vector2i(13, 0), Vector2i(3, 3)),
+		TileSet.CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER: Rect2i(origin + Vector2i(13, 13), Vector2i(3, 3)),
+		TileSet.CELL_NEIGHBOR_BOTTOM_LEFT_CORNER: Rect2i(origin + Vector2i(0, 13), Vector2i(3, 3)),
+	}
+	for neighbor in checks:
+		var threshold := 0.45 if neighbor in [TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_LEFT_SIDE] else 0.35
+		if _alpha_coverage(image, checks[neighbor]) > threshold:
+			tile_data.set_terrain_peering_bit(neighbor, 0)
+
+
+func _tile_center_is_filled(image: Image, atlas_coord: Vector2i) -> bool:
+	return _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE + Vector2i(5, 5), Vector2i(6, 6))) >= 0.35
+
+
+func _alpha_coverage(image: Image, area: Rect2i) -> float:
+	var filled := 0
+	for y in range(area.position.y, area.end.y):
+		for x in range(area.position.x, area.end.x):
+			if image.get_pixel(x, y).a > 0.38:
+				filled += 1
+	return float(filled) / float(area.size.x * area.size.y)
+
+
+func _refresh_farming_terrain() -> void:
+	if not is_instance_valid(farming_layer):
+		return
+	var next_cells: Array[Vector2i] = []
+	for node in get_tree().get_nodes_in_group("farm_plots"):
+		var plot := node as FarmPlot
+		if plot.state != FarmPlot.PlotState.EMPTY:
+			next_cells.append(Vector2i(roundi(plot.position.x / 32.0), roundi(plot.position.y / 32.0)))
+	next_cells.sort()
+	if next_cells == connected_farm_cells:
+		return
+	connected_farm_cells = next_cells
+	farming_layer.clear()
+	if not connected_farm_cells.is_empty():
+		farming_layer.set_cells_terrain_connect(connected_farm_cells, 0, 0, true)
 
 
 func _build_ground() -> void:
