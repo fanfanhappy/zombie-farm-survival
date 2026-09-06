@@ -27,7 +27,7 @@ const DAY_LENGTH_SECONDS := 90.0
 @onready var weather_label: Label = $HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $HUD/PauseOverlay
 
-const STARTING_ITEMS := {"wooden_club": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
+const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
 var day_progress := 0.25
 var last_hour := -1
@@ -211,6 +211,7 @@ func show_message(text: String) -> void:
 func _on_interaction_requested() -> void:
 	var target := _nearest_interactable()
 	if target and target.has_method("interact"):
+		if target.has_method("can_interact") and not target.can_interact(self): return
 		var stamina_cost := float(target.get_stamina_cost()) if target.has_method("get_stamina_cost") else 0.0
 		if stamina_cost > 0.0 and not player.try_spend_stamina(stamina_cost):
 			show_message("体力不足，休息片刻再继续")

@@ -27,6 +27,15 @@
     "usable": true,
     "sort_order": 2
   },
+  "stone_hoe": {
+    "name": "石锄",
+    "description": "用于开垦土地。放入快捷栏并选中后，靠近未开垦土地按E使用。",
+    "category": "tool",
+    "tool_type": "hoe",
+    "stack_limit": 1,
+    "usable": true,
+    "sort_order": 2
+  },
   "repair_hammer": {
     "name": "维修锤",
     "description": "用于维修受损的农舍、栅栏和尖刺。需要放入快捷栏并选中。",

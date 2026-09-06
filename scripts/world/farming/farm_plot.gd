@@ -18,7 +18,7 @@ func _ready() -> void:
 
 func get_interaction_prompt() -> String:
 	match state:
-		PlotState.EMPTY: return "E 开垦土地"
+		PlotState.EMPTY: return "E 使用石锄开垦土地"
 		PlotState.TILLED: return "E 播种（先在快捷栏选择种子）"
 		PlotState.PLANTED, PlotState.GROWING: return "E 浇水" if not watered else "%s今天已浇水" % get_crop_name()
 		PlotState.READY: return "E 收获%s" % get_crop_name()
@@ -32,6 +32,18 @@ func get_stamina_cost() -> float:
 		PlotState.PLANTED, PlotState.GROWING: return 3.0 if not watered else 0.0
 		PlotState.READY: return 4.0
 	return 0.0
+
+
+func can_interact(game: Node) -> bool:
+	if state == PlotState.EMPTY and game.get_active_tool_type() != "hoe":
+		game.show_message("需要先把石锄放入快捷栏并选中")
+		return false
+	if state == PlotState.TILLED:
+		var selected_item_id: String = game.get_selected_hotbar_item_id()
+		if selected_item_id.is_empty() or game.inventory.get_item_data(selected_item_id).get("category", "") != "seed":
+			game.show_message("需要先把种子放入快捷栏并选中")
+			return false
+	return true
 
 
 func interact(game: Node) -> void:
@@ -125,12 +137,16 @@ func _harvest(game: Node) -> void:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
 	if state == PlotState.EMPTY:
-		draw_line(Vector2(-10, 0), Vector2(10, 0), Color("#99745a"), 2.0)
+		draw_rect(Rect2(-14, -14, 28, 28), Color("#769d55"), true)
+		draw_rect(Rect2(-14, -14, 28, 28), Color("#9fbd77"), false, 1.0)
+		draw_circle(Vector2(-6, 5), 2.0, Color("#668b49"))
+		draw_circle(Vector2(7, -5), 2.0, Color("#668b49"))
 	elif state == PlotState.TILLED:
+		draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
 		for y in [-8, 0, 8]: draw_line(Vector2(-11, y), Vector2(11, y), Color("#a77b58"), 2.0)
 	elif state in [PlotState.PLANTED, PlotState.GROWING, PlotState.READY]:
+		draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
 		var size := 4.0 + growth_days * 3.0
 		var leaf_color := Color("#%s" % crop_data.get("leaf_color", "65a653"))
 		var produce_color := Color("#%s" % crop_data.get("produce_color", "d5b061"))

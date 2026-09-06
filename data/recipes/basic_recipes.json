@@ -17,6 +17,12 @@
     "ingredients": { "wood": 4, "stone": 2 },
     "results": { "stone_pickaxe": 1 }
   },
+  "stone_hoe": {
+    "name": "石锄",
+    "station": "workbench",
+    "ingredients": { "wood": 3, "stone": 2 },
+    "results": { "stone_hoe": 1 }
+  },
   "repair_hammer": {
     "name": "维修锤",
     "station": "workbench",
