@@ -73,7 +73,10 @@ func _ready() -> void:
 	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Load.pressed.connect(load_game)
 	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Quit.pressed.connect(get_tree().quit)
 	_update_hud()
-	show_message("第一天：熟悉家园，采集资源并开垦土地")
+	if SaveSystem.consume_load_request():
+		load_game()
+	else:
+		show_message("第一天：熟悉家园，采集资源并开垦土地")
 
 
 func _process(delta: float) -> void:

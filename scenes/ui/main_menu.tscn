@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_menu"]
+bg_color = Color(0.065, 0.09, 0.074, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.48, 0.33, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.12, 0.09, 1)
+mouse_filter = 2
+
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(0, 390, 960, 300, 960, 540, 0, 540)
+color = Color(0.2, 0.29, 0.17, 1)
+
+[node name="Moon" type="Polygon2D" parent="."]
+position = Vector2(785, 105)
+polygon = PackedVector2Array(-34, 0, -24, -24, 0, -34, 24, -24, 34, 0, 24, 24, 0, 34, -24, 24)
+color = Color(0.92, 0.88, 0.66, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(510, 390)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_menu")
+
+[node name="Margin" type="MarginContainer" parent="Center/Menu"]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 36
+
+[node name="Content" type="VBoxContainer" parent="Center/Menu/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="Center/Menu/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.84, 0.55, 1)
+theme_override_font_sizes/font_size = 35
+text = "僵尸来了也要种田"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Menu/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.81, 0.72, 1)
+theme_override_font_sizes/font_size = 16
+text = "末日农场生存 RPG"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Center/Menu/Margin/Content"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="NewGameButton" type="Button" parent="Center/Menu/Margin/Content"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "开始新游戏"
+
+[node name="ContinueButton" type="Button" parent="Center/Menu/Margin/Content"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "继续游戏"
+
+[node name="QuitButton" type="Button" parent="Center/Menu/Margin/Content"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+text = "退出游戏"
+
+[node name="SaveHint" type="Label" parent="Center/Menu/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.7, 1)
+text = "存档状态"
+horizontal_alignment = 1

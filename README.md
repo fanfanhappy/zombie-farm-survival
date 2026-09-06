@@ -36,11 +36,13 @@
 - 数据驱动的晴朗、降雨与炎热天气，对作物浇水和口渴速度产生影响
 - 防御设施三级升级：栅栏强化耐久，尖刺同时强化耐久与反伤
 - 可制作与放置的简易捕兽夹，提供伤害、减速和有限触发次数
+- 中文主菜单，以及新游戏、存档检测、继续游戏和退出入口
 - 武器制作后进入背包，由玩家手动装备或放入快捷栏
 
 ## 入口文件
 
-- 主场景：`scenes/game/game_world.tscn`
+- 启动场景：`scenes/ui/main_menu.tscn`
+- 游戏场景：`scenes/game/game_world.tscn`
 - 游戏流程：`scripts/core/game_controller.gd`
 - 项目结构规范：`docs/project_structure.md`
 - 命名规范：`docs/naming_conventions.md`
