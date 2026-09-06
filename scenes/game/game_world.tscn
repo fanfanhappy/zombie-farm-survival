@@ -54,6 +54,7 @@ script = ExtResource("9_objectives")
 script = ExtResource("11_weather")
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1658304268]
+z_index = 10
 position = Vector2(640, 460)
 script = ExtResource("2_player")
 

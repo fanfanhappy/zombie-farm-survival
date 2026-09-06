@@ -95,6 +95,8 @@ func reset_for_new_game() -> void:
 	for ground_item in get_tree().get_nodes_in_group("ground_items"): ground_item.queue_free()
 	for plot in get_tree().get_nodes_in_group("farm_plots"): (plot as FarmPlot).reset_for_new_game()
 	inventory.reset_for_new_game(STARTING_ITEMS)
+	inventory.assign_hotbar_item(0, "wooden_club")
+	inventory.assign_hotbar_item(1, "stone_hoe")
 	objective_system.reset_for_new_game()
 	player.reset_for_new_game(PLAYER_HOME)
 	if is_instance_valid(homestead): homestead.restore_full()
@@ -121,6 +123,7 @@ func _process(delta: float) -> void:
 			night_spawned = true
 			_spawn_night_threat()
 	_update_lighting()
+	_update_farm_plot_highlights()
 	_update_prompt()
 	_update_hud()
 	if message_time > 0.0:
@@ -334,6 +337,15 @@ func _update_prompt() -> void:
 	prompt_label.text = target.get_interaction_prompt() if target else ""
 
 
+func _update_farm_plot_highlights() -> void:
+	var mouse_world_position := get_global_mouse_position()
+	for node in get_tree().get_nodes_in_group("farm_plots"):
+		var plot := node as FarmPlot
+		var hovered := mouse_world_position.distance_to(plot.global_position) <= 16.0
+		var reachable := player.global_position.distance_to(plot.global_position) <= 64.0
+		plot.set_mouse_highlight(hovered, reachable)
+
+
 func get_selected_hotbar_item_id() -> String:
 	return inventory_ui.get_selected_hotbar_item_id()
 
@@ -403,9 +415,9 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 func _spawn_world_objects() -> void:
 	for data in [["wood", Vector2(145, 175)], ["wood", Vector2(1080, 190)], ["wood", Vector2(1060, 565)], ["wood", Vector2(570, 170)], ["stone", Vector2(570, 520)], ["stone", Vector2(1030, 470)], ["stone", Vector2(620, 640)], ["herb", Vector2(530, 610)], ["herb", Vector2(1020, 620)]]:
 		var node := HarvestableResource.new(); node.position = data[1]; add_child(node); node.setup(data[0])
-	for row in 3:
-		for column in 5:
-			var plot := FarmPlot.new(); plot.position = Vector2(244 + column * 38, 430 + row * 38); add_child(plot)
+	for row in 6:
+		for column in 12:
+			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * 32, 428 + row * 32); add_child(plot)
 	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
 	var kitchen := CraftingStation.new(); kitchen.position = Vector2(1040, 325); add_child(kitchen); kitchen.setup("kitchen")
 	var sleep_point := SleepPoint.new(); sleep_point.position = Vector2(930, 425); add_child(sleep_point)
@@ -843,7 +855,6 @@ func _draw() -> void:
 	draw_rect(Rect2(0, 0, 1280, 800), Color("#82a85d"))
 	for x in range(0, 1280, 32): draw_line(Vector2(x, 0), Vector2(x, 800), Color("#789d55"), 1.0)
 	for y in range(0, 800, 32): draw_line(Vector2(0, y), Vector2(1280, y), Color("#789d55"), 1.0)
-	draw_rect(Rect2(180, 370, 320, 224), Color("#876349"))
 	draw_rect(Rect2(690, 170, 300, 220), Color("#c69b66"))
 	draw_colored_polygon(PackedVector2Array([Vector2(660, 190), Vector2(840, 80), Vector2(1020, 190)]), Color("#7e4a3e"))
 	draw_rect(Rect2(815, 310, 52, 80), Color("#604638"))

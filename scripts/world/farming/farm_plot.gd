@@ -8,13 +8,21 @@ var watered := false
 var growth_days := 0
 var crop_id := ""
 var crop_data: Dictionary = {}
+var highlight_state := 0
 
 
 func _ready() -> void:
-	# 农田属于地面层，不能遮挡角色、作物交互提示或建筑。
-	z_index = -5
+	# 农田与地面同层，玩家使用更高显示层避免被耕地遮挡。
+	z_index = 0
 	add_to_group("mouse_action_targets")
 	add_to_group("farm_plots")
+	queue_redraw()
+
+
+func set_mouse_highlight(hovered: bool, reachable: bool) -> void:
+	var next_state := (1 if reachable else 2) if hovered else 0
+	if next_state == highlight_state: return
+	highlight_state = next_state
 	queue_redraw()
 
 
@@ -140,10 +148,8 @@ func _harvest(game: Node) -> void:
 
 func _draw() -> void:
 	if state == PlotState.EMPTY:
-		draw_rect(Rect2(-14, -14, 28, 28), Color("#769d55"), true)
-		draw_rect(Rect2(-14, -14, 28, 28), Color("#9fbd77"), false, 1.0)
-		draw_circle(Vector2(-6, 5), 2.0, Color("#668b49"))
-		draw_circle(Vector2(7, -5), 2.0, Color("#668b49"))
+		draw_line(Vector2(-7, 8), Vector2(-5, 3), Color("#668b49"), 1.0)
+		draw_line(Vector2(8, -4), Vector2(6, -9), Color("#668b49"), 1.0)
 	elif state == PlotState.TILLED:
 		draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
 		for y in [-8, 0, 8]: draw_line(Vector2(-11, y), Vector2(11, y), Color("#a77b58"), 2.0)
@@ -157,3 +163,8 @@ func _draw() -> void:
 		draw_circle(Vector2(5, -size + 1), size * 0.55, leaf_color.lightened(0.08))
 		if state == PlotState.READY: draw_circle(Vector2(0, 5), 6.0, produce_color)
 	if watered: draw_circle(Vector2(10, -10), 3.0, Color("#68b9d2"))
+	if highlight_state > 0:
+		var highlight_color := Color(1.0, 0.88, 0.3, 0.28) if highlight_state == 1 else Color(0.95, 0.28, 0.25, 0.24)
+		var border_color := Color("#ffe36b") if highlight_state == 1 else Color("#ee6158")
+		draw_rect(Rect2(-15, -15, 30, 30), highlight_color, true)
+		draw_rect(Rect2(-15, -15, 30, 30), border_color, false, 2.0)
