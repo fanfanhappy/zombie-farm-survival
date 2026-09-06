@@ -27,6 +27,7 @@ const WATERING_CAN_CAPACITY := 5
 @onready var weather_system: WeatherSystem = $WeatherSystem
 @onready var weather_label: Label = $HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $HUD/PauseOverlay
+@onready var world_tile_map: WorldTileMap = $WorldTileMap
 
 const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
@@ -127,7 +128,6 @@ func _process(delta: float) -> void:
 			night_spawned = true
 			_spawn_night_threat()
 	_update_lighting()
-	_update_farm_plot_highlights()
 	_update_prompt()
 	_update_hud()
 	if message_time > 0.0:
@@ -338,16 +338,12 @@ func _update_prompt() -> void:
 		prompt_label.text = mouse_target.get_interaction_prompt()
 		return
 	var target := _nearest_interactable()
-	prompt_label.text = target.get_interaction_prompt() if target else ""
-
-
-func _update_farm_plot_highlights() -> void:
-	var mouse_world_position := get_global_mouse_position()
-	for node in get_tree().get_nodes_in_group("farm_plots"):
-		var plot := node as FarmPlot
-		var hovered := mouse_world_position.distance_to(plot.global_position) <= 16.0
-		var reachable := player.global_position.distance_to(plot.global_position) <= 64.0
-		plot.set_mouse_highlight(hovered, reachable)
+	if target:
+		prompt_label.text = target.get_interaction_prompt()
+	elif is_instance_valid(world_tile_map):
+		prompt_label.text = world_tile_map.get_cursor_hint()
+	else:
+		prompt_label.text = ""
 
 
 func get_selected_hotbar_item_id() -> String:

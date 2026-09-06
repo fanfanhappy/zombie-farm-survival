@@ -13,6 +13,8 @@ var ground_layer: TileMapLayer
 var water_layer: TileMapLayer
 var path_layer: TileMapLayer
 var fence_layer: TileMapLayer
+var grid_cursor: WorldGridCursor
+var cursor_hint := ""
 
 
 func _ready() -> void:
@@ -25,6 +27,14 @@ func _ready() -> void:
 	_build_pond_collision()
 	_build_paths()
 	_build_perimeter_fence()
+	grid_cursor = WorldGridCursor.new()
+	grid_cursor.name = "WorldGridCursor"
+	grid_cursor.z_index = 8
+	add_child(grid_cursor)
+
+
+func _process(_delta: float) -> void:
+	_update_grid_cursor()
 
 
 func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i, layer_z_index: int) -> TileMapLayer:
@@ -109,10 +119,10 @@ func _build_paths() -> void:
 	for y in range(13, 22):
 		path_cells[Vector2i(20, y)] = true
 		path_cells[Vector2i(21, y)] = true
-	for x in range(18, 28):
+	for x in range(19, 28):
 		path_cells[Vector2i(x, 13)] = true
 		path_cells[Vector2i(x, 14)] = true
-	for x in range(16, 21):
+	for x in range(19, 21):
 		path_cells[Vector2i(x, 17)] = true
 	for cell in path_cells:
 		path_layer.set_cell(cell, 0, Vector2i(0, 5))
@@ -126,3 +136,39 @@ func _build_perimeter_fence() -> void:
 	for y in range(4, 21):
 		fence_layer.set_cell(Vector2i(3, y), 0, Vector2i(0, 2))
 		fence_layer.set_cell(Vector2i(36, y), 0, Vector2i(0, 2))
+
+
+func get_cursor_hint() -> String:
+	return cursor_hint
+
+
+func _update_grid_cursor() -> void:
+	if not is_instance_valid(grid_cursor):
+		return
+	var mouse_position := get_global_mouse_position()
+	if not Rect2(0, 0, 1280, 800).has_point(mouse_position):
+		grid_cursor.set_cursor(Vector2.ZERO, WorldGridCursor.CursorState.HIDDEN)
+		cursor_hint = ""
+		return
+	var hovered_plot := _find_hovered_farm_plot(mouse_position)
+	var player := get_parent().get_node_or_null("Player") as Player
+	if is_instance_valid(hovered_plot):
+		var reachable := is_instance_valid(player) and player.global_position.distance_to(hovered_plot.global_position) <= 64.0
+		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH)
+		cursor_hint = "" if reachable else "目标太远，靠近后才能操作"
+		return
+	var snapped_position := Vector2(roundf(mouse_position.x / 32.0) * 32.0, roundf(mouse_position.y / 32.0) * 32.0)
+	grid_cursor.set_cursor(snapped_position, WorldGridCursor.CursorState.BLOCKED)
+	cursor_hint = "该区域不可耕作"
+
+
+func _find_hovered_farm_plot(mouse_position: Vector2) -> FarmPlot:
+	var hovered_plot: FarmPlot
+	var nearest_distance := 16.0
+	for node in get_tree().get_nodes_in_group("farm_plots"):
+		var plot := node as FarmPlot
+		var distance := mouse_position.distance_to(plot.global_position)
+		if distance <= nearest_distance:
+			hovered_plot = plot
+			nearest_distance = distance
+	return hovered_plot
