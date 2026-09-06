@@ -3,6 +3,10 @@ extends CharacterBody2D
 
 @onready var character_sprite: Sprite2D = $CharacterSprite
 
+const WALK_TEXTURE := preload("res://assets/art/characters/basic_charakter_spritesheet.png")
+const ACTION_TEXTURE := preload("res://assets/art/characters/basic_charakter_actions.png")
+const TOOL_ACTION_DURATION := 0.48
+
 signal interaction_requested
 signal attack_requested
 signal health_changed(current: float, maximum: float)
@@ -46,6 +50,8 @@ var well_fed_time := 0.0
 var level := 1
 var experience := 0
 var environment_thirst_multiplier := 1.0
+var tool_action_time_left := 0.0
+var tool_action_row_offset := 0
 
 
 func _ready() -> void:
@@ -64,12 +70,13 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	tool_action_time_left = maxf(tool_action_time_left - delta, 0.0)
 	well_fed_time = maxf(well_fed_time - delta, 0.0)
 	attack_time_left = maxf(attack_time_left - delta, 0.0)
 	hurt_flash_left = maxf(hurt_flash_left - delta, 0.0)
 	var keyboard := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var arrows := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var direction := (keyboard + arrows).limit_length(1.0)
+	var direction := Vector2.ZERO if tool_action_time_left > 0.0 else (keyboard + arrows).limit_length(1.0)
 	var sprinting := direction != Vector2.ZERO and Input.is_action_pressed("sprint") and stamina > 0.0
 	_update_hunger(delta, sprinting)
 	_update_thirst(delta, sprinting)
@@ -92,6 +99,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if tool_action_time_left > 0.0: return
 	if event.is_action_pressed("interact"):
 		interaction_requested.emit()
 	if event.is_action_pressed("attack") and attack_time_left <= 0.0:
@@ -247,13 +255,35 @@ func get_next_level_experience() -> int:
 	return 40 + (level - 1) * 25
 
 
+func play_tool_action(action_type: String) -> void:
+	tool_action_row_offset = 0 if action_type == "axe" else 4
+	tool_action_time_left = TOOL_ACTION_DURATION
+	velocity = Vector2.ZERO
+	_update_character_sprite(Vector2.ZERO)
+
+
+func _get_direction_row() -> int:
+	if absf(facing_direction.x) > absf(facing_direction.y):
+		return 3 if facing_direction.x > 0.0 else 2
+	return 0 if facing_direction.y > 0.0 else 1
+
+
 func _update_character_sprite(direction: Vector2) -> void:
 	if not is_instance_valid(character_sprite): return
-	var direction_row := 0
-	if absf(facing_direction.x) > absf(facing_direction.y):
-		direction_row = 3 if facing_direction.x > 0.0 else 2
-	else:
-		direction_row = 0 if facing_direction.y > 0.0 else 1
+	var direction_row := _get_direction_row()
+	if tool_action_time_left > 0.0:
+		character_sprite.texture = ACTION_TEXTURE
+		character_sprite.hframes = 3
+		character_sprite.vframes = 12
+		var elapsed := TOOL_ACTION_DURATION - tool_action_time_left
+		var action_frame := mini(int(elapsed / (TOOL_ACTION_DURATION / 3.0)), 2)
+		character_sprite.frame = (tool_action_row_offset + direction_row) * 3 + action_frame
+		character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
+		return
+	if character_sprite.texture != WALK_TEXTURE:
+		character_sprite.texture = WALK_TEXTURE
+		character_sprite.hframes = 4
+		character_sprite.vframes = 4
 	var animation_frame := 0 if direction == Vector2.ZERO else int(step_time) % 4
 	character_sprite.frame = direction_row * 4 + animation_frame
 	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE

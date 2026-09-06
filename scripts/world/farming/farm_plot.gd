@@ -37,6 +37,7 @@ func get_stamina_cost() -> float:
 func interact(game: Node) -> void:
 	match state:
 		PlotState.EMPTY:
+			game.player.play_tool_action("hoe")
 			state = PlotState.TILLED
 			game.show_message("土地已经开垦")
 		PlotState.TILLED:

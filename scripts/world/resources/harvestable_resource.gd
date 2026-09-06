@@ -40,6 +40,7 @@ func get_stamina_cost() -> float:
 
 func interact(game: Node) -> void:
 	if depleted: return
+	if resource_type == "wood": game.player.play_tool_action("axe")
 	var tool_type: String = game.get_active_tool_type()
 	var correct_tool := (resource_type == "wood" and tool_type == "axe") or (resource_type == "stone" and tool_type == "pickaxe")
 	var work_amount := 2.0 if correct_tool else 1.0
