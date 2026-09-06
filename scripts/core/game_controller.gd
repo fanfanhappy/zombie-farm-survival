@@ -417,7 +417,7 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 
 
 func _spawn_world_objects() -> void:
-	for data in [["wood", Vector2(145, 175)], ["wood", Vector2(1080, 190)], ["wood", Vector2(1060, 565)], ["wood", Vector2(570, 170)], ["stone", Vector2(570, 520)], ["stone", Vector2(1030, 470)], ["stone", Vector2(620, 640)], ["herb", Vector2(530, 610)], ["herb", Vector2(1020, 620)]]:
+	for data in [["wood", Vector2(150, 370)], ["wood", Vector2(1080, 190)], ["wood", Vector2(1060, 565)], ["wood", Vector2(570, 170)], ["stone", Vector2(570, 520)], ["stone", Vector2(1030, 470)], ["stone", Vector2(620, 640)], ["herb", Vector2(530, 610)], ["herb", Vector2(1020, 620)]]:
 		var node := HarvestableResource.new(); node.position = data[1]; add_child(node); node.setup(data[0])
 	for row in 6:
 		for column in 12:
@@ -885,13 +885,8 @@ func _get_pressed_hotbar_index(event: InputEvent) -> int:
 
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, 1280, 800), Color("#82a85d"))
-	for x in range(0, 1280, 32): draw_line(Vector2(x, 0), Vector2(x, 800), Color("#789d55"), 1.0)
-	for y in range(0, 800, 32): draw_line(Vector2(0, y), Vector2(1280, y), Color("#789d55"), 1.0)
+	# 农舍仍使用原型轮廓，地面、水域、道路和栅栏已交给 WorldTileMap。
 	draw_rect(Rect2(690, 170, 300, 220), Color("#c69b66"))
 	draw_colored_polygon(PackedVector2Array([Vector2(660, 190), Vector2(840, 80), Vector2(1020, 190)]), Color("#7e4a3e"))
 	draw_rect(Rect2(815, 310, 52, 80), Color("#604638"))
 	draw_rect(Rect2(730, 240, 54, 46), Color("#9fd1d5")); draw_rect(Rect2(895, 240, 54, 46), Color("#9fd1d5"))
-	var fence := Color("#71533b")
-	draw_rect(Rect2(110, 105, 1040, 14), fence); draw_rect(Rect2(110, 105, 14, 590), fence)
-	draw_rect(Rect2(1136, 105, 14, 590), fence); draw_rect(Rect2(110, 681, 450, 14), fence); draw_rect(Rect2(720, 681, 430, 14), fence)

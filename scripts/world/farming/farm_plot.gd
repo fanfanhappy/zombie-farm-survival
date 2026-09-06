@@ -3,6 +3,9 @@ extends Node2D
 
 enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
 
+const TILLED_DIRT_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_detailed_tileset.png")
+const TILLED_DIRT_REGION := Rect2(0, 0, 16, 16)
+
 var state := PlotState.EMPTY
 var watered := false
 var growth_days := 0
@@ -158,10 +161,9 @@ func _draw() -> void:
 		draw_line(Vector2(-7, 8), Vector2(-5, 3), Color("#668b49"), 1.0)
 		draw_line(Vector2(8, -4), Vector2(6, -9), Color("#668b49"), 1.0)
 	elif state == PlotState.TILLED:
-		draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
-		for y in [-8, 0, 8]: draw_line(Vector2(-11, y), Vector2(11, y), Color("#a77b58"), 2.0)
+		draw_texture_rect_region(TILLED_DIRT_TEXTURE, Rect2(-16, -16, 32, 32), TILLED_DIRT_REGION)
 	elif state in [PlotState.PLANTED, PlotState.GROWING, PlotState.READY]:
-		draw_rect(Rect2(-14, -14, 28, 28), Color("#76523e"))
+		draw_texture_rect_region(TILLED_DIRT_TEXTURE, Rect2(-16, -16, 32, 32), TILLED_DIRT_REGION)
 		var size := 4.0 + growth_days * 3.0
 		var leaf_color := Color("#%s" % crop_data.get("leaf_color", "65a653"))
 		var produce_color := Color("#%s" % crop_data.get("produce_color", "d5b061"))
