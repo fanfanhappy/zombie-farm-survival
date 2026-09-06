@@ -41,6 +41,12 @@
     "ingredients": { "wood": 10 },
     "results": { "storage_chest": 1 }
   },
+  "snare_trap": {
+    "name": "简易捕兽夹",
+    "station": "workbench",
+    "ingredients": { "wood": 2, "stone": 3 },
+    "results": { "snare_trap": 1 }
+  },
   "vegetable_stew": {
     "name": "蔬菜炖菜",
     "station": "kitchen",

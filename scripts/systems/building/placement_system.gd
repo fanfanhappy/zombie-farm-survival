@@ -54,6 +54,7 @@ func try_place() -> bool:
 		cancel_placement(); return false
 	var structure: Node2D
 	if placement_type == "storage_chest": structure = StorageChest.new()
+	elif placement_type == "snare_trap": structure = SnareTrap.new()
 	else: structure = DefenseStructure.new()
 	structure.position = global_position
 	structure.rotation = rotation
@@ -101,5 +102,10 @@ func _draw() -> void:
 	elif placement_type == "storage_chest":
 		draw_rect(Rect2(-21, -14, 42, 28), color)
 		draw_rect(Rect2(-4, -2, 8, 10), color.lightened(0.18))
+	elif placement_type == "snare_trap":
+		draw_arc(Vector2.ZERO, 15.0, 0.0, TAU, 18, color, 5.0)
+		for angle in range(0, 360, 45):
+			var direction := Vector2.from_angle(deg_to_rad(angle))
+			draw_line(direction * 9.0, direction * 18.0, color, 4.0)
 	else:
 		for x in [-10, 0, 10]: draw_colored_polygon(PackedVector2Array([Vector2(x - 5, 13), Vector2(x, -14), Vector2(x + 5, 13)]), color)

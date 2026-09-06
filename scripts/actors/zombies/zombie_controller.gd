@@ -10,6 +10,8 @@ var attack_cooldown := 0.0
 var hit_flash := 0.0
 var player_aggro_time := 0.0
 var experience_reward := 12
+var slow_multiplier := 1.0
+var slow_time_left := 0.0
 
 
 func setup(player: Player, home: HomesteadCore, fast := false) -> void:
@@ -31,11 +33,13 @@ func _physics_process(delta: float) -> void:
 	attack_cooldown = maxf(attack_cooldown - delta, 0.0)
 	hit_flash = maxf(hit_flash - delta, 0.0)
 	player_aggro_time = maxf(player_aggro_time - delta, 0.0)
+	slow_time_left = maxf(slow_time_left - delta, 0.0)
+	if slow_time_left <= 0.0: slow_multiplier = 1.0
 	var pursue_player := player_aggro_time > 0.0 or global_position.distance_to(target.global_position) < 105.0
 	var target_position := target.global_position if pursue_player else homestead.global_position
 	var target_distance := global_position.distance_to(target_position)
 	if target_distance > 27.0:
-		velocity = global_position.direction_to(target_position) * move_speed
+		velocity = global_position.direction_to(target_position) * move_speed * slow_multiplier
 		move_and_slide(); _check_structure_collision()
 	else:
 		velocity = Vector2.ZERO
@@ -63,6 +67,11 @@ func take_damage(amount: float, source: Node = null) -> void:
 	if source is Player: player_aggro_time = 3.0
 	if health <= 0.0: defeated.emit(self); queue_free()
 	else: queue_redraw()
+
+
+func apply_slow(multiplier: float, duration: float) -> void:
+	slow_multiplier = minf(slow_multiplier, clampf(multiplier, 0.1, 1.0))
+	slow_time_left = maxf(slow_time_left, duration)
 
 
 func _draw() -> void:

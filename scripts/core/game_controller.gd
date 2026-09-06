@@ -27,7 +27,7 @@ const DAY_LENGTH_SECONDS := 90.0
 @onready var weather_label: Label = $HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $HUD/PauseOverlay
 
-const STARTING_ITEMS := {"wooden_club": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
+const STARTING_ITEMS := {"wooden_club": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
 var day_progress := 0.25
 var last_hour := -1
@@ -414,6 +414,8 @@ func _eat_potato() -> void:
 func save_game() -> void:
 	if horde_system.active: show_message("尸潮期间不能保存"); return
 	var data := {"version": 15, "day": day, "day_progress": day_progress, "weather": weather_system.current_weather_id, "inventory": inventory.create_save_data(), "player_position": {"x": player.position.x, "y": player.position.y}, "health": player.health, "max_health": player.max_health, "stamina": player.stamina, "max_stamina": player.max_stamina, "hunger": player.hunger, "thirst": player.thirst, "level": player.level, "experience": player.experience, "well_fed_time": player.well_fed_time, "homestead_health": homestead.health, "equipped_weapon_id": player.equipped_weapon_id, "weapon": player.equipped_weapon, "attack_damage": player.attack_damage, "kills": kills, "hordes_survived": hordes_survived, "defenses": _serialize_defenses(), "storage_chests": _serialize_storage_chests(), "ground_items": _serialize_ground_items(), "farm_plots": _serialize_farm_plots(), "objectives": objective_system.create_save_data()}
+	data["version"] = 16
+	data["snare_traps"] = _serialize_snare_traps()
 	show_message("游戏已保存" if SaveSystem.save_game(data) else "保存失败")
 
 
@@ -443,6 +445,7 @@ func load_game() -> void:
 	homestead.repair(0.0)
 	_restore_defenses(data.get("defenses", []))
 	_restore_storage_chests(data.get("storage_chests", []))
+	_restore_snare_traps(data.get("snare_traps", []))
 	_restore_ground_items(data.get("ground_items", []))
 	_restore_farm_plots(data.get("farm_plots", []))
 	kills = int(data.get("kills", 0)); hordes_survived = int(data.get("hordes_survived", 0))
@@ -490,6 +493,24 @@ func _restore_storage_chests(saved_chests: Array) -> void:
 		chest.rotation = float(entry.get("rotation", 0.0))
 		add_child(chest)
 		chest.restore_items(entry.get("items", {}))
+
+
+func _serialize_snare_traps() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for node in get_tree().get_nodes_in_group("snare_traps"):
+		result.append((node as SnareTrap).create_save_data())
+	return result
+
+
+func _restore_snare_traps(saved_traps: Array) -> void:
+	for node in get_tree().get_nodes_in_group("snare_traps"): node.queue_free()
+	for entry in saved_traps:
+		if not entry is Dictionary: continue
+		var trap := SnareTrap.new()
+		trap.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
+		trap.rotation = float(entry.get("rotation", 0.0))
+		trap.charges = int(entry.get("charges", SnareTrap.MAX_CHARGES))
+		add_child(trap)
 
 
 func _serialize_farm_plots() -> Array[Dictionary]:

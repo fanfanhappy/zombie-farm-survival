@@ -63,6 +63,15 @@
     "usable": true,
     "sort_order": 5
   },
+  "snare_trap": {
+    "name": "简易捕兽夹",
+    "description": "放置在地面，僵尸踩中后受到8点伤害并减速4秒，可触发3次。",
+    "category": "placeable",
+    "placement_type": "snare_trap",
+    "stack_limit": 20,
+    "usable": true,
+    "sort_order": 6
+  },
   "scrap": {
     "name": "机械零件",
     "description": "尸潮后收集到的稀有零件，将用于后续家园升级。",
