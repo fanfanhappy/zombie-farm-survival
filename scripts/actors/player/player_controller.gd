@@ -1,6 +1,8 @@
 class_name Player
 extends CharacterBody2D
 
+@onready var character_sprite: Sprite2D = $CharacterSprite
+
 signal interaction_requested
 signal attack_requested
 signal health_changed(current: float, maximum: float)
@@ -82,6 +84,7 @@ func _physics_process(delta: float) -> void:
 		step_time += delta * 10.0
 	else:
 		step_time = 0.0
+	_update_character_sprite(direction)
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 24.0, 1256.0)
 	global_position.y = clampf(global_position.y, 24.0, 776.0)
@@ -244,15 +247,18 @@ func get_next_level_experience() -> int:
 	return 40 + (level - 1) * 25
 
 
+func _update_character_sprite(direction: Vector2) -> void:
+	if not is_instance_valid(character_sprite): return
+	var direction_row := 0
+	if absf(facing_direction.x) > absf(facing_direction.y):
+		direction_row = 3 if facing_direction.x > 0.0 else 2
+	else:
+		direction_row = 0 if facing_direction.y > 0.0 else 1
+	var animation_frame := 0 if direction == Vector2.ZERO else int(step_time) % 4
+	character_sprite.frame = direction_row * 4 + animation_frame
+	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
+
+
 func _draw() -> void:
-	var bob := 1.0 if sin(step_time) > 0.0 and velocity != Vector2.ZERO else 0.0
-	var body_color := Color("#d75b54") if hurt_flash_left > 0.0 else Color("#355b48")
-	draw_circle(Vector2(0, 12), 11.0, Color("#31523a"))
-	draw_rect(Rect2(-9, -4 - bob, 18, 20), body_color)
-	draw_rect(Rect2(-8, -17 - bob, 16, 14), Color("#e0b58a"))
-	draw_rect(Rect2(-9, -18 - bob, 18, 6), Color("#693f35"))
-	var eyes := facing_direction * 2.0
-	draw_circle(Vector2(-3, -10 - bob) + eyes, 1.2, Color("#20232a"))
-	draw_circle(Vector2(3, -10 - bob) + eyes, 1.2, Color("#20232a"))
 	if attack_time_left > attack_cooldown - 0.14:
 		draw_arc(facing_direction * 18.0, 24.0, facing_direction.angle() - 0.8, facing_direction.angle() + 0.8, 12, Color("#f4e3a1"), 4.0)
