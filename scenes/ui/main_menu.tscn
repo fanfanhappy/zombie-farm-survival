@@ -104,3 +104,9 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.76, 0.7, 1)
 text = "存档状态"
 horizontal_alignment = 1
+
+[node name="FullscreenHint" type="Label" parent="Center/Menu/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.68, 0.61, 1)
+text = "F11 切换全屏 / 窗口模式"
+horizontal_alignment = 1

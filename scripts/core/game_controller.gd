@@ -126,6 +126,10 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("toggle_fullscreen"):
+		DisplayManager.toggle_fullscreen()
+		get_viewport().set_input_as_handled()
+		return
 	if pause_overlay.visible:
 		if event.is_action_pressed("ui_cancel"):
 			_set_paused(false)
@@ -367,7 +371,7 @@ func _update_hud() -> void:
 	status_label.text = "第 %d 天  %02d:%02d　等级 %d（%d/%d经验）\n生命 %d/%d　体力 %d/%d\n饥饿 %d/%d　口渴 %d/%d\n农舍 %d/%d　武器 %s\n背包 %d/%d 格　击杀 %d" % [day, total_minutes / 60, total_minutes % 60, player.level, player.experience, player.get_next_level_experience(), int(player.health), int(player.max_health), int(player.stamina), int(player.max_stamina), int(player.hunger), int(player.max_hunger), int(player.thirst), int(player.max_thirst), home_health, home_max, player.equipped_weapon, inventory.get_used_slots(), inventory.slot_capacity, kills]
 	if player.hunger <= 20.0: status_label.text += "\n⚠ 非常饥饿"
 	if player.thirst <= 20.0: status_label.text += "\n⚠ 严重口渴"
-	help_label.text = "WASD 移动　Shift 冲刺　空格 攻击　Esc 暂停\nE 交互　B 背包　数字键快捷栏　U 升级　X 拆除\n放置：左键确认 R旋转 右键取消"
+	help_label.text = "WASD 移动　Shift 冲刺　空格 攻击　Esc 暂停　F11 全屏\nE 交互　B 背包　数字键快捷栏　U 升级　X 拆除\n放置：左键确认 R旋转 右键取消"
 	if player.well_fed_time > 0.0:
 		status_label.text += "\n饱餐：%d秒（攻击+20%% / 恢复+35%%）" % int(ceil(player.well_fed_time))
 	if horde_system.active:

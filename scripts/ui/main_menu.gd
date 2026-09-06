@@ -22,6 +22,12 @@ func _ready() -> void:
 	$Center/Menu/Margin/Content/NewGameButton.grab_focus()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("toggle_fullscreen"):
+		DisplayManager.toggle_fullscreen()
+		get_viewport().set_input_as_handled()
+
+
 func _start_new_game() -> void:
 	if SaveSystem.has_save():
 		overwrite_confirmation.popup_centered(Vector2i(430, 180))
