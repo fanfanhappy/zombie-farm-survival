@@ -5,7 +5,9 @@ extends CharacterBody2D
 
 const WALK_TEXTURE := preload("res://assets/art/characters/basic_charakter_spritesheet.png")
 const ACTION_TEXTURE := preload("res://assets/art/characters/basic_charakter_actions.png")
-const TOOL_ACTION_DURATION := 0.48
+const ANIMATION_FPS := 3.0
+const TOOL_ACTION_FRAME_COUNT := 3
+const TOOL_ACTION_DURATION := TOOL_ACTION_FRAME_COUNT / ANIMATION_FPS
 
 signal interaction_requested
 signal attack_requested
@@ -88,7 +90,7 @@ func _physics_process(delta: float) -> void:
 		_regenerate_stamina(delta)
 	if direction != Vector2.ZERO:
 		facing_direction = direction.normalized()
-		step_time += delta * 10.0
+		step_time += delta * ANIMATION_FPS
 	else:
 		step_time = 0.0
 	_update_character_sprite(direction)
@@ -287,7 +289,7 @@ func _update_character_sprite(direction: Vector2) -> void:
 		character_sprite.hframes = 3
 		character_sprite.vframes = 12
 		var elapsed := TOOL_ACTION_DURATION - tool_action_time_left
-		var action_frame := mini(int(elapsed / (TOOL_ACTION_DURATION / 3.0)), 2)
+		var action_frame := mini(int(elapsed * ANIMATION_FPS), TOOL_ACTION_FRAME_COUNT - 1)
 		character_sprite.frame = (tool_action_row_offset + direction_row) * 3 + action_frame
 		character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
 		return
