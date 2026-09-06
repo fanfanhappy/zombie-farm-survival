@@ -295,7 +295,8 @@ func _nearest_mouse_target(mouse_world_position: Vector2) -> Node2D:
 	for node in get_tree().get_nodes_in_group("mouse_action_targets"):
 		var target := node as Node2D
 		var cursor_distance := mouse_world_position.distance_to(target.global_position)
-		if cursor_distance < nearest_cursor_distance and player.global_position.distance_to(target.global_position) <= 64.0:
+		var selection_radius := FarmPlot.CELL_SIZE * 0.5 if target is FarmPlot else nearest_cursor_distance
+		if cursor_distance <= selection_radius and cursor_distance < nearest_cursor_distance and player.global_position.distance_to(target.global_position) <= 64.0:
 			nearest = target
 			nearest_cursor_distance = cursor_distance
 	for node in get_tree().get_nodes_in_group("zombies"):
@@ -415,9 +416,10 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 func _spawn_world_objects() -> void:
 	for data in [["wood", Vector2(150, 370)], ["wood", Vector2(1080, 190)], ["wood", Vector2(1060, 565)], ["wood", Vector2(570, 170)], ["stone", Vector2(570, 520)], ["stone", Vector2(1030, 470)], ["stone", Vector2(620, 640)], ["herb", Vector2(530, 610)], ["herb", Vector2(1020, 620)]]:
 		var node := HarvestableResource.new(); node.position = data[1]; add_child(node); node.setup(data[0])
-	for row in 6:
-		for column in 12:
-			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * 32, 448 + row * 32); add_child(plot)
+	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
+	for row in 12:
+		for column in 24:
+			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
 	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
 	var kitchen := CraftingStation.new(); kitchen.position = Vector2(1040, 325); add_child(kitchen); kitchen.setup("kitchen")
 	var sleep_point := SleepPoint.new(); sleep_point.position = Vector2(930, 425); add_child(sleep_point)

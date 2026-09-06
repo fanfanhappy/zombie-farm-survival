@@ -2,6 +2,7 @@ class_name WorldTileMap
 extends Node2D
 
 const TILE_SIZE := Vector2i(16, 16)
+const FARM_CELL_SIZE := 16.0
 const WORLD_SIZE := Vector2i(41, 26)
 
 const GRASS_TEXTURE := preload("res://assets/art/environment/terrain/terrain_grass_tileset.png")
@@ -66,13 +67,15 @@ func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i,
 func _create_farming_terrain_layer() -> TileMapLayer:
 	var layer := TileMapLayer.new()
 	layer.name = "FarmingTerrainLayer"
-	layer.position = Vector2(-16.0, -16.0)
-	layer.scale = Vector2(2.0, 2.0)
+	# Farming art is authored on a native 16x16 grid. Keeping it at 1:1 also
+	# makes the selected plot line up with the player's tool animation.
+	layer.position = Vector2(-FARM_CELL_SIZE * 0.5, -FARM_CELL_SIZE * 0.5)
 	layer.z_index = -16
 	var tiles := TileSet.new()
 	tiles.tile_size = TILE_SIZE
 	tiles.add_terrain_set(0)
-	tiles.set_terrain_set_mode(0, TileSet.TERRAIN_MODE_MATCH_CORNERS_AND_SIDES)
+	# 图集左上角4x4区域正好覆盖16种上下左右连接组合。
+	tiles.set_terrain_set_mode(0, TileSet.TERRAIN_MODE_MATCH_SIDES)
 	tiles.add_terrain(0)
 	tiles.set_terrain_name(0, 0, "tilled_dirt")
 	var atlas := TileSetAtlasSource.new()
@@ -82,12 +85,13 @@ func _create_farming_terrain_layer() -> TileMapLayer:
 	for y in 7:
 		for x in 11:
 			var atlas_coord := Vector2i(x, y)
-			if _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE, TILE_SIZE)) <= 0.01:
+			if not _is_farming_terrain_tile(atlas_coord) or _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE, TILE_SIZE)) <= 0.01:
 				continue
 			atlas.create_tile(atlas_coord)
 			var tile_data := atlas.get_tile_data(atlas_coord, 0)
 			tile_data.terrain_set = 0
-			tile_data.terrain = 0 if _tile_center_is_filled(image, atlas_coord) else -1
+			# 边缘块虽然只有一小部分泥土，但它仍代表一个被开垦的逻辑格。
+			tile_data.terrain = 0
 			_apply_terrain_peering_bits(tile_data, image, atlas_coord)
 	tiles.add_source(atlas, 0)
 	layer.tile_set = tiles
@@ -108,16 +112,17 @@ func _apply_terrain_peering_bits(tile_data: TileData, image: Image, atlas_coord:
 		TileSet.CELL_NEIGHBOR_BOTTOM_LEFT_CORNER: Rect2i(origin + Vector2i(0, 13), Vector2i(3, 3)),
 	}
 	for neighbor in checks:
-		var threshold := 0.45 if neighbor in [TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_LEFT_SIDE] else 0.35
+		# 凹角素材的角落仍有少量抗锯齿像素，角判定必须足够严格，
+		# 否则它会和完整中心块得到同一套 terrain signature。
+		var threshold := 0.45 if neighbor in [TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_LEFT_SIDE] else 0.75
 		if _alpha_coverage(image, checks[neighbor]) > threshold:
 			tile_data.set_terrain_peering_bit(neighbor, 0)
 
 
-func _tile_center_is_filled(image: Image, atlas_coord: Vector2i) -> bool:
-	# Terrain center tiles in this atlas have a fully opaque middle. Inner-corner
-	# transition pieces only cover roughly 35%-40% of this area and must not be
-	# registered as terrain centers, or solid tilled fields develop grass holes.
-	return _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE + Vector2i(5, 5), Vector2i(6, 6))) >= 0.80
+func _is_farming_terrain_tile(atlas_coord: Vector2i) -> bool:
+	# 只使用标准4x4边连接区。右侧的复杂凹角变体需要另一套角规则，
+	# 混用会让完整地块随机出现透明缺口。
+	return atlas_coord.x <= 3 and atlas_coord.y <= 3
 
 
 func _alpha_coverage(image: Image, area: Rect2i) -> float:
@@ -136,7 +141,7 @@ func _refresh_farming_terrain() -> void:
 	for node in get_tree().get_nodes_in_group("farm_plots"):
 		var plot := node as FarmPlot
 		if plot.state != FarmPlot.PlotState.EMPTY:
-			next_cells.append(Vector2i(roundi(plot.position.x / 32.0), roundi(plot.position.y / 32.0)))
+			next_cells.append(Vector2i(roundi(plot.position.x / FARM_CELL_SIZE), roundi(plot.position.y / FARM_CELL_SIZE)))
 	next_cells.sort()
 	if next_cells == connected_farm_cells:
 		return
@@ -242,17 +247,17 @@ func _update_grid_cursor() -> void:
 	var player := get_parent().get_node_or_null("Player") as Player
 	if is_instance_valid(hovered_plot):
 		var reachable := is_instance_valid(player) and player.global_position.distance_to(hovered_plot.global_position) <= 64.0
-		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH)
+		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH, FARM_CELL_SIZE)
 		cursor_hint = "" if reachable else "目标太远，靠近后才能操作"
 		return
-	var snapped_position := Vector2(roundf(mouse_position.x / 32.0) * 32.0, roundf(mouse_position.y / 32.0) * 32.0)
-	grid_cursor.set_cursor(snapped_position, WorldGridCursor.CursorState.BLOCKED)
+	var snapped_position := Vector2(roundf(mouse_position.x / FARM_CELL_SIZE) * FARM_CELL_SIZE, roundf(mouse_position.y / FARM_CELL_SIZE) * FARM_CELL_SIZE)
+	grid_cursor.set_cursor(snapped_position, WorldGridCursor.CursorState.BLOCKED, FARM_CELL_SIZE)
 	cursor_hint = "该区域不可耕作"
 
 
 func _find_hovered_farm_plot(mouse_position: Vector2) -> FarmPlot:
 	var hovered_plot: FarmPlot
-	var nearest_distance := 16.0
+	var nearest_distance := FARM_CELL_SIZE * 0.5
 	for node in get_tree().get_nodes_in_group("farm_plots"):
 		var plot := node as FarmPlot
 		var distance := mouse_position.distance_to(plot.global_position)
