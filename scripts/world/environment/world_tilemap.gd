@@ -8,7 +8,6 @@ const WORLD_SIZE := Vector2i(41, 26)
 const GRASS_TEXTURE := preload("res://assets/art/environment/terrain/terrain_grass_tileset.png")
 const WATER_TEXTURE := preload("res://assets/art/environment/terrain/terrain_water_tileset.png")
 const PATH_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_clean_tileset.png")
-const FARMING_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_detailed_tileset.png")
 const FENCE_TEXTURE := preload("res://assets/art/environment/defenses/defense_fence_tileset.png")
 
 var ground_layer: TileMapLayer
@@ -25,7 +24,7 @@ func _ready() -> void:
 	ground_layer = _create_layer("GroundLayer", GRASS_TEXTURE, Vector2i(11, 7), -20)
 	water_layer = _create_layer("WaterLayer", WATER_TEXTURE, Vector2i(4, 1), -19)
 	path_layer = _create_layer("PathLayer", PATH_TEXTURE, Vector2i(11, 7), -18)
-	farming_layer = _create_farming_terrain_layer()
+	farming_layer = get_node("FarmingTerrainLayer") as TileMapLayer
 	fence_layer = _create_layer("FenceLayer", FENCE_TEXTURE, Vector2i(4, 4), -2)
 	_build_ground()
 	_build_pond()
@@ -62,76 +61,6 @@ func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i,
 	layer.tile_set = tiles
 	add_child(layer)
 	return layer
-
-
-func _create_farming_terrain_layer() -> TileMapLayer:
-	var layer := TileMapLayer.new()
-	layer.name = "FarmingTerrainLayer"
-	# Farming art is authored on a native 16x16 grid. Keeping it at 1:1 also
-	# makes the selected plot line up with the player's tool animation.
-	layer.position = Vector2(-FARM_CELL_SIZE * 0.5, -FARM_CELL_SIZE * 0.5)
-	layer.z_index = -16
-	var tiles := TileSet.new()
-	tiles.tile_size = TILE_SIZE
-	tiles.add_terrain_set(0)
-	# 图集左上角4x4区域正好覆盖16种上下左右连接组合。
-	tiles.set_terrain_set_mode(0, TileSet.TERRAIN_MODE_MATCH_SIDES)
-	tiles.add_terrain(0)
-	tiles.set_terrain_name(0, 0, "tilled_dirt")
-	var atlas := TileSetAtlasSource.new()
-	atlas.texture = FARMING_TEXTURE
-	atlas.texture_region_size = TILE_SIZE
-	var image := FARMING_TEXTURE.get_image()
-	for y in 7:
-		for x in 11:
-			var atlas_coord := Vector2i(x, y)
-			if not _is_farming_terrain_tile(atlas_coord) or _alpha_coverage(image, Rect2i(atlas_coord * TILE_SIZE, TILE_SIZE)) <= 0.01:
-				continue
-			atlas.create_tile(atlas_coord)
-			var tile_data := atlas.get_tile_data(atlas_coord, 0)
-			tile_data.terrain_set = 0
-			# 边缘块虽然只有一小部分泥土，但它仍代表一个被开垦的逻辑格。
-			tile_data.terrain = 0
-			_apply_terrain_peering_bits(tile_data, image, atlas_coord)
-	tiles.add_source(atlas, 0)
-	layer.tile_set = tiles
-	add_child(layer)
-	return layer
-
-
-func _apply_terrain_peering_bits(tile_data: TileData, image: Image, atlas_coord: Vector2i) -> void:
-	var origin := atlas_coord * TILE_SIZE
-	var checks := {
-		TileSet.CELL_NEIGHBOR_TOP_SIDE: Rect2i(origin + Vector2i(5, 0), Vector2i(6, 2)),
-		TileSet.CELL_NEIGHBOR_RIGHT_SIDE: Rect2i(origin + Vector2i(14, 5), Vector2i(2, 6)),
-		TileSet.CELL_NEIGHBOR_BOTTOM_SIDE: Rect2i(origin + Vector2i(5, 14), Vector2i(6, 2)),
-		TileSet.CELL_NEIGHBOR_LEFT_SIDE: Rect2i(origin + Vector2i(0, 5), Vector2i(2, 6)),
-		TileSet.CELL_NEIGHBOR_TOP_LEFT_CORNER: Rect2i(origin, Vector2i(3, 3)),
-		TileSet.CELL_NEIGHBOR_TOP_RIGHT_CORNER: Rect2i(origin + Vector2i(13, 0), Vector2i(3, 3)),
-		TileSet.CELL_NEIGHBOR_BOTTOM_RIGHT_CORNER: Rect2i(origin + Vector2i(13, 13), Vector2i(3, 3)),
-		TileSet.CELL_NEIGHBOR_BOTTOM_LEFT_CORNER: Rect2i(origin + Vector2i(0, 13), Vector2i(3, 3)),
-	}
-	for neighbor in checks:
-		# 凹角素材的角落仍有少量抗锯齿像素，角判定必须足够严格，
-		# 否则它会和完整中心块得到同一套 terrain signature。
-		var threshold := 0.45 if neighbor in [TileSet.CELL_NEIGHBOR_TOP_SIDE, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_LEFT_SIDE] else 0.75
-		if _alpha_coverage(image, checks[neighbor]) > threshold:
-			tile_data.set_terrain_peering_bit(neighbor, 0)
-
-
-func _is_farming_terrain_tile(atlas_coord: Vector2i) -> bool:
-	# 只使用标准4x4边连接区。右侧的复杂凹角变体需要另一套角规则，
-	# 混用会让完整地块随机出现透明缺口。
-	return atlas_coord.x <= 3 and atlas_coord.y <= 3
-
-
-func _alpha_coverage(image: Image, area: Rect2i) -> float:
-	var filled := 0
-	for y in range(area.position.y, area.end.y):
-		for x in range(area.position.x, area.end.x):
-			if image.get_pixel(x, y).a > 0.38:
-				filled += 1
-	return float(filled) / float(area.size.x * area.size.y)
 
 
 func _refresh_farming_terrain() -> void:
