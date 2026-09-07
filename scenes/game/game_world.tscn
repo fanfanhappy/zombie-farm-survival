@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://cgs8veh1owu3o" path="res://scripts/actors/player/player_controller.gd" id="2_player"]
 [ext_resource type="Script" uid="uid://w53upxv5xwrr" path="res://scripts/systems/crafting/crafting_system.gd" id="3_crafting"]
 [ext_resource type="Script" uid="uid://cuu6sww7iqxjc" path="res://scripts/systems/inventory/inventory_system.gd" id="4_inventory"]
-[ext_resource type="Script" uid="uid://c5rp4rk5h7osa" path="res://scripts/ui/inventory_ui.gd" id="5_inventory_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/inventory_ui.tscn" id="5_inventory_ui"]
 [ext_resource type="Script" uid="uid://0cdgtucvvyee" path="res://scripts/systems/building/placement_system.gd" id="6_placement"]
 [ext_resource type="Script" uid="uid://c1yiiucbhlk38" path="res://scripts/systems/horde/horde_system.gd" id="7_horde"]
 [ext_resource type="Script" uid="uid://b2twffqxhysi" path="res://scripts/systems/farming/farming_system.gd" id="8_farming"]
@@ -327,133 +327,6 @@ custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 text = "退出游戏"
 
-[node name="InventoryUI" type="CanvasLayer" parent="." unique_id=1258358898]
-layer = 2
-script = ExtResource("5_inventory_ui")
-
-[node name="HotbarPanel" type="PanelContainer" parent="InventoryUI" unique_id=2009382078]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -260.0
-offset_top = -78.0
-offset_right = 260.0
-offset_bottom = -6.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="InventoryUI/HotbarPanel" unique_id=1260070302]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
-
-[node name="Hotbar" type="HBoxContainer" parent="InventoryUI/HotbarPanel/Margin" unique_id=1300149993]
-layout_mode = 2
-theme_override_constants/separation = 5
-alignment = 1
-
-[node name="BackpackPanel" type="PanelContainer" parent="InventoryUI" unique_id=15868106]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -260.0
-offset_right = 350.0
-offset_bottom = 260.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="InventoryUI/BackpackPanel" unique_id=595222076]
-layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 18
-
-[node name="Content" type="VBoxContainer" parent="InventoryUI/BackpackPanel/Margin" unique_id=782490181]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Header" type="HBoxContainer" parent="InventoryUI/BackpackPanel/Margin/Content" unique_id=1767547845]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/Header" unique_id=1933837050]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 26
-text = "背包"
-
-[node name="Capacity" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/Header" unique_id=1056060587]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 0.68)
-text = "0 / 24 格"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="CloseButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/Header" unique_id=1367374589]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-text = "×"
-
-[node name="Separator" type="HSeparator" parent="InventoryUI/BackpackPanel/Margin/Content" unique_id=222071819]
-layout_mode = 2
-
-[node name="ItemGrid" type="GridContainer" parent="InventoryUI/BackpackPanel/Margin/Content" unique_id=527135454]
-custom_minimum_size = Vector2(0, 248)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 6
-
-[node name="DetailPanel" type="PanelContainer" parent="InventoryUI/BackpackPanel/Margin/Content" unique_id=1184305867]
-custom_minimum_size = Vector2(0, 105)
-layout_mode = 2
-
-[node name="Margin" type="MarginContainer" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel" unique_id=1490350790]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
-
-[node name="Detail" type="VBoxContainer" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin" unique_id=1822331053]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="ItemName" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail" unique_id=137026996]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 18
-text = "选择一个物品"
-
-[node name="Description" type="Label" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail" unique_id=1396311173]
-layout_mode = 2
-size_flags_vertical = 3
-text = "点击物品格查看说明。"
-autowrap_mode = 2
-
-[node name="UseButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail" unique_id=346283771]
-visible = false
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-text = "使用"
-
-[node name="DropButton" type="Button" parent="InventoryUI/BackpackPanel/Margin/Content/DetailPanel/Margin/Detail" unique_id=369774166]
-visible = false
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-text = "丢弃 1 个"
+[node name="InventoryUI" parent="." instance=ExtResource("5_inventory_ui")]
 
 [node name="StorageUI" parent="." instance=ExtResource("10_storage_ui")]

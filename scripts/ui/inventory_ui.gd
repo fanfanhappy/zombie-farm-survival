@@ -11,82 +11,7 @@ const TOOL_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_tool_material
 const FARMING_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_farming_icons.png")
 const FOOD_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_food_icons.png")
 const EGG_ICON_TEXTURE := preload("res://assets/art/characters/egg_and_nest.png")
-
-
-class DraggableItemSlot extends Button:
-	var inventory_ui: InventoryUI
-	var slot_kind := "inventory"
-	var slot_index := -1
-	var item_id := ""
-
-	func configure(ui: InventoryUI, kind: String, index: int, id: String) -> void:
-		inventory_ui = ui
-		slot_kind = kind
-		slot_index = index
-		item_id = id
-
-	func set_visual(icon_texture: Texture2D, amount: int, hotkey: String, selected: bool) -> void:
-		text = ""
-		inventory_ui.apply_slot_style(self, selected)
-		var icon_rect := TextureRect.new()
-		icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon_rect.set_anchors_preset(Control.PRESET_CENTER)
-		icon_rect.offset_left = -18.0
-		icon_rect.offset_top = -19.0
-		icon_rect.offset_right = 18.0
-		icon_rect.offset_bottom = 17.0
-		icon_rect.texture = icon_texture
-		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		add_child(icon_rect)
-		if amount > 0:
-			var amount_label := Label.new()
-			amount_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			amount_label.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-			amount_label.offset_left = -34.0
-			amount_label.offset_top = -23.0
-			amount_label.offset_right = -5.0
-			amount_label.offset_bottom = -3.0
-			amount_label.text = "×%d" % amount
-			amount_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-			amount_label.add_theme_font_size_override("font_size", 13)
-			amount_label.add_theme_color_override("font_color", Color("#fff4d2"))
-			amount_label.add_theme_color_override("font_outline_color", Color("#4b2f2b"))
-			amount_label.add_theme_constant_override("outline_size", 3)
-			add_child(amount_label)
-		if not hotkey.is_empty():
-			var key_label := Label.new()
-			key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			key_label.offset_left = 7.0
-			key_label.offset_top = 4.0
-			key_label.offset_right = 25.0
-			key_label.offset_bottom = 23.0
-			key_label.text = hotkey
-			key_label.add_theme_font_size_override("font_size", 13)
-			key_label.add_theme_color_override("font_color", Color("#5b3733"))
-			add_child(key_label)
-
-	func _get_drag_data(_at_position: Vector2) -> Variant:
-		if item_id.is_empty():
-			return null
-		var preview := DraggableItemSlot.new()
-		preview.custom_minimum_size = Vector2(64, 64)
-		preview.inventory_ui = inventory_ui
-		preview.set_visual(inventory_ui.get_item_icon(item_id), inventory_ui.inventory.get_amount(item_id), "", false)
-		preview.tooltip_text = inventory_ui.inventory.get_display_name(item_id)
-		set_drag_preview(preview)
-		return {"source": slot_kind, "slot_index": slot_index, "item_id": item_id}
-
-	func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-		return slot_kind == "hotbar" and data is Dictionary and data.has("item_id")
-
-	func _drop_data(_at_position: Vector2, data: Variant) -> void:
-		inventory_ui.handle_hotbar_drop(slot_index, data)
-
-	func _gui_input(event: InputEvent) -> void:
-		if slot_kind == "hotbar" and event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-			inventory_ui.clear_hotbar_slot(slot_index)
-			accept_event()
+const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot.tscn")
 
 
 @onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Hotbar
@@ -172,8 +97,7 @@ func _refresh_hotbar() -> void:
 	_clear_container(hotbar)
 	for index in inventory.hotbar_capacity:
 		var item_id := inventory.get_hotbar_item(index)
-		var slot := DraggableItemSlot.new()
-		slot.custom_minimum_size = Vector2(64, 64)
+		var slot := ITEM_SLOT_SCENE.instantiate() as DraggableItemSlot
 		slot.configure(self, "hotbar", index, item_id)
 		if item_id.is_empty():
 			slot.set_visual(null, 0, str(index + 1), selected_hotbar_index == index)
@@ -191,16 +115,14 @@ func _refresh_backpack() -> void:
 	var item_ids := inventory.get_sorted_item_ids()
 	for item_id in item_ids:
 		var data := inventory.get_item_data(item_id)
-		var slot := DraggableItemSlot.new()
-		slot.custom_minimum_size = Vector2(64, 64)
+		var slot := ITEM_SLOT_SCENE.instantiate() as DraggableItemSlot
 		slot.configure(self, "inventory", -1, item_id)
 		slot.set_visual(get_item_icon(item_id), inventory.get_amount(item_id), "", selected_item_id == item_id)
 		slot.tooltip_text = "%s\n拖动到下方快捷栏" % data.get("description", "")
 		slot.pressed.connect(_select_item.bind(item_id))
 		item_grid.add_child(slot)
 	for empty_index in range(item_ids.size(), inventory.slot_capacity):
-		var empty_slot := DraggableItemSlot.new()
-		empty_slot.custom_minimum_size = Vector2(64, 64)
+		var empty_slot := ITEM_SLOT_SCENE.instantiate() as DraggableItemSlot
 		empty_slot.configure(self, "inventory", empty_index, "")
 		empty_slot.set_visual(null, 0, "", false)
 		empty_slot.tooltip_text = "空背包格"
