@@ -8,23 +8,16 @@
 [ext_resource type="Script" uid="uid://c1yiiucbhlk38" path="res://scripts/systems/horde/horde_system.gd" id="7_horde"]
 [ext_resource type="Script" uid="uid://b2twffqxhysi" path="res://scripts/systems/farming/farming_system.gd" id="8_farming"]
 [ext_resource type="Script" uid="uid://c2klyokmmch5v" path="res://scripts/systems/objectives/objective_system.gd" id="9_objectives"]
-[ext_resource type="PackedScene" path="res://scenes/ui/storage_ui.tscn" id="10_storage_ui"]
 [ext_resource type="Script" uid="uid://ore0wuhwce05" path="res://scripts/systems/weather/weather_system.gd" id="11_weather"]
 [ext_resource type="Script" uid="uid://ceekb058vj7rb" path="res://scripts/systems/building/defense_upgrade_system.gd" id="12_defense_upgrade"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player.tscn" id="20_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/game_hud.tscn" id="17_game_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_menus.tscn" id="21_game_menus"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/world_resource_layer.tscn" id="18_resource_layer"]
 [ext_resource type="Script" uid="uid://ba1k3rg43lg30" path="res://scripts/world/environment/world_tilemap.gd" id="14_world_tilemap"]
 [ext_resource type="Script" path="res://scripts/core/camera_rig.gd" id="19_camera_rig"]
 
 [ext_resource type="TileSet" uid="uid://c85i64skxhmie" path="res://resources/tilesets/farm_tilled_terrain.tres" id="15_farm_tileset"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.0745, 0.0941, 0.0863, 0.86)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -100,14 +93,7 @@ color = Color(0, 0, 0, 1)
 [node name="UI" type="CanvasLayer" parent="."]
 layer = 20
 
-[node name="Menus" type="Control" parent="UI"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="Menus" parent="UI" instance=ExtResource("21_game_menus")]
 
 [node name="FloatingTexts" type="Node2D" parent="UI"]
 
@@ -154,115 +140,4 @@ position = Vector2(640, 460)
 
 [node name="HUD" parent="UI" unique_id=1722933136 instance=ExtResource("17_game_hud")]
 
-[node name="CraftingPanel" type="PanelContainer" parent="UI/Menus" unique_id=134803110]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -210.0
-offset_top = -175.0
-offset_right = 210.0
-offset_bottom = 175.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="UI/Menus/CraftingPanel" unique_id=1528261598]
-layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 18
-
-[node name="Content" type="VBoxContainer" parent="UI/Menus/CraftingPanel/Margin" unique_id=464076623]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="UI/Menus/CraftingPanel/Margin/Content" unique_id=1241703807]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 24
-text = "工作台"
-horizontal_alignment = 1
-
-[node name="Hint" type="Label" parent="UI/Menus/CraftingPanel/Margin/Content" unique_id=282842918]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.65)
-text = "选择要制作的物品"
-horizontal_alignment = 1
-
-[node name="RecipeList" type="VBoxContainer" parent="UI/Menus/CraftingPanel/Margin/Content" unique_id=361145837]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="Close" type="Button" parent="UI/Menus/CraftingPanel/Margin/Content" unique_id=937278059]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-text = "关闭（Esc）"
-
-[node name="PauseOverlay" type="ColorRect" parent="UI/Menus" unique_id=1054448592]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.02, 0.025, 0.023, 0.72)
-
-[node name="PausePanel" type="PanelContainer" parent="UI/Menus/PauseOverlay" unique_id=1806804923]
-layout_mode = 0
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -170.0
-offset_top = -145.0
-offset_right = 170.0
-offset_bottom = 145.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="UI/Menus/PauseOverlay/PausePanel" unique_id=395840187]
-layout_mode = 2
-theme_override_constants/margin_left = 26
-theme_override_constants/margin_top = 22
-theme_override_constants/margin_right = 26
-theme_override_constants/margin_bottom = 22
-
-[node name="Buttons" type="VBoxContainer" parent="UI/Menus/PauseOverlay/PausePanel/Margin" unique_id=191912974]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="UI/Menus/PauseOverlay/PausePanel/Margin/Buttons" unique_id=1109687388]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "游戏暂停"
-horizontal_alignment = 1
-
-[node name="Resume" type="Button" parent="UI/Menus/PauseOverlay/PausePanel/Margin/Buttons" unique_id=1552261681]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-text = "继续游戏"
-
-[node name="Save" type="Button" parent="UI/Menus/PauseOverlay/PausePanel/Margin/Buttons" unique_id=1912884458]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-text = "保存游戏"
-
-[node name="Load" type="Button" parent="UI/Menus/PauseOverlay/PausePanel/Margin/Buttons" unique_id=1556772991]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-text = "读取存档"
-
-[node name="Quit" type="Button" parent="UI/Menus/PauseOverlay/PausePanel/Margin/Buttons" unique_id=952791415]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 2
-text = "退出游戏"
-
 [node name="InventoryUI" parent="UI" instance=ExtResource("5_inventory_ui")]
-
-[node name="StorageUI" parent="UI/Menus" instance=ExtResource("10_storage_ui")]

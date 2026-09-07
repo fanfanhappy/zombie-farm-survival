@@ -1,0 +1,132 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/storage_ui.tscn" id="1_storage_ui"]
+[ext_resource type="Theme" path="res://resources/themes/survival_ui_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.0745, 0.0941, 0.0863, 0.86)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Menus" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="CraftingPanel" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -210.0
+offset_top = -175.0
+offset_right = 210.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="CraftingPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="CraftingPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="CraftingPanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
+theme_override_font_sizes/font_size = 24
+text = "工作台"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="CraftingPanel/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.65)
+text = "选择要制作的物品"
+horizontal_alignment = 1
+
+[node name="RecipeList" type="VBoxContainer" parent="CraftingPanel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Close" type="Button" parent="CraftingPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "关闭（Esc）"
+
+[node name="PauseOverlay" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.025, 0.023, 0.72)
+
+[node name="PausePanel" type="PanelContainer" parent="PauseOverlay"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -170.0
+offset_top = -145.0
+offset_right = 170.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Margin" type="MarginContainer" parent="PauseOverlay/PausePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="Buttons" type="VBoxContainer" parent="PauseOverlay/PausePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="PauseOverlay/PausePanel/Margin/Buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "游戏暂停"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "继续游戏"
+
+[node name="Save" type="Button" parent="PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "保存游戏"
+
+[node name="Load" type="Button" parent="PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "读取存档"
+
+[node name="Quit" type="Button" parent="PauseOverlay/PausePanel/Margin/Buttons"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "退出游戏"
+
+[node name="StorageUI" parent="." instance=ExtResource("1_storage_ui")]
