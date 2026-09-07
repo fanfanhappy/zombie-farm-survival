@@ -2,6 +2,7 @@ class_name Player
 extends CharacterBody2D
 
 @onready var character_sprite: AnimatedSprite2D = $PlayerAnimation
+@onready var attack_effect: Node2D = $AttackEffect
 
 signal interaction_requested
 signal attack_requested
@@ -83,10 +84,10 @@ func _physics_process(delta: float) -> void:
 	if direction != Vector2.ZERO:
 		facing_direction = direction.normalized()
 	_update_character_animation(direction)
+	_update_attack_effect()
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 24.0, 1256.0)
 	global_position.y = clampf(global_position.y, 24.0, 776.0)
-	queue_redraw()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -104,7 +105,7 @@ func try_mouse_attack(target_position: Vector2) -> bool:
 		return false
 	attack_time_left = attack_cooldown
 	attack_requested.emit()
-	queue_redraw()
+	_update_attack_effect()
 	return true
 
 
@@ -287,6 +288,8 @@ func _update_character_animation(direction: Vector2) -> void:
 	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
 
 
-func _draw() -> void:
-	if attack_time_left > attack_cooldown - 0.14:
-		draw_arc(facing_direction * 18.0, 24.0, facing_direction.angle() - 0.8, facing_direction.angle() + 0.8, 12, Color("#f4e3a1"), 4.0)
+func _update_attack_effect() -> void:
+	if not is_instance_valid(attack_effect):
+		return
+	attack_effect.visible = attack_time_left > attack_cooldown - 0.14
+	attack_effect.rotation = facing_direction.angle()
