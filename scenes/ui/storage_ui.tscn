@@ -1,0 +1,163 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/storage_ui.gd" id="1_script"]
+[ext_resource type="Theme" path="res://resources/themes/survival_ui_theme.tres" id="2_theme"]
+
+[node name="StorageUI" type="CanvasLayer"]
+layer = 3
+script = ExtResource("1_script")
+
+[node name="Overlay" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.022, 0.019, 0.78)
+mouse_filter = 0
+
+[node name="Center" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Panel" type="PanelContainer" parent="Overlay/Center"]
+custom_minimum_size = Vector2(820, 520)
+layout_mode = 2
+theme = ExtResource("2_theme")
+
+[node name="Margin" type="MarginContainer" parent="Overlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 22
+
+[node name="Content" type="VBoxContainer" parent="Overlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Header" type="HBoxContainer" parent="Overlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Overlay/Center/Panel/Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.55, 1)
+theme_override_font_sizes/font_size = 27
+text = "基地储物箱"
+vertical_alignment = 1
+
+[node name="Capacity" type="Label" parent="Overlay/Center/Panel/Margin/Content/Header"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.74, 0.61, 1)
+text = "储物箱 0/12 格"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="Overlay/Center/Panel/Margin/Content/Header"]
+custom_minimum_size = Vector2(44, 38)
+layout_mode = 2
+text = "×"
+tooltip_text = "关闭储物箱"
+
+[node name="HeaderSeparator" type="HSeparator" parent="Overlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+
+[node name="Columns" type="HBoxContainer" parent="Overlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 24
+
+[node name="BackpackColumn" type="VBoxContainer" parent="Overlay/Center/Panel/Margin/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="SectionTitle" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/BackpackColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.78, 0.55, 1)
+theme_override_font_sizes/font_size = 19
+text = "随身背包"
+
+[node name="SectionHint" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/BackpackColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.62, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "点击物品，每次存入 1 个"
+
+[node name="BackpackScroll" type="ScrollContainer" parent="Overlay/Center/Panel/Margin/Content/Columns/BackpackColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BackpackGrid" type="GridContainer" parent="Overlay/Center/Panel/Margin/Content/Columns/BackpackColumn/BackpackScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="EmptyHint" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/BackpackColumn"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.59, 0.53, 1)
+text = "背包中没有可以存放的物品"
+horizontal_alignment = 1
+
+[node name="Divider" type="VSeparator" parent="Overlay/Center/Panel/Margin/Content/Columns"]
+layout_mode = 2
+
+[node name="ChestColumn" type="VBoxContainer" parent="Overlay/Center/Panel/Margin/Content/Columns"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="SectionTitle" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/ChestColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.91, 0.78, 0.55, 1)
+theme_override_font_sizes/font_size = 19
+text = "箱内物品"
+
+[node name="SectionHint" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/ChestColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.62, 0.55, 1)
+theme_override_font_sizes/font_size = 12
+text = "点击物品，每次取出 1 个"
+
+[node name="ChestScroll" type="ScrollContainer" parent="Overlay/Center/Panel/Margin/Content/Columns/ChestColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ChestGrid" type="GridContainer" parent="Overlay/Center/Panel/Margin/Content/Columns/ChestColumn/ChestScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="EmptyHint" type="Label" parent="Overlay/Center/Panel/Margin/Content/Columns/ChestColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.59, 0.53, 1)
+text = "储物箱目前是空的"
+horizontal_alignment = 1
+
+[node name="FooterSeparator" type="HSeparator" parent="Overlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="Overlay/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "关闭储物箱（Esc）"

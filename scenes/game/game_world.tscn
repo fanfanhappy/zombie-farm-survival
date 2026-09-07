@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://c1yiiucbhlk38" path="res://scripts/systems/horde/horde_system.gd" id="7_horde"]
 [ext_resource type="Script" uid="uid://b2twffqxhysi" path="res://scripts/systems/farming/farming_system.gd" id="8_farming"]
 [ext_resource type="Script" uid="uid://c2klyokmmch5v" path="res://scripts/systems/objectives/objective_system.gd" id="9_objectives"]
-[ext_resource type="Script" uid="uid://kn001c20xrjd" path="res://scripts/ui/storage_ui.gd" id="10_storage_ui"]
+[ext_resource type="PackedScene" path="res://scenes/ui/storage_ui.tscn" id="10_storage_ui"]
 [ext_resource type="Script" uid="uid://ore0wuhwce05" path="res://scripts/systems/weather/weather_system.gd" id="11_weather"]
 [ext_resource type="Script" uid="uid://ceekb058vj7rb" path="res://scripts/systems/building/defense_upgrade_system.gd" id="12_defense_upgrade"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player_visual.tscn" id="13_player_visual"]
@@ -456,6 +456,4 @@ custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 text = "丢弃 1 个"
 
-[node name="StorageUI" type="CanvasLayer" parent="." unique_id=982442188]
-layer = 3
-script = ExtResource("10_storage_ui")
+[node name="StorageUI" parent="." instance=ExtResource("10_storage_ui")]
