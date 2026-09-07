@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="SpriteFrames" path="res://resources/animations/chicken_sprite_frames.tres" id="1_frames"]
+
+[node name="ChickenAnimation" type="AnimatedSprite2D"]
+texture_filter = 1
+scale = Vector2(2, 2)
+sprite_frames = ExtResource("1_frames")
+animation = &"chicken_a"
+autoplay = "chicken_a"

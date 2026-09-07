@@ -1,16 +1,15 @@
 class_name Chicken
 extends CharacterBody2D
 
-const CHICKEN_TEXTURE := preload("res://assets/art/characters/free_chicken_sprites.png")
+const CHICKEN_VISUAL_SCENE := preload("res://scenes/actors/animals/chicken_visual.tscn")
 const ROAM_RADIUS := 54.0
 
 var home_position := Vector2.ZERO
 var roam_target := Vector2.ZERO
 var decision_time := 0.0
 var egg_ready := false
-var animation_time := 0.0
 var chicken_index := 0
-var sprite: Sprite2D
+var sprite: AnimatedSprite2D
 
 
 func setup(at_position: Vector2, index: int) -> void:
@@ -25,19 +24,14 @@ func _ready() -> void:
 	add_to_group("interactables")
 	add_to_group("mouse_action_targets")
 	z_index = 3
-	sprite = Sprite2D.new()
-	sprite.texture = CHICKEN_TEXTURE
-	sprite.hframes = 4
-	sprite.vframes = 2
-	sprite.scale = Vector2(2.0, 2.0)
-	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	sprite = CHICKEN_VISUAL_SCENE.instantiate() as AnimatedSprite2D
 	add_child(sprite)
+	sprite.play(&"chicken_a" if chicken_index % 2 == 0 else &"chicken_b")
 	_choose_next_target()
 
 
 func _physics_process(delta: float) -> void:
 	decision_time -= delta
-	animation_time += delta
 	if decision_time <= 0.0 or global_position.distance_to(roam_target) < 3.0:
 		_choose_next_target()
 	var direction := global_position.direction_to(roam_target)
@@ -45,7 +39,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if absf(direction.x) > 0.05:
 		sprite.flip_h = direction.x < 0.0
-	sprite.frame = chicken_index % 2 * 4 + (int(animation_time * 3.0) % 2)
 
 
 func get_interaction_prompt() -> String:

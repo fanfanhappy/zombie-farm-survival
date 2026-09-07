@@ -1,0 +1,40 @@
+[gd_resource type="SpriteFrames" load_steps=7 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/characters/free_chicken_sprites.png" id="1_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a0"]
+atlas = ExtResource("1_texture")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a1"]
+atlas = ExtResource("1_texture")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0"]
+atlas = ExtResource("1_texture")
+region = Rect2(0, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b1"]
+atlas = ExtResource("1_texture")
+region = Rect2(16, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b2"]
+atlas = ExtResource("1_texture")
+region = Rect2(32, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b3"]
+atlas = ExtResource("1_texture")
+region = Rect2(48, 16, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_a0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_a1")}],
+"loop": true,
+"name": &"chicken_a",
+"speed": 3.0
+}, {
+"frames": [{"duration": 1.0, "texture": SubResource("AtlasTexture_b0")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_b1")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_b2")}, {"duration": 1.0, "texture": SubResource("AtlasTexture_b3")}],
+"loop": true,
+"name": &"chicken_b",
+"speed": 3.0
+}]
