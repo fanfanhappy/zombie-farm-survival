@@ -17,6 +17,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/character_status_hud.tscn" id="17_status_hud"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/world_resource_layer.tscn" id="18_resource_layer"]
 [ext_resource type="Script" uid="uid://ba1k3rg43lg30" path="res://scripts/world/environment/world_tilemap.gd" id="14_world_tilemap"]
+[ext_resource type="Script" path="res://scripts/core/camera_rig.gd" id="19_camera_rig"]
 
 [ext_resource type="TileSet" uid="uid://c85i64skxhmie" path="res://resources/tilesets/farm_tilled_terrain.tres" id="15_farm_tileset"]
 
@@ -65,9 +66,40 @@ z_index = 100
 [node name="TransitionZones" type="Node2D" parent="GameWorld"]
 
 [node name="CameraRig" type="Node2D" parent="."]
+script = ExtResource("19_camera_rig")
+target_path = NodePath("../GameWorld/DynamicYSortGroup/Player")
+follow_offset = Vector2(0, -20)
+
+[node name="MainCamera" type="Camera2D" parent="CameraRig"]
+limit_left = 0
+limit_top = 0
+limit_right = 1280
+limit_bottom = 800
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0
 
 [node name="ScreenEffects" type="CanvasLayer" parent="."]
 layer = 10
+
+[node name="DamageVignette" type="ColorRect" parent="ScreenEffects"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.55, 0.02, 0.02, 0.24)
+
+[node name="FadeTransition" type="ColorRect" parent="ScreenEffects"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
 
 [node name="UI" type="CanvasLayer" parent="."]
 layer = 20
@@ -83,7 +115,7 @@ tile_set = ExtResource("15_farm_tileset")
 
 [node name="WorldResourceLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" instance=ExtResource("18_resource_layer")]
 
-[node name="Darkness" type="CanvasModulate" parent="." unique_id=979342609]
+[node name="WorldLighting" type="CanvasModulate" parent="GameWorld" unique_id=979342609]
 
 [node name="CraftingSystem" type="Node" parent="GameSession" unique_id=869456683]
 script = ExtResource("3_crafting")
@@ -122,15 +154,6 @@ script = ExtResource("2_player")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GameWorld/DynamicYSortGroup/Player" unique_id=999272664]
 position = Vector2(0, 2)
 shape = SubResource("CapsuleShape2D_player")
-
-[node name="Camera2D" type="Camera2D" parent="GameWorld/DynamicYSortGroup/Player" unique_id=639132020]
-position = Vector2(0, -20)
-limit_left = 0
-limit_top = 0
-limit_right = 1280
-limit_bottom = 800
-position_smoothing_enabled = true
-position_smoothing_speed = 7.0
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1722933136]
 

@@ -20,7 +20,7 @@ const REPAIR_POINT_SCENE := preload("res://scenes/world/facilities/homestead_rep
 const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
-@onready var darkness: CanvasModulate = $Darkness
+@onready var darkness: CanvasModulate = $GameWorld/WorldLighting
 @onready var status_hud: CharacterStatusHUD = $HUD/StatusPanel
 @onready var prompt_label: Label = $HUD/Prompt
 @onready var message_label: Label = $HUD/Message
