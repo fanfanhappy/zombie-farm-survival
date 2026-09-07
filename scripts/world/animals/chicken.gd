@@ -1,7 +1,6 @@
 class_name Chicken
 extends CharacterBody2D
 
-const CHICKEN_VISUAL_SCENE := preload("res://scenes/actors/animals/chicken_visual.tscn")
 const ROAM_RADIUS := 54.0
 
 var home_position := Vector2.ZERO
@@ -9,7 +8,7 @@ var roam_target := Vector2.ZERO
 var decision_time := 0.0
 var egg_ready := false
 var chicken_index := 0
-var sprite: AnimatedSprite2D
+@onready var sprite: AnimatedSprite2D = $ChickenAnimation
 
 
 func setup(at_position: Vector2, index: int) -> void:
@@ -24,8 +23,6 @@ func _ready() -> void:
 	add_to_group("interactables")
 	add_to_group("mouse_action_targets")
 	z_index = 3
-	sprite = CHICKEN_VISUAL_SCENE.instantiate() as AnimatedSprite2D
-	add_child(sprite)
 	sprite.play(&"chicken_a" if chicken_index % 2 == 0 else &"chicken_b")
 	_choose_next_target()
 

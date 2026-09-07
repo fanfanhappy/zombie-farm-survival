@@ -3,6 +3,8 @@ extends Node2D
 const PLAYER_HOME := Vector2(640, 460)
 const DAY_LENGTH_SECONDS := 90.0
 const WATERING_CAN_CAPACITY := 5
+const CHICKEN_SCENE := preload("res://scenes/world/animals/chicken.tscn")
+const HOMESTEAD_SCENE := preload("res://scenes/world/buildings/homestead.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -422,7 +424,7 @@ func _spawn_world_objects() -> void:
 		for column in 24:
 			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
 	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
-		var chicken := Chicken.new()
+		var chicken := CHICKEN_SCENE.instantiate() as Chicken
 		chicken.setup(chicken_data[0], chicken_data[1])
 		add_child(chicken)
 	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
@@ -434,7 +436,7 @@ func _spawn_world_objects() -> void:
 func _create_world_collisions() -> void:
 	_add_wall(Vector2(640, 5), Vector2(1280, 10)); _add_wall(Vector2(640, 795), Vector2(1280, 10))
 	_add_wall(Vector2(5, 400), Vector2(10, 800)); _add_wall(Vector2(1275, 400), Vector2(10, 800))
-	homestead = HomesteadCore.new()
+	homestead = HOMESTEAD_SCENE.instantiate() as HomesteadCore
 	homestead.position = Vector2(840, 280)
 	add_child(homestead)
 	homestead.setup(Vector2(300, 220))
