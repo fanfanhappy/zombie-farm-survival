@@ -28,3 +28,23 @@ Main
 8. UI 子模块使用独立 `.tscn`，统一放在 UI CanvasLayer 下；脚本只更新数据和响应操作。
 9. 世界状态与美术资源分离，替换图片、动画、TileSet 或 UI 场景不应破坏存档。
 10. 每个迁移阶段必须通过无界面启动和功能回归测试后单独提交。
+
+## 当前可视化编辑入口
+
+- 玩家整体：`scenes/actors/player/player.tscn`
+- 初始农田：`scenes/world/farming/initial_farm_plots.tscn`
+- 初始动物：`scenes/world/animals/initial_animals.tscn`
+- 初始建筑：`scenes/world/buildings/initial_buildings.tscn`
+- 初始设施：`scenes/world/facilities/initial_facilities.tscn`
+- 地图瓦片：`resources/tilesets/`
+- 资源绘制层：`scenes/world/environment/world_resource_layer.tscn`
+- 池塘与边界碰撞：`scenes/world/environment/pond_collision.tscn`、`world_boundaries.tscn`
+- 常驻 HUD：`scenes/ui/game_hud.tscn`
+- 弹窗菜单：`scenes/ui/game_menus.tscn`
+- 背包与快捷栏：`scenes/ui/inventory_ui.tscn`
+
+运行时只动态创建确实会变化的对象，例如敌人、掉落物、玩家放置物和配方按钮。初始地图、碰撞、建筑、设施、农田、动物、动画和 UI 均应优先在编辑器中调整。
+
+## Git 安全回退
+
+已经推送到 GitHub 的改动使用 `git revert <提交编号>` 生成反向提交，再推送到远端。这样不会改写历史，适合逐阶段撤销。迁移期间禁止用强制推送覆盖远端历史。
