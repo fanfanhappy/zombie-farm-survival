@@ -1,0 +1,24 @@
+[gd_resource type="TileSet" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/environment/buildings/wooden_house/building_wooden_house_wall_tileset.png" id="1_uu2jp"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bss8c"]
+texture = ExtResource("1_uu2jp")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_bss8c")

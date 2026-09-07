@@ -1,11 +1,19 @@
 class_name HomesteadCore
 extends StaticBody2D
 
+const HOUSE_VISUAL_SCENE := preload("res://scenes/world/buildings/wooden_house_visual.tscn")
+
 signal health_changed(current: float, maximum: float)
 signal destroyed
 
 @export var max_health := 300.0
 var health := 300.0
+
+
+func _ready() -> void:
+	var visual := HOUSE_VISUAL_SCENE.instantiate()
+	visual.name = "WoodenHouseVisual"
+	add_child(visual)
 
 
 func setup(collision_size: Vector2) -> void:
