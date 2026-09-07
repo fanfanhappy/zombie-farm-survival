@@ -14,6 +14,7 @@ var work_remaining := 3.0
 
 func _ready() -> void:
 	# 支持从TileSet场景集合直接绘制生成，不再依赖主控制器额外初始化。
+	add_to_group("harvestable_resources")
 	setup(resource_type)
 
 

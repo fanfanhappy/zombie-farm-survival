@@ -35,6 +35,15 @@ func _init() -> void:
 	assert(get_nodes_in_group("farm_plots").size() == 72)
 	assert(get_nodes_in_group("chickens").size() == 3)
 	assert(get_nodes_in_group("mouse_action_targets").size() >= 9)
+	assert(get_nodes_in_group("harvestable_resources").size() == 9)
+	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes/WorldResourceLayer")
+	assert(resource_layers.get_node("StaticDecorations") is TileMapLayer)
+	assert(resource_layers.get_node("HarvestableResources") is TileMapLayer)
+	var static_tree := (load("res://scenes/world/decorations/static_tree_decoration.tscn") as PackedScene).instantiate()
+	root.add_child(static_tree)
+	await process_frame
+	assert(static_tree.is_in_group("static_decorations"))
+	assert(not static_tree.has_method("interact"))
 	for plot in get_nodes_in_group("farm_plots"):
 		assert(plot.get_parent().name == "FarmPlots")
 	for chicken in get_nodes_in_group("chickens"):

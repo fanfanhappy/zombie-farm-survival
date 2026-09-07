@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/art/environment/resources/resource_tree_stump_bush_tiles.png" id="1_texture"]
+
+[sub_resource type="CircleShape2D" id="tree_collision"]
+radius = 15.0
+
+[node name="StaticTreeDecoration" type="StaticBody2D" groups=["static_decorations"]]
+collision_layer = 1
+collision_mask = 0
+
+[node name="Visual" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -19)
+scale = Vector2(2, 2)
+texture = ExtResource("1_texture")
+region_enabled = true
+region_rect = Rect2(32, 0, 16, 48)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 10)
+shape = SubResource("tree_collision")
