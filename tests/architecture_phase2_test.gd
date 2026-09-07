@@ -1,5 +1,12 @@
 extends SceneTree
 
+class HarvestGameMock:
+	extends Node
+	var received: Dictionary = {}
+	func show_message(_message: String) -> void: pass
+	func add_resource(resource_type: String, amount: int, _show_message := true) -> void:
+		received[resource_type] = int(received.get(resource_type, 0)) + amount
+
 
 func _init() -> void:
 	_validate_sprite_frames("res://resources/animations/player_sprite_frames.tres", [
@@ -10,6 +17,8 @@ func _init() -> void:
 		&"water_down", &"water_left", &"water_right", &"water_up",
 	])
 	_validate_sprite_frames("res://resources/animations/chicken_sprite_frames.tres", [&"chicken_a", &"chicken_b"])
+	_validate_sprite_frames("res://resources/animations/tree_harvest_sprite_frames.tres", [&"idle", &"hit", &"break", &"depleted"])
+	_validate_sprite_frames("res://resources/animations/stone_harvest_sprite_frames.tres", [&"idle", &"hit", &"break", &"depleted"])
 	var scene := load("res://scenes/game/game_world.tscn") as PackedScene
 	var game := scene.instantiate()
 	root.add_child(game)
@@ -42,16 +51,32 @@ func _init() -> void:
 	assert(game.get_node("UI/Menus/PauseOverlay") is ColorRect)
 	assert(get_nodes_in_group("farm_plots").size() == 72)
 	assert(get_nodes_in_group("chickens").size() == 3)
-	assert(get_nodes_in_group("mouse_action_targets").size() >= 9)
-	assert(get_nodes_in_group("harvestable_resources").size() == 9)
 	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes/WorldResourceLayer")
 	assert(resource_layers.get_node("StaticDecorations") is TileMapLayer)
-	assert(resource_layers.get_node("HarvestableResources") is TileMapLayer)
+	var harvestable_layer := resource_layers.get_node("HarvestableResources") as TileMapLayer
+	assert(harvestable_layer != null)
+	assert(get_nodes_in_group("harvestable_resources").size() == harvestable_layer.get_used_cells().size())
+	assert(not get_nodes_in_group("harvestable_resources").is_empty())
+	for harvestable in get_nodes_in_group("harvestable_resources"):
+		assert(harvestable.has_method("interact"))
+		if harvestable.resource_type in ["wood", "stone"]:
+			assert(harvestable.get_node("ResourceAnimation") is AnimatedSprite2D)
 	var static_tree := (load("res://scenes/world/decorations/static_tree_decoration.tscn") as PackedScene).instantiate()
 	root.add_child(static_tree)
 	await process_frame
 	assert(static_tree.is_in_group("static_decorations"))
 	assert(not static_tree.has_method("interact"))
+	var harvest_mock := HarvestGameMock.new()
+	root.add_child(harvest_mock)
+	var animated_tree := (load("res://scenes/world/resources/tree_resource.tscn") as PackedScene).instantiate() as HarvestableResource
+	root.add_child(animated_tree)
+	await process_frame
+	animated_tree.resource_animation.speed_scale = 100.0
+	animated_tree._finish_harvest(harvest_mock)
+	await create_timer(0.1).timeout
+	assert(animated_tree.depleted)
+	assert(harvest_mock.received.get("wood", 0) == animated_tree.yield_amount)
+	assert(animated_tree.resource_animation.animation == &"depleted")
 	for plot in get_nodes_in_group("farm_plots"):
 		assert(plot.get_parent().name == "FarmPlots")
 	for chicken in get_nodes_in_group("chickens"):

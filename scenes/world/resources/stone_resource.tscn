@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://djas44utdqlpl"]
 
 [ext_resource type="Script" uid="uid://bx1n56070lhhe" path="res://scripts/world/resources/harvestable_resource.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://c2a3lvm3psx5c" path="res://assets/art/environment/resources/resource_stone_herb_tiles.png" id="2_texture"]
+[ext_resource type="SpriteFrames" path="res://resources/animations/stone_harvest_sprite_frames.tres" id="2_frames"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dxjmj"]
 size = Vector2(21, 17)
@@ -12,19 +12,12 @@ collision_mask = 0
 script = ExtResource("1_script")
 resource_type = "stone"
 
-[node name="ResourceSprite" type="Sprite2D" parent="." unique_id=128431043]
+[node name="ResourceAnimation" type="AnimatedSprite2D" parent="." unique_id=128431043]
 texture_filter = 1
 position = Vector2(0, -8)
-texture = ExtResource("2_texture")
-region_enabled = true
-region_rect = Rect2(100, 27, 25, 20)
-
-[node name="DepletedSprite" type="Sprite2D" parent="." unique_id=2110272358]
-visible = false
-texture_filter = 1
-texture = ExtResource("2_texture")
-region_enabled = true
-region_rect = Rect2(100, 27, 25, 20)
+sprite_frames = ExtResource("2_frames")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=807483944]
 position = Vector2(0.5, -8.5)
