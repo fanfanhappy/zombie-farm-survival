@@ -12,6 +12,11 @@ var work_remaining := 3.0
 @onready var work_progress: ProgressBar = $WorkProgress
 
 
+func _ready() -> void:
+	# 支持从TileSet场景集合直接绘制生成，不再依赖主控制器额外初始化。
+	setup(resource_type)
+
+
 func setup(type: String) -> void:
 	resource_type = type
 	match type:

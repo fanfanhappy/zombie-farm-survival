@@ -1,0 +1,8 @@
+[gd_scene format=4]
+
+[ext_resource type="TileSet" path="res://resources/tilesets/world_resource_scenes.tres" id="1_sejw0"]
+
+[node name="WorldResourceLayer" type="TileMapLayer" unique_id=778720538]
+position = Vector2(-16, -16)
+tile_map_data = PackedByteArray("AAAFAAwAAAAAAAAAAAAiAAYAAAAAAAAAAAAhABIAAAAAAAAAAAASAAUAAAAAAAAAAAASABAAAAAAAAAAAQAgAA8AAAAAAAAAAQATABQAAAAAAAAAAQARABMAAAAAAAAAAgAgABMAAAAAAAAAAgA=")
+tile_set = ExtResource("1_sejw0")

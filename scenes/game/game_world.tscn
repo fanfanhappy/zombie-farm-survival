@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player_visual.tscn" id="13_player_visual"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player_attack_effect.tscn" id="16_attack_effect"]
 [ext_resource type="PackedScene" path="res://scenes/ui/character_status_hud.tscn" id="17_status_hud"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/world_resource_layer.tscn" id="18_resource_layer"]
 [ext_resource type="Script" uid="uid://ba1k3rg43lg30" path="res://scripts/world/environment/world_tilemap.gd" id="14_world_tilemap"]
 
 [ext_resource type="TileSet" uid="uid://c85i64skxhmie" path="res://resources/tilesets/farm_tilled_terrain.tres" id="15_farm_tileset"]
@@ -39,6 +40,8 @@ z_index = -16
 position = Vector2(-16, -16)
 scale = Vector2(2, 2)
 tile_set = ExtResource("15_farm_tileset")
+
+[node name="WorldResourceLayer" parent="." instance=ExtResource("18_resource_layer")]
 
 [node name="Darkness" type="CanvasModulate" parent="." unique_id=979342609]
 
