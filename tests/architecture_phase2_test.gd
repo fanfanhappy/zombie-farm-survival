@@ -18,6 +18,8 @@ func _init() -> void:
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WorldGridCursor") is WorldGridCursor)
 	assert(game.get_node("GameWorld/LogicLayers/PondCollision") is StaticBody2D)
 	assert(game.get_node("GameWorld/LogicLayers/PondCollision").get_child_count() == 7)
+	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries") is StaticBody2D)
+	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries").get_child_count() == 4)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player") is Player)
 	assert(game.get_node("GameWorld/DynamicYSortGroup").y_sort_enabled)
 	assert(game.get_node("CameraRig") is CameraRig)

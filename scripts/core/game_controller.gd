@@ -35,7 +35,6 @@ const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 @onready var weather_label: Label = $UI/HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $UI/Menus/PauseOverlay
 @onready var world_tile_map: WorldTileMap = $GameWorld/TerrainLayers/WorldTileMap
-@onready var logic_layers: Node2D = $GameWorld/LogicLayers
 @onready var building_layer: Node2D = $GameWorld/DynamicYSortGroup/BuildingLayer
 @onready var farm_plots_root: Node2D = $GameWorld/DynamicYSortGroup/FarmPlots
 @onready var facilities_root: Node2D = $GameWorld/DynamicYSortGroup/Facilities
@@ -433,20 +432,11 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 
 
 func _create_world_collisions() -> void:
-	_add_wall(Vector2(640, 5), Vector2(1280, 10)); _add_wall(Vector2(640, 795), Vector2(1280, 10))
-	_add_wall(Vector2(5, 400), Vector2(10, 800)); _add_wall(Vector2(1275, 400), Vector2(10, 800))
 	homestead = building_layer.get_node("Homestead") as HomesteadCore
 	homestead.setup(Vector2(300, 220))
 	homestead.destroyed.connect(_on_homestead_destroyed)
 	var repair_point := facilities_root.get_node("HomesteadRepairPoint") as HomesteadRepairPoint
 	repair_point.setup(homestead)
-
-
-func _add_wall(at: Vector2, size: Vector2) -> void:
-	var body := StaticBody2D.new(); body.position = at
-	var collision := CollisionShape2D.new(); var rectangle := RectangleShape2D.new()
-	rectangle.size = size; collision.shape = rectangle; body.add_child(collision); logic_layers.add_child(body)
-
 
 func _update_lighting() -> void:
 	var hour := day_progress * 24.0

@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/animals/initial_animals.tscn" id="29_animals"]
 [ext_resource type="PackedScene" path="res://scenes/world/facilities/initial_facilities.tscn" id="30_facilities"]
 [ext_resource type="PackedScene" path="res://scenes/world/buildings/initial_buildings.tscn" id="31_buildings"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/world_boundaries.tscn" id="32_boundaries"]
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -41,6 +42,8 @@ script = ExtResource("1_main")
 [node name="LogicLayers" type="Node2D" parent="GameWorld"]
 
 [node name="PondCollision" parent="GameWorld/LogicLayers" instance=ExtResource("27_pond_collision")]
+
+[node name="WorldBoundaries" parent="GameWorld/LogicLayers" instance=ExtResource("32_boundaries")]
 
 [node name="DynamicYSortGroup" type="Node2D" parent="GameWorld"]
 y_sort_enabled = true
