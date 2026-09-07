@@ -8,6 +8,9 @@ func _init() -> void:
 	await process_frame
 	await process_frame
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap") is WorldTileMap)
+	assert(game.get_node("GameSession/PlacementSystem") is PlacementSystem)
+	assert(game.get_node("GameSession/HordeSpawner") is HordeSystem)
+	assert(game.get_node("GameSession/WeatherController") is WeatherSystem)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/GroundLayer") is TileMapLayer)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WaterLayer") is TileMapLayer)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/PathLayer") is TileMapLayer)

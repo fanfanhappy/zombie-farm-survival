@@ -150,14 +150,14 @@ script = ExtResource("3_crafting")
 [node name="InventorySystem" type="Node" parent="GameSession" unique_id=1407268162]
 script = ExtResource("4_inventory")
 
-[node name="PlacementSystem" type="Node2D" parent="." unique_id=835565366]
+[node name="PlacementSystem" type="Node2D" parent="GameSession" unique_id=835565366]
 z_index = 20
 script = ExtResource("6_placement")
 
 [node name="DefenseUpgradeSystem" type="Node" parent="GameSession" unique_id=1740210685]
 script = ExtResource("12_defense_upgrade")
 
-[node name="HordeSystem" type="Node" parent="GameSession" unique_id=460335431]
+[node name="HordeSpawner" type="Node" parent="GameSession" unique_id=460335431]
 script = ExtResource("7_horde")
 
 [node name="FarmingSystem" type="Node" parent="GameSession" unique_id=667839147]
@@ -166,7 +166,7 @@ script = ExtResource("8_farming")
 [node name="ObjectiveSystem" type="Node" parent="GameSession" unique_id=1581011714]
 script = ExtResource("9_objectives")
 
-[node name="WeatherSystem" type="Node" parent="GameSession" unique_id=508456209]
+[node name="WeatherController" type="Node" parent="GameSession" unique_id=508456209]
 script = ExtResource("11_weather")
 
 [node name="Player" parent="GameWorld/DynamicYSortGroup" unique_id=1658304268 instance=ExtResource("20_player")]
