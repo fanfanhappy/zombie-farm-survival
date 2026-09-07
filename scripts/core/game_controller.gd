@@ -24,7 +24,7 @@ const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
-@onready var status_label: Label = $HUD/StatusPanel/Margin/Status
+@onready var status_hud: CharacterStatusHUD = $HUD/StatusPanel
 @onready var prompt_label: Label = $HUD/Prompt
 @onready var message_label: Label = $HUD/Message
 @onready var help_label: Label = $HUD/HelpPanel/Margin/Help
@@ -492,17 +492,8 @@ func _update_lighting() -> void:
 
 func _update_hud() -> void:
 	if not is_instance_valid(player): return
-	var total_minutes := int(day_progress * 1440.0)
-	var home_health := int(homestead.health) if is_instance_valid(homestead) else 0
-	var home_max := int(homestead.max_health) if is_instance_valid(homestead) else 0
-	status_label.text = "第 %d 天  %02d:%02d　等级 %d（%d/%d经验）\n生命 %d/%d　体力 %d/%d\n饥饿 %d/%d　口渴 %d/%d\n农舍 %d/%d　武器 %s\n背包 %d/%d 格　击杀 %d" % [day, total_minutes / 60, total_minutes % 60, player.level, player.experience, player.get_next_level_experience(), int(player.health), int(player.max_health), int(player.stamina), int(player.max_stamina), int(player.hunger), int(player.max_hunger), int(player.thirst), int(player.max_thirst), home_health, home_max, player.equipped_weapon, inventory.get_used_slots(), inventory.slot_capacity, kills]
-	if player.hunger <= 20.0: status_label.text += "\n⚠ 非常饥饿"
-	if player.thirst <= 20.0: status_label.text += "\n⚠ 严重口渴"
+	status_hud.update_from_game(self)
 	help_label.text = "WASD 移动　Shift 冲刺　鼠标操作/攻击　Esc 暂停　F11 全屏\nE 使用设施　B 背包　数字键快捷栏　U 升级　X 拆除\n鼠标：点击或长按目标　放置：左键确认 R旋转 右键取消"
-	if player.well_fed_time > 0.0:
-		status_label.text += "\n饱餐：%d秒（攻击+20%% / 恢复+35%%）" % int(ceil(player.well_fed_time))
-	if get_active_tool_type() == "watering_can":
-		status_label.text += "\n水壶：%d/%d" % [watering_can_water, WATERING_CAN_CAPACITY]
 	if horde_system.active:
 		horde_label.text = horde_system.get_status_text()
 	else:

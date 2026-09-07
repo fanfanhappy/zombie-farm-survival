@@ -1,0 +1,217 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/character_status_hud.gd" id="1_script"]
+[ext_resource type="Theme" path="res://resources/themes/survival_ui_theme.tres" id="2_theme"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/hud/ui_status_atlas.png" id="3_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_heart"]
+atlas = ExtResource("3_atlas")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_bar_bg"]
+bg_color = Color(0.075, 0.06, 0.055, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.32, 0.23, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_health"]
+bg_color = Color(0.78, 0.25, 0.24, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_stamina"]
+bg_color = Color(0.35, 0.7, 0.32, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_hunger"]
+bg_color = Color(0.9, 0.63, 0.25, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_thirst"]
+bg_color = Color(0.25, 0.61, 0.84, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_experience"]
+bg_color = Color(0.64, 0.43, 0.79, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="StatusPanel" type="PanelContainer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 348.0
+offset_bottom = 318.0
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 13
+
+[node name="Content" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Header" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+
+[node name="HeartIcon" type="TextureRect" parent="Margin/Content/Header"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture_filter = 1
+texture = SubResource("AtlasTexture_heart")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DayTime" type="Label" parent="Margin/Content/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.85, 0.56, 1)
+theme_override_font_sizes/font_size = 18
+text = "第 1 天　07:00"
+vertical_alignment = 1
+
+[node name="Level" type="Label" parent="Margin/Content/Header"]
+layout_mode = 2
+text = "等级 1"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Bars" type="VBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Health" type="HBoxContainer" parent="Margin/Content/Bars"]
+layout_mode = 2
+[node name="Name" type="Label" parent="Margin/Content/Bars/Health"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "生命"
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Health"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_health")
+show_percentage = false
+[node name="Value" type="Label" parent="Margin/Content/Bars/Health"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="Stamina" type="HBoxContainer" parent="Margin/Content/Bars"]
+layout_mode = 2
+[node name="Name" type="Label" parent="Margin/Content/Bars/Stamina"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "体力"
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Stamina"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_stamina")
+show_percentage = false
+[node name="Value" type="Label" parent="Margin/Content/Bars/Stamina"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="Hunger" type="HBoxContainer" parent="Margin/Content/Bars"]
+layout_mode = 2
+[node name="Name" type="Label" parent="Margin/Content/Bars/Hunger"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "饥饿"
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Hunger"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_hunger")
+show_percentage = false
+[node name="Value" type="Label" parent="Margin/Content/Bars/Hunger"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="Thirst" type="HBoxContainer" parent="Margin/Content/Bars"]
+layout_mode = 2
+[node name="Name" type="Label" parent="Margin/Content/Bars/Thirst"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "口渴"
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Thirst"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_thirst")
+show_percentage = false
+[node name="Value" type="Label" parent="Margin/Content/Bars/Thirst"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="Experience" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+[node name="Name" type="Label" parent="Margin/Content/Experience"]
+custom_minimum_size = Vector2(42, 0)
+layout_mode = 2
+text = "经验"
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Experience"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("StyleBox_bar_bg")
+theme_override_styles/fill = SubResource("StyleBox_experience")
+show_percentage = false
+[node name="Value" type="Label" parent="Margin/Content/Experience"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+text = "0/40"
+horizontal_alignment = 2
+
+[node name="Equipment" type="Label" parent="Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.77, 0.66, 1)
+theme_override_font_sizes/font_size = 13
+text = "武器：木棒　农舍：300/300\n背包：0/24格　击杀：0"
+
+[node name="Warning" type="Label" parent="Margin/Content"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.39, 0.3, 1)
+text = "警告"
+
+[node name="Buff" type="Label" parent="Margin/Content"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.87, 0.55, 1)
+text = "增益"
