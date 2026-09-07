@@ -935,11 +935,3 @@ func _get_pressed_hotbar_index(event: InputEvent) -> int:
 		if event.is_action_pressed("hotbar_slot_%d" % (index + 1)):
 			return index
 	return -1
-
-
-func _draw() -> void:
-	# 农舍仍使用原型轮廓，地面、水域、道路和栅栏已交给 WorldTileMap。
-	draw_rect(Rect2(690, 170, 300, 220), Color("#c69b66"))
-	draw_colored_polygon(PackedVector2Array([Vector2(660, 190), Vector2(840, 80), Vector2(1020, 190)]), Color("#7e4a3e"))
-	draw_rect(Rect2(815, 310, 52, 80), Color("#604638"))
-	draw_rect(Rect2(730, 240, 54, 46), Color("#9fd1d5")); draw_rect(Rect2(895, 240, 54, 46), Color("#9fd1d5"))

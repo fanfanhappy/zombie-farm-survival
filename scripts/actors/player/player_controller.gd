@@ -1,8 +1,7 @@
 class_name Player
 extends CharacterBody2D
 
-const PLAYER_VISUAL_SCENE := preload("res://scenes/actors/player/player_visual.tscn")
-var character_sprite: AnimatedSprite2D
+@onready var character_sprite: AnimatedSprite2D = $PlayerAnimation
 
 signal interaction_requested
 signal attack_requested
@@ -50,7 +49,6 @@ var tool_action_time_left := 0.0
 
 
 func _ready() -> void:
-	_setup_character_visual()
 	# 1层：战斗与防御设施；2层：树木、矿石和生活设施。
 	collision_layer = 1
 	collision_mask = 3
@@ -287,14 +285,6 @@ func _update_character_animation(direction: Vector2) -> void:
 	if character_sprite.animation != animation_name:
 		character_sprite.play(animation_name)
 	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
-
-
-func _setup_character_visual() -> void:
-	var legacy_sprite := get_node_or_null("CharacterSprite") as Sprite2D
-	if is_instance_valid(legacy_sprite):
-		legacy_sprite.hide()
-	character_sprite = PLAYER_VISUAL_SCENE.instantiate() as AnimatedSprite2D
-	add_child(character_sprite)
 
 
 func _draw() -> void:
