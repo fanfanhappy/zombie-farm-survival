@@ -24,6 +24,10 @@
 [ext_resource type="TileSet" path="res://resources/tilesets/buildings/perimeter_fence_tileset.tres" id="25_fence_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/world_grid_cursor.tscn" id="26_grid_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/pond_collision.tscn" id="27_pond_collision"]
+[ext_resource type="PackedScene" path="res://scenes/world/farming/initial_farm_plots.tscn" id="28_farm_plots"]
+[ext_resource type="PackedScene" path="res://scenes/world/animals/initial_animals.tscn" id="29_animals"]
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/initial_facilities.tscn" id="30_facilities"]
+[ext_resource type="PackedScene" path="res://scenes/world/buildings/initial_buildings.tscn" id="31_buildings"]
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -41,15 +45,15 @@ script = ExtResource("1_main")
 [node name="DynamicYSortGroup" type="Node2D" parent="GameWorld"]
 y_sort_enabled = true
 
-[node name="BuildingLayer" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
+[node name="BuildingLayer" parent="GameWorld/DynamicYSortGroup" instance=ExtResource("31_buildings")]
 
-[node name="FarmPlots" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
+[node name="FarmPlots" parent="GameWorld/DynamicYSortGroup" instance=ExtResource("28_farm_plots")]
 
 [node name="ResourceNodes" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
 
-[node name="Facilities" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
+[node name="Facilities" parent="GameWorld/DynamicYSortGroup" instance=ExtResource("30_facilities")]
 
-[node name="Animals" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
+[node name="Animals" parent="GameWorld/DynamicYSortGroup" instance=ExtResource("29_animals")]
 
 [node name="Enemies" type="Node2D" parent="GameWorld/DynamicYSortGroup"]
 

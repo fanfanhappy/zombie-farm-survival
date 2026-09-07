@@ -4,20 +4,12 @@ const PLAYER_HOME := Vector2(640, 460)
 const DAY_LENGTH_SECONDS := 90.0
 const DAY_START_PROGRESS := 7.0 / 24.0
 const WATERING_CAN_CAPACITY := 5
-const CHICKEN_SCENE := preload("res://scenes/world/animals/chicken.tscn")
-const HOMESTEAD_SCENE := preload("res://scenes/world/buildings/homestead.tscn")
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
 const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
 const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
 const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
-const WORKBENCH_SCENE := preload("res://scenes/world/facilities/workbench.tscn")
-const KITCHEN_SCENE := preload("res://scenes/world/facilities/kitchen.tscn")
-const SLEEP_POINT_SCENE := preload("res://scenes/world/facilities/sleep_point.tscn")
-const WATER_PUMP_SCENE := preload("res://scenes/world/facilities/water_pump.tscn")
-const REPAIR_POINT_SCENE := preload("res://scenes/world/facilities/homestead_repair_point.tscn")
-const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $GameWorld/WorldLighting
@@ -92,7 +84,6 @@ func _ready() -> void:
 	player.level_changed.connect(_update_hud.unbind(3))
 	player.action_failed.connect(show_message)
 	player.died.connect(_on_player_died)
-	_spawn_world_objects()
 	_create_world_collisions()
 	$UI/Menus/CraftingPanel/Margin/Content/Close.pressed.connect(close_crafting)
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.pressed.connect(_set_paused.bind(false))
@@ -441,32 +432,13 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 	else: show_message("击败感染者：经验+%d" % experience_reward)
 
 
-func _spawn_world_objects() -> void:
-	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
-	for row in 6:
-		for column in 12:
-			var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot; plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); farm_plots_root.add_child(plot)
-	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
-		var chicken := CHICKEN_SCENE.instantiate() as Chicken
-		chicken.setup(chicken_data[0], chicken_data[1])
-		animals_root.add_child(chicken)
-	var workbench := WORKBENCH_SCENE.instantiate() as CraftingStation; workbench.position = Vector2(625, 330); facilities_root.add_child(workbench)
-	var kitchen := KITCHEN_SCENE.instantiate() as CraftingStation; kitchen.position = Vector2(1040, 325); facilities_root.add_child(kitchen)
-	var sleep_point := SLEEP_POINT_SCENE.instantiate() as SleepPoint; sleep_point.position = Vector2(930, 425); facilities_root.add_child(sleep_point)
-	var water_pump := WATER_PUMP_SCENE.instantiate() as WaterPump; water_pump.position = Vector2(755, 435); facilities_root.add_child(water_pump)
-
-
 func _create_world_collisions() -> void:
 	_add_wall(Vector2(640, 5), Vector2(1280, 10)); _add_wall(Vector2(640, 795), Vector2(1280, 10))
 	_add_wall(Vector2(5, 400), Vector2(10, 800)); _add_wall(Vector2(1275, 400), Vector2(10, 800))
-	homestead = HOMESTEAD_SCENE.instantiate() as HomesteadCore
-	homestead.position = Vector2(840, 280)
-	building_layer.add_child(homestead)
+	homestead = building_layer.get_node("Homestead") as HomesteadCore
 	homestead.setup(Vector2(300, 220))
 	homestead.destroyed.connect(_on_homestead_destroyed)
-	var repair_point := REPAIR_POINT_SCENE.instantiate() as HomesteadRepairPoint
-	repair_point.position = Vector2(840, 420)
-	facilities_root.add_child(repair_point)
+	var repair_point := facilities_root.get_node("HomesteadRepairPoint") as HomesteadRepairPoint
 	repair_point.setup(homestead)
 
 

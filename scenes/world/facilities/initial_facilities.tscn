@@ -1,0 +1,19 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/workbench.tscn" id="1_workbench"]
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/kitchen.tscn" id="2_kitchen"]
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/sleep_point.tscn" id="3_sleep"]
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/water_pump.tscn" id="4_water"]
+[ext_resource type="PackedScene" path="res://scenes/world/facilities/homestead_repair_point.tscn" id="5_repair"]
+
+[node name="Facilities" type="Node2D"]
+[node name="Workbench" parent="." instance=ExtResource("1_workbench")]
+position = Vector2(625, 330)
+[node name="Kitchen" parent="." instance=ExtResource("2_kitchen")]
+position = Vector2(1040, 325)
+[node name="SleepPoint" parent="." instance=ExtResource("3_sleep")]
+position = Vector2(930, 425)
+[node name="WaterPump" parent="." instance=ExtResource("4_water")]
+position = Vector2(755, 435)
+[node name="HomesteadRepairPoint" parent="." instance=ExtResource("5_repair")]
+position = Vector2(840, 420)

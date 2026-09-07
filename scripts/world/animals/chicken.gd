@@ -7,7 +7,7 @@ var home_position := Vector2.ZERO
 var roam_target := Vector2.ZERO
 var decision_time := 0.0
 var egg_ready := false
-var chicken_index := 0
+@export var chicken_index := 0
 @onready var sprite: AnimatedSprite2D = $ChickenAnimation
 
 
@@ -19,6 +19,8 @@ func setup(at_position: Vector2, index: int) -> void:
 
 
 func _ready() -> void:
+	home_position = position
+	roam_target = position
 	add_to_group("chickens")
 	add_to_group("interactables")
 	add_to_group("mouse_action_targets")
