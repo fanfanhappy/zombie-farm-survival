@@ -20,6 +20,7 @@ const KITCHEN_SCENE := preload("res://scenes/world/facilities/kitchen.tscn")
 const SLEEP_POINT_SCENE := preload("res://scenes/world/facilities/sleep_point.tscn")
 const WATER_PUMP_SCENE := preload("res://scenes/world/facilities/water_pump.tscn")
 const REPAIR_POINT_SCENE := preload("res://scenes/world/facilities/homestead_repair_point.tscn")
+const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -444,7 +445,7 @@ func _spawn_world_objects() -> void:
 	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
 	for row in 6:
 		for column in 12:
-			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
+			var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot; plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
 	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
 		var chicken := CHICKEN_SCENE.instantiate() as Chicken
 		chicken.setup(chicken_data[0], chicken_data[1])

@@ -25,14 +25,14 @@ func _ready() -> void:
 	add_to_group("mouse_action_targets")
 	add_to_group("farm_plots")
 	_refresh_crop_visual()
-	queue_redraw()
+	_refresh_state_visuals()
 
 
 func set_mouse_highlight(hovered: bool, reachable: bool) -> void:
 	var next_state := (1 if reachable else 2) if hovered else 0
 	if next_state == highlight_state: return
 	highlight_state = next_state
-	queue_redraw()
+	_refresh_state_visuals()
 
 
 func get_interaction_prompt() -> String:
@@ -87,7 +87,7 @@ func interact(game: Node) -> void:
 		PlotState.READY:
 			_harvest(game)
 	_refresh_crop_visual()
-	queue_redraw()
+	_refresh_state_visuals()
 
 
 func advance_day() -> void:
@@ -96,13 +96,13 @@ func advance_day() -> void:
 		watered = false
 		state = PlotState.READY if growth_days >= int(crop_data.get("growth_days", 2)) else PlotState.GROWING
 		_refresh_crop_visual()
-		queue_redraw()
+		_refresh_state_visuals()
 
 
 func water_from_rain() -> void:
 	if state in [PlotState.PLANTED, PlotState.GROWING]:
 		watered = true
-		queue_redraw()
+		_refresh_state_visuals()
 
 
 func create_save_data() -> Dictionary:
@@ -116,7 +116,7 @@ func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
 	crop_id = str(data.get("crop_id", ""))
 	crop_data = farming_system.get_crop_data(crop_id).duplicate(true) if not crop_id.is_empty() else {}
 	_refresh_crop_visual()
-	queue_redraw()
+	_refresh_state_visuals()
 
 
 func reset_for_new_game() -> void:
@@ -126,7 +126,7 @@ func reset_for_new_game() -> void:
 	crop_id = ""
 	crop_data = {}
 	_refresh_crop_visual()
-	queue_redraw()
+	_refresh_state_visuals()
 
 
 func get_crop_name() -> String:
@@ -185,13 +185,16 @@ func _refresh_crop_visual() -> void:
 	crop_visual.show_stage(stage)
 
 
-func _draw() -> void:
-	if state == PlotState.EMPTY:
-		draw_line(Vector2(-7, 8), Vector2(-5, 3), Color("#668b49"), 1.0)
-		draw_line(Vector2(8, -4), Vector2(6, -9), Color("#668b49"), 1.0)
-	if watered: draw_circle(Vector2(10, -10), 3.0, Color("#68b9d2"))
-	if highlight_state > 0:
-		var highlight_color := Color(1.0, 0.88, 0.3, 0.28) if highlight_state == 1 else Color(0.95, 0.28, 0.25, 0.24)
-		var border_color := Color("#ffe36b") if highlight_state == 1 else Color("#ee6158")
-		draw_rect(Rect2(-WorldGrid.HALF_CELL, -WorldGrid.HALF_CELL, CELL_SIZE, CELL_SIZE), highlight_color, true)
-		draw_rect(Rect2(-WorldGrid.HALF_CELL + 1.0, -WorldGrid.HALF_CELL + 1.0, CELL_SIZE - 2.0, CELL_SIZE - 2.0), border_color, false, 2.0)
+func _refresh_state_visuals() -> void:
+	var water_marker := get_node_or_null("StatusVisuals/WateredIndicator") as CanvasItem
+	if water_marker:
+		water_marker.visible = watered
+	var highlight := get_node_or_null("Highlight") as CanvasItem
+	if not highlight:
+		return
+	highlight.visible = highlight_state > 0
+	var reachable := highlight_state == 1
+	var fill := highlight.get_node("Fill") as Polygon2D
+	var border := highlight.get_node("Border") as Line2D
+	fill.color = Color(1.0, 0.88, 0.3, 0.28) if reachable else Color(0.95, 0.28, 0.25, 0.24)
+	border.default_color = Color("#ffe36b") if reachable else Color("#ee6158")
