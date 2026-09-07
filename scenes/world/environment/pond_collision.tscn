@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3]
+
+[sub_resource type="RectangleShape2D" id="row_4"]
+size = Vector2(128, 30)
+[sub_resource type="RectangleShape2D" id="row_5"]
+size = Vector2(192, 30)
+[sub_resource type="RectangleShape2D" id="row_6"]
+size = Vector2(256, 30)
+[sub_resource type="RectangleShape2D" id="row_8"]
+size = Vector2(224, 30)
+[sub_resource type="RectangleShape2D" id="row_9"]
+size = Vector2(160, 30)
+[sub_resource type="RectangleShape2D" id="row_10"]
+size = Vector2(96, 30)
+
+[node name="PondCollision" type="StaticBody2D"]
+collision_layer = 1
+collision_mask = 0
+[node name="Row04" type="CollisionShape2D" parent="."]
+position = Vector2(272, 128)
+shape = SubResource("row_4")
+[node name="Row05" type="CollisionShape2D" parent="."]
+position = Vector2(272, 160)
+shape = SubResource("row_5")
+[node name="Row06" type="CollisionShape2D" parent="."]
+position = Vector2(272, 192)
+shape = SubResource("row_6")
+[node name="Row07" type="CollisionShape2D" parent="."]
+position = Vector2(272, 224)
+shape = SubResource("row_6")
+[node name="Row08" type="CollisionShape2D" parent="."]
+position = Vector2(288, 256)
+shape = SubResource("row_8")
+[node name="Row09" type="CollisionShape2D" parent="."]
+position = Vector2(288, 288)
+shape = SubResource("row_9")
+[node name="Row10" type="CollisionShape2D" parent="."]
+position = Vector2(288, 320)
+shape = SubResource("row_10")

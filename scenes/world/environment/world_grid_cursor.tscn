@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/environment/world_grid_cursor.gd" id="1_cursor"]
+
+[node name="WorldGridCursor" type="Node2D"]
+visible = false
+z_index = 8
+script = ExtResource("1_cursor")

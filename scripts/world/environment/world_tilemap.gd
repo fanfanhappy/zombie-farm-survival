@@ -9,7 +9,7 @@ const WORLD_SIZE := Vector2i(41, 26)
 @onready var path_layer: TileMapLayer = $PathLayer
 @onready var farming_layer: TileMapLayer = $FarmingTerrainLayer
 @onready var fence_layer: TileMapLayer = $FenceLayer
-var grid_cursor: WorldGridCursor
+@onready var grid_cursor: WorldGridCursor = $WorldGridCursor
 var cursor_hint := ""
 var connected_farm_cells: Array[Vector2i] = []
 
@@ -17,13 +17,8 @@ var connected_farm_cells: Array[Vector2i] = []
 func _ready() -> void:
 	_build_ground()
 	_build_pond()
-	_build_pond_collision()
 	_build_paths()
 	_build_perimeter_fence()
-	grid_cursor = WorldGridCursor.new()
-	grid_cursor.name = "WorldGridCursor"
-	grid_cursor.z_index = 8
-	add_child(grid_cursor)
 
 
 func _process(_delta: float) -> void:
@@ -49,6 +44,8 @@ func _refresh_farming_terrain() -> void:
 
 
 func _build_ground() -> void:
+	if not ground_layer.get_used_cells().is_empty():
+		return
 	for y in WORLD_SIZE.y:
 		for x in WORLD_SIZE.x:
 			# 底部一排是可无缝铺设的草地，少量变化避免大面积重复感。
@@ -62,6 +59,8 @@ func _build_ground() -> void:
 
 
 func _build_pond() -> void:
+	if not water_layer.get_used_cells().is_empty():
+		return
 	# 错落的行宽形成自然水塘轮廓，避开农田与主要建筑动线。
 	var pond_rows := {
 		4: Vector2i(7, 10),
@@ -78,32 +77,9 @@ func _build_pond() -> void:
 			water_layer.set_cell(Vector2i(x, y), 0, Vector2i((x + y) % 4, 0))
 
 
-func _build_pond_collision() -> void:
-	var pond_body := StaticBody2D.new()
-	pond_body.name = "PondCollision"
-	pond_body.collision_layer = 1
-	pond_body.collision_mask = 0
-	add_child(pond_body)
-	var pond_rows := {
-		4: Vector2i(7, 10),
-		5: Vector2i(6, 11),
-		6: Vector2i(5, 12),
-		7: Vector2i(5, 12),
-		8: Vector2i(6, 12),
-		9: Vector2i(7, 11),
-		10: Vector2i(8, 10),
-	}
-	for y in pond_rows:
-		var horizontal_range: Vector2i = pond_rows[y]
-		var collision := CollisionShape2D.new()
-		var shape := RectangleShape2D.new()
-		shape.size = Vector2((horizontal_range.y - horizontal_range.x + 1) * WorldGrid.CELL_SIZE, WorldGrid.CELL_SIZE - 2.0)
-		collision.position = Vector2((horizontal_range.x + horizontal_range.y) * WorldGrid.HALF_CELL, y * WorldGrid.CELL_SIZE)
-		collision.shape = shape
-		pond_body.add_child(collision)
-
-
 func _build_paths() -> void:
+	if not path_layer.get_used_cells().is_empty():
+		return
 	var path_cells: Dictionary = {}
 	# 从南门通往农舍，再向西分出一条农田支路。
 	for y in range(13, 22):
@@ -119,6 +95,8 @@ func _build_paths() -> void:
 
 
 func _build_perimeter_fence() -> void:
+	if not fence_layer.get_used_cells().is_empty():
+		return
 	for x in range(4, 36):
 		fence_layer.set_cell(Vector2i(x, 3), 0, Vector2i(2, 1))
 		if x < 18 or x > 21:

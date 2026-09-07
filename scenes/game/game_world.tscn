@@ -22,6 +22,8 @@
 [ext_resource type="TileSet" path="res://resources/tilesets/terrain_water_tileset.tres" id="23_water_tileset"]
 [ext_resource type="TileSet" path="res://resources/tilesets/terrain_path_tileset.tres" id="24_path_tileset"]
 [ext_resource type="TileSet" path="res://resources/tilesets/buildings/perimeter_fence_tileset.tres" id="25_fence_tileset"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/world_grid_cursor.tscn" id="26_grid_cursor"]
+[ext_resource type="PackedScene" path="res://scenes/world/environment/pond_collision.tscn" id="27_pond_collision"]
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -33,6 +35,8 @@ script = ExtResource("1_main")
 [node name="TerrainLayers" type="Node2D" parent="GameWorld"]
 
 [node name="LogicLayers" type="Node2D" parent="GameWorld"]
+
+[node name="PondCollision" parent="GameWorld/LogicLayers" instance=ExtResource("27_pond_collision")]
 
 [node name="DynamicYSortGroup" type="Node2D" parent="GameWorld"]
 y_sort_enabled = true
@@ -133,6 +137,8 @@ z_index = -2
 position = Vector2(-16, -16)
 scale = Vector2(2, 2)
 tile_set = ExtResource("25_fence_tileset")
+
+[node name="WorldGridCursor" parent="GameWorld/TerrainLayers/WorldTileMap" instance=ExtResource("26_grid_cursor")]
 
 [node name="WorldResourceLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" instance=ExtResource("18_resource_layer")]
 
