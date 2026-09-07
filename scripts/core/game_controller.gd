@@ -219,11 +219,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		show_message("测试：时间前进2小时")
 
 
-func add_resource(type: String, amount: int, announce := true) -> void:
+func add_resource(type: String, amount: int, announce := true) -> int:
 	var remaining := inventory.add_item(type, amount)
 	var accepted := amount - remaining
 	if announce and accepted > 0: show_message("获得 %s × %d" % [_resource_name(type), accepted])
-	if remaining > 0: show_message("背包已满，%s × %d 无法放入" % [_resource_name(type), remaining])
+	if remaining > 0:
+		# 收获、任务和尸潮奖励都不能因背包已满而静默消失。
+		var drop_position := player.global_position + player.facing_direction * 28.0
+		_spawn_ground_item(type, remaining, drop_position)
+		show_message("背包已满，%s × %d 已掉落在脚边" % [_resource_name(type), remaining])
+	return accepted
 
 
 func get_resource_amount(type: String) -> int:
