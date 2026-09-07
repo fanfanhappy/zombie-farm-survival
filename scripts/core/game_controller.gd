@@ -13,6 +13,7 @@ const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
 const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
 const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
 const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
+const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -401,7 +402,7 @@ func _spawn_night_threat() -> void:
 
 
 func _spawn_zombie(fast: bool) -> void:
-	var zombie := Zombie.new()
+	var zombie := ZOMBIE_SCENE.instantiate() as Zombie
 	match randi() % 4:
 		0: zombie.position = Vector2(randf_range(40, 1240), 40)
 		1: zombie.position = Vector2(randf_range(40, 1240), 760)

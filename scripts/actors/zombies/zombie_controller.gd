@@ -12,20 +12,19 @@ var player_aggro_time := 0.0
 var experience_reward := 12
 var slow_multiplier := 1.0
 var slow_time_left := 0.0
+@onready var visual: Node2D = $Visual
+@onready var head: Polygon2D = $Visual/Head
 
 
 func setup(player: Player, home: HomesteadCore, fast := false) -> void:
-	# 僵尸检测玩家、农舍和可破坏防御，不检测生活设施层。
-	collision_layer = 1
-	collision_mask = 1
 	target = player
 	homestead = home
-	if fast: move_speed = 105.0; health = 32.0; experience_reward = 20
+	if fast:
+		move_speed = 105.0; health = 32.0; experience_reward = 20
+		visual.scale = Vector2(0.86, 0.86)
+		head.color = Color("#91a865")
 	add_to_group("zombies")
-	var shape := CollisionShape2D.new()
-	var capsule := CapsuleShape2D.new()
-	capsule.radius = 9.0; capsule.height = 26.0; shape.shape = capsule
-	add_child(shape); queue_redraw()
+	_update_visual_state()
 
 
 func _physics_process(delta: float) -> void:
@@ -47,7 +46,7 @@ func _physics_process(delta: float) -> void:
 			if pursue_player: target.take_damage(9.0)
 			else: homestead.take_damage(10.0)
 			attack_cooldown = 0.8
-	queue_redraw()
+	_update_visual_state()
 
 
 func _check_structure_collision() -> void:
@@ -66,7 +65,7 @@ func take_damage(amount: float, source: Node = null) -> void:
 	health -= amount; hit_flash = 0.1
 	if source is Player: player_aggro_time = 3.0
 	if health <= 0.0: defeated.emit(self); queue_free()
-	else: queue_redraw()
+	else: _update_visual_state()
 
 
 func apply_slow(multiplier: float, duration: float) -> void:
@@ -74,9 +73,8 @@ func apply_slow(multiplier: float, duration: float) -> void:
 	slow_time_left = maxf(slow_time_left, duration)
 
 
-func _draw() -> void:
-	var color := Color("#f3e4c2") if hit_flash > 0.0 else Color("#73945c")
-	draw_circle(Vector2(0, 10), 10.0, Color("#3f523d"))
-	draw_rect(Rect2(-9, -4, 18, 20), Color("#645d54"))
-	draw_rect(Rect2(-8, -17, 16, 14), color)
-	draw_circle(Vector2(-3, -10), 1.4, Color("#bd3f3f")); draw_circle(Vector2(3, -10), 1.4, Color("#bd3f3f"))
+func _update_visual_state() -> void:
+	if not is_instance_valid(head):
+		return
+	var base_color := Color("#91a865") if move_speed > 100.0 else Color("#73945c")
+	head.color = Color("#f3e4c2") if hit_flash > 0.0 else base_color
