@@ -32,6 +32,30 @@ corner_radius_bottom_left = 8
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
 
+[node name="GameSession" type="Node" parent="."]
+
+[node name="GameWorld" type="Node2D" parent="."]
+
+[node name="TerrainLayers" type="Node2D" parent="GameWorld"]
+
+[node name="LogicLayers" type="Node2D" parent="GameWorld"]
+
+[node name="DynamicYSortGroup" type="Node2D" parent="GameWorld"]
+y_sort_enabled = true
+
+[node name="RoofLayer" type="Node2D" parent="GameWorld"]
+z_index = 100
+
+[node name="TransitionZones" type="Node2D" parent="GameWorld"]
+
+[node name="CameraRig" type="Node2D" parent="."]
+
+[node name="ScreenEffects" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="UI" type="CanvasLayer" parent="."]
+layer = 20
+
 [node name="WorldTileMap" type="Node2D" parent="." unique_id=308722699]
 script = ExtResource("14_world_tilemap")
 
@@ -45,29 +69,29 @@ tile_set = ExtResource("15_farm_tileset")
 
 [node name="Darkness" type="CanvasModulate" parent="." unique_id=979342609]
 
-[node name="CraftingSystem" type="Node" parent="." unique_id=869456683]
+[node name="CraftingSystem" type="Node" parent="GameSession" unique_id=869456683]
 script = ExtResource("3_crafting")
 
-[node name="InventorySystem" type="Node" parent="." unique_id=1407268162]
+[node name="InventorySystem" type="Node" parent="GameSession" unique_id=1407268162]
 script = ExtResource("4_inventory")
 
 [node name="PlacementSystem" type="Node2D" parent="." unique_id=835565366]
 z_index = 20
 script = ExtResource("6_placement")
 
-[node name="DefenseUpgradeSystem" type="Node" parent="." unique_id=1740210685]
+[node name="DefenseUpgradeSystem" type="Node" parent="GameSession" unique_id=1740210685]
 script = ExtResource("12_defense_upgrade")
 
-[node name="HordeSystem" type="Node" parent="." unique_id=460335431]
+[node name="HordeSystem" type="Node" parent="GameSession" unique_id=460335431]
 script = ExtResource("7_horde")
 
-[node name="FarmingSystem" type="Node" parent="." unique_id=667839147]
+[node name="FarmingSystem" type="Node" parent="GameSession" unique_id=667839147]
 script = ExtResource("8_farming")
 
-[node name="ObjectiveSystem" type="Node" parent="." unique_id=1581011714]
+[node name="ObjectiveSystem" type="Node" parent="GameSession" unique_id=1581011714]
 script = ExtResource("9_objectives")
 
-[node name="WeatherSystem" type="Node" parent="." unique_id=508456209]
+[node name="WeatherSystem" type="Node" parent="GameSession" unique_id=508456209]
 script = ExtResource("11_weather")
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=1658304268]
