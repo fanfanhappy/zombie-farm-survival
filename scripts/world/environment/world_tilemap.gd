@@ -173,7 +173,7 @@ func _update_grid_cursor() -> void:
 		cursor_hint = ""
 		return
 	var hovered_plot := _find_hovered_farm_plot(mouse_position)
-	var player := get_parent().get_node_or_null("Player") as Player
+	var player := get_tree().get_first_node_in_group("player") as Player
 	if is_instance_valid(hovered_plot):
 		var reachable := is_instance_valid(player) and player.global_position.distance_to(hovered_plot.global_position) <= 64.0
 		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH, FARM_CELL_SIZE)

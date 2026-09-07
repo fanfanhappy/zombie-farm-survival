@@ -1,6 +1,9 @@
 class_name Player
 extends CharacterBody2D
 
+func _enter_tree() -> void:
+	add_to_group("player")
+
 @onready var character_sprite: AnimatedSprite2D = $PlayerAnimation
 @onready var attack_effect: Node2D = $AttackEffect
 

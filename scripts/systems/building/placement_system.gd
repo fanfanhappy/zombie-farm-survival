@@ -11,7 +11,8 @@ const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
 const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
 const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 
-var game_world: Node2D
+var game_controller: Node2D
+var placement_parent: Node2D
 var inventory: InventorySystem
 var selected_item_id := ""
 var placement_type := ""
@@ -20,8 +21,9 @@ var placement_valid := false
 var preview_instance: Node2D
 
 
-func setup(world: Node2D, inventory_system: InventorySystem) -> void:
-	game_world = world
+func setup(controller: Node2D, world_parent: Node2D, inventory_system: InventorySystem) -> void:
+	game_controller = controller
+	placement_parent = world_parent
 	inventory = inventory_system
 	visible = false
 
@@ -37,7 +39,7 @@ func _process(_delta: float) -> void:
 
 func begin_placement(item_id: String) -> void:
 	if not inventory.has_item(item_id):
-		game_world.show_message("背包里没有这个物品")
+		game_controller.show_message("背包里没有这个物品")
 		return
 	var item_data := inventory.get_item_data(item_id)
 	if item_data.get("category", "") != "placeable": return
@@ -47,7 +49,7 @@ func begin_placement(item_id: String) -> void:
 	_create_preview()
 	visible = true
 	placement_started.emit(item_id)
-	game_world.show_message("左键放置　R旋转　右键或Esc取消")
+	game_controller.show_message("左键放置　R旋转　右键或Esc取消")
 
 
 func rotate_preview() -> void:
@@ -66,9 +68,9 @@ func try_place() -> bool:
 	else: structure = SPIKE_SCENE.instantiate()
 	structure.position = global_position
 	structure.rotation = rotation
-	game_world.add_child(structure)
+	placement_parent.add_child(structure)
 	if structure is DefenseStructure: structure.setup(placement_type)
-	game_world.show_message("已放置%s" % inventory.get_display_name(selected_item_id))
+	game_controller.show_message("已放置%s" % inventory.get_display_name(selected_item_id))
 	if not inventory.has_item(selected_item_id): cancel_placement()
 	return true
 
@@ -88,7 +90,7 @@ func is_placing() -> bool:
 
 
 func _check_placement_valid() -> bool:
-	if global_position.distance_to(game_world.player.global_position) > 240.0: return false
+	if global_position.distance_to(game_controller.player.global_position) > 240.0: return false
 	var footprint := Vector2(48, 20) if placement_type == "fence" else (Vector2(42, 30) if placement_type == "storage_chest" else Vector2(32, 32))
 	var corners := [Vector2(-footprint.x, -footprint.y) * 0.5, Vector2(footprint.x, footprint.y) * 0.5]
 	for corner in corners:

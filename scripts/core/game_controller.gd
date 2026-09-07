@@ -19,7 +19,7 @@ const WATER_PUMP_SCENE := preload("res://scenes/world/facilities/water_pump.tscn
 const REPAIR_POINT_SCENE := preload("res://scenes/world/facilities/homestead_repair_point.tscn")
 const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
-@onready var player: Player = $Player
+@onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $Darkness
 @onready var status_hud: CharacterStatusHUD = $HUD/StatusPanel
 @onready var prompt_label: Label = $HUD/Prompt
@@ -42,7 +42,14 @@ const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 @onready var weather_system: WeatherSystem = $GameSession/WeatherSystem
 @onready var weather_label: Label = $HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $HUD/PauseOverlay
-@onready var world_tile_map: WorldTileMap = $WorldTileMap
+@onready var world_tile_map: WorldTileMap = $GameWorld/TerrainLayers/WorldTileMap
+@onready var logic_layers: Node2D = $GameWorld/LogicLayers
+@onready var building_layer: Node2D = $GameWorld/DynamicYSortGroup/BuildingLayer
+@onready var farm_plots_root: Node2D = $GameWorld/DynamicYSortGroup/FarmPlots
+@onready var facilities_root: Node2D = $GameWorld/DynamicYSortGroup/Facilities
+@onready var animals_root: Node2D = $GameWorld/DynamicYSortGroup/Animals
+@onready var enemies_root: Node2D = $GameWorld/DynamicYSortGroup/Enemies
+@onready var ground_items_root: Node2D = $GameWorld/DynamicYSortGroup/GroundItems
 
 const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
@@ -66,7 +73,7 @@ func _ready() -> void:
 	inventory_ui.item_use_requested.connect(_on_inventory_item_use_requested)
 	inventory_ui.item_drop_requested.connect(_on_inventory_item_drop_requested)
 	inventory_ui.inventory_closed.connect(_on_inventory_closed)
-	placement_system.setup(self, inventory)
+	placement_system.setup(self, building_layer, inventory)
 	horde_system.zombie_spawn_requested.connect(_spawn_zombie)
 	horde_system.horde_started.connect(_on_horde_started)
 	horde_system.wave_started.connect(_on_horde_wave_started)
@@ -417,7 +424,7 @@ func _spawn_zombie(fast: bool) -> void:
 		1: zombie.position = Vector2(randf_range(40, 1240), 760)
 		2: zombie.position = Vector2(40, randf_range(40, 760))
 		_: zombie.position = Vector2(1240, randf_range(40, 760))
-	add_child(zombie); zombie.setup(player, homestead, fast)
+	enemies_root.add_child(zombie); zombie.setup(player, homestead, fast)
 	zombie.defeated.connect(_on_zombie_defeated)
 
 
@@ -438,15 +445,15 @@ func _spawn_world_objects() -> void:
 	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
 	for row in 6:
 		for column in 12:
-			var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot; plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
+			var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot; plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); farm_plots_root.add_child(plot)
 	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
 		var chicken := CHICKEN_SCENE.instantiate() as Chicken
 		chicken.setup(chicken_data[0], chicken_data[1])
-		add_child(chicken)
-	var workbench := WORKBENCH_SCENE.instantiate() as CraftingStation; workbench.position = Vector2(625, 330); add_child(workbench)
-	var kitchen := KITCHEN_SCENE.instantiate() as CraftingStation; kitchen.position = Vector2(1040, 325); add_child(kitchen)
-	var sleep_point := SLEEP_POINT_SCENE.instantiate() as SleepPoint; sleep_point.position = Vector2(930, 425); add_child(sleep_point)
-	var water_pump := WATER_PUMP_SCENE.instantiate() as WaterPump; water_pump.position = Vector2(755, 435); add_child(water_pump)
+		animals_root.add_child(chicken)
+	var workbench := WORKBENCH_SCENE.instantiate() as CraftingStation; workbench.position = Vector2(625, 330); facilities_root.add_child(workbench)
+	var kitchen := KITCHEN_SCENE.instantiate() as CraftingStation; kitchen.position = Vector2(1040, 325); facilities_root.add_child(kitchen)
+	var sleep_point := SLEEP_POINT_SCENE.instantiate() as SleepPoint; sleep_point.position = Vector2(930, 425); facilities_root.add_child(sleep_point)
+	var water_pump := WATER_PUMP_SCENE.instantiate() as WaterPump; water_pump.position = Vector2(755, 435); facilities_root.add_child(water_pump)
 
 
 func _create_world_collisions() -> void:
@@ -454,19 +461,19 @@ func _create_world_collisions() -> void:
 	_add_wall(Vector2(5, 400), Vector2(10, 800)); _add_wall(Vector2(1275, 400), Vector2(10, 800))
 	homestead = HOMESTEAD_SCENE.instantiate() as HomesteadCore
 	homestead.position = Vector2(840, 280)
-	add_child(homestead)
+	building_layer.add_child(homestead)
 	homestead.setup(Vector2(300, 220))
 	homestead.destroyed.connect(_on_homestead_destroyed)
 	var repair_point := REPAIR_POINT_SCENE.instantiate() as HomesteadRepairPoint
 	repair_point.position = Vector2(840, 420)
-	add_child(repair_point)
+	facilities_root.add_child(repair_point)
 	repair_point.setup(homestead)
 
 
 func _add_wall(at: Vector2, size: Vector2) -> void:
 	var body := StaticBody2D.new(); body.position = at
 	var collision := CollisionShape2D.new(); var rectangle := RectangleShape2D.new()
-	rectangle.size = size; collision.shape = rectangle; body.add_child(collision); add_child(body)
+	rectangle.size = size; collision.shape = rectangle; body.add_child(collision); logic_layers.add_child(body)
 
 
 func _update_lighting() -> void:
@@ -621,7 +628,7 @@ func _restore_defenses(saved_defenses: Array) -> void:
 		var structure := structure_scene.instantiate() as DefenseStructure
 		structure.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		structure.rotation = float(entry.get("rotation", 0.0))
-		add_child(structure)
+		building_layer.add_child(structure)
 		structure.setup(str(entry.get("type", "fence")))
 		structure.upgrade_level = int(entry.get("upgrade_level", 1))
 		structure.max_health = float(entry.get("max_health", structure.max_health))
@@ -644,7 +651,7 @@ func _restore_storage_chests(saved_chests: Array) -> void:
 		var chest := STORAGE_CHEST_SCENE.instantiate() as StorageChest
 		chest.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		chest.rotation = float(entry.get("rotation", 0.0))
-		add_child(chest)
+		building_layer.add_child(chest)
 		chest.restore_items(entry.get("items", {}))
 
 
@@ -663,7 +670,7 @@ func _restore_snare_traps(saved_traps: Array) -> void:
 		trap.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		trap.rotation = float(entry.get("rotation", 0.0))
 		trap.charges = int(entry.get("charges", SnareTrap.MAX_CHARGES))
-		add_child(trap)
+		building_layer.add_child(trap)
 
 
 func _serialize_farm_plots() -> Array[Dictionary]:
@@ -759,7 +766,7 @@ func _on_inventory_item_drop_requested(item_id: String) -> void:
 func _spawn_ground_item(item_id: String, amount: int, at_position: Vector2) -> void:
 	var ground_item := GROUND_ITEM_SCENE.instantiate() as GroundItem
 	ground_item.position = at_position
-	add_child(ground_item)
+	ground_items_root.add_child(ground_item)
 	ground_item.setup(item_id, amount, inventory.get_display_name(item_id))
 
 
