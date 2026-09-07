@@ -31,9 +31,9 @@
    │  └─ save/                   # 存档序列化与读取
    ├─ ui/                         # 独立界面控制脚本
    └─ world/
-      ├─ building/                # 建造和防御设施
-      ├─ farming/                 # 土地、作物和种植
-      └─ resources/               # 采集点与资源刷新
+	  ├─ building/                # 建造和防御设施
+	  ├─ farming/                 # 土地、作物和种植
+	  └─ resources/               # 采集点与资源刷新
 ```
 
 ## 放置规则
@@ -47,4 +47,4 @@
 
 ## 当前入口
 
-`project.godot` 指向 `scenes/game/game_world.tscn`，主流程由 `scripts/core/game_controller.gd` 控制。
+`project.godot` 指向 `scenes/ui/main_menu.tscn`；开始或继续游戏后进入 `scenes/game/game_world.tscn`，主流程由 `scripts/core/game_controller.gd` 控制。

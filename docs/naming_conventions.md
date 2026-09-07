@@ -45,6 +45,7 @@ IMG_001.png
 | 作物 | `crop` |
 | 农田格 | `farm_plot` |
 | 采集资源 | `harvestable_resource` |
+| 静态装饰 | `static_decoration` |
 | 防御设施 | `defense_structure` |
 | 栅栏 | `fence` |
 | 尖刺 | `spike` |
@@ -72,4 +73,3 @@ assets/art/third_party/作者名_素材包名/
 ```
 
 不要修改后覆盖唯一原文件。派生素材放入项目对应正式分类，并在同目录或资产清单中记录来源。
-
