@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/resources/harvestable_resource.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/resources/resource_stone_herb_tiles.png" id="2_texture"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_herb"]
+radius = 8.0
+
+[node name="HerbResource" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_script")
+resource_type = "herb"
+
+[node name="ResourceSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_texture")
+region_enabled = true
+region_rect = Rect2(32, 48, 16, 16)
+
+[node name="DepletedSprite" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+texture = ExtResource("2_texture")
+region_enabled = true
+region_rect = Rect2(32, 64, 16, 16)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_herb")
+
+[node name="WorkProgress" type="ProgressBar" parent="."]
+visible = false
+offset_left = -16.0
+offset_top = -25.0
+offset_right = 16.0
+offset_bottom = -19.0
+mouse_filter = 2
+show_percentage = false

@@ -4,6 +4,8 @@ extends Node2D
 var item_id := ""
 var amount := 1
 var display_name := ""
+@onready var item_label: Label = $ItemLabel
+@onready var amount_label: Label = $AmountLabel
 
 
 func setup(id: String, quantity := 1, shown_name := "") -> void:
@@ -12,7 +14,7 @@ func setup(id: String, quantity := 1, shown_name := "") -> void:
 	display_name = shown_name if not shown_name.is_empty() else id
 	add_to_group("ground_items")
 	add_to_group("interactables")
-	queue_redraw()
+	_update_visual()
 
 
 func get_interaction_prompt() -> String:
@@ -33,14 +35,15 @@ func interact(game: Node) -> void:
 		queue_free()
 	else:
 		game.show_message("背包已满，地上还剩%d个" % amount)
-	queue_redraw()
+	_update_visual()
 
 
 func create_save_data() -> Dictionary:
 	return {"item_id": item_id, "amount": amount, "x": position.x, "y": position.y}
 
 
-func _draw() -> void:
-	draw_circle(Vector2.ZERO, 13.0, Color("#d9b76f"))
-	draw_rect(Rect2(-8, -8, 16, 16), Color("#6f5134"), false, 3.0)
-	draw_string(ThemeDB.fallback_font, Vector2(-5, 5), str(amount), HORIZONTAL_ALIGNMENT_CENTER, 10, 12, Color.WHITE)
+func _update_visual() -> void:
+	if not is_instance_valid(item_label):
+		return
+	item_label.text = display_name
+	amount_label.text = str(amount)

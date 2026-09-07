@@ -5,6 +5,10 @@ const DAY_LENGTH_SECONDS := 90.0
 const WATERING_CAN_CAPACITY := 5
 const CHICKEN_SCENE := preload("res://scenes/world/animals/chicken.tscn")
 const HOMESTEAD_SCENE := preload("res://scenes/world/buildings/homestead.tscn")
+const TREE_RESOURCE_SCENE := preload("res://scenes/world/resources/tree_resource.tscn")
+const STONE_RESOURCE_SCENE := preload("res://scenes/world/resources/stone_resource.tscn")
+const HERB_RESOURCE_SCENE := preload("res://scenes/world/resources/herb_resource.tscn")
+const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -418,7 +422,9 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 
 func _spawn_world_objects() -> void:
 	for data in [["wood", Vector2(150, 370)], ["wood", Vector2(1080, 190)], ["wood", Vector2(1060, 565)], ["wood", Vector2(570, 170)], ["stone", Vector2(570, 520)], ["stone", Vector2(1030, 470)], ["stone", Vector2(620, 640)], ["herb", Vector2(530, 610)], ["herb", Vector2(1020, 620)]]:
-		var node := HarvestableResource.new(); node.position = data[1]; add_child(node); node.setup(data[0])
+		var resource_scene: PackedScene = {"wood": TREE_RESOURCE_SCENE, "stone": STONE_RESOURCE_SCENE, "herb": HERB_RESOURCE_SCENE}[data[0]]
+		var node := resource_scene.instantiate() as HarvestableResource
+		node.position = data[1]; add_child(node); node.setup(data[0])
 	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
 	for row in 12:
 		for column in 24:
@@ -743,7 +749,7 @@ func _on_inventory_item_drop_requested(item_id: String) -> void:
 
 
 func _spawn_ground_item(item_id: String, amount: int, at_position: Vector2) -> void:
-	var ground_item := GroundItem.new()
+	var ground_item := GROUND_ITEM_SCENE.instantiate() as GroundItem
 	ground_item.position = at_position
 	add_child(ground_item)
 	ground_item.setup(item_id, amount, inventory.get_display_name(item_id))

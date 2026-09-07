@@ -1,18 +1,18 @@
 class_name HarvestableResource
 extends StaticBody2D
 
-var resource_type := "wood"
+@export_enum("wood", "stone", "herb") var resource_type := "wood"
 var display_name := "树木"
 var yield_amount := 3
 var depleted := false
 var work_required := 3.0
 var work_remaining := 3.0
+@onready var resource_sprite: Sprite2D = $ResourceSprite
+@onready var depleted_sprite: Sprite2D = $DepletedSprite
+@onready var work_progress: ProgressBar = $WorkProgress
 
 
 func setup(type: String) -> void:
-	# 草药可踩过；树木和矿石会阻挡玩家，但不会卡住僵尸。
-	collision_layer = 0 if type == "herb" else 2
-	collision_mask = 0
 	resource_type = type
 	match type:
 		"wood": display_name = "树木"; yield_amount = 4; work_required = 3.0
@@ -20,12 +20,7 @@ func setup(type: String) -> void:
 		"herb": display_name = "草药"; yield_amount = 2; work_required = 1.0
 	work_remaining = work_required
 	add_to_group("mouse_action_targets")
-	var shape := CollisionShape2D.new()
-	var circle := CircleShape2D.new()
-	circle.radius = 15.0 if type == "wood" else (17.0 if type == "stone" else 8.0)
-	shape.shape = circle
-	add_child(shape)
-	queue_redraw()
+	_update_visual_state()
 
 
 func get_interaction_prompt() -> String:
@@ -60,30 +55,21 @@ func interact(game: Node) -> void:
 		game.add_resource(resource_type, yield_amount)
 		remove_from_group("mouse_action_targets")
 		get_tree().create_timer(20.0).timeout.connect(_respawn)
-	queue_redraw()
+	_update_visual_state()
 
 
 func _respawn() -> void:
 	depleted = false
 	work_remaining = work_required
 	add_to_group("mouse_action_targets")
-	queue_redraw()
+	_update_visual_state()
 
 
-func _draw() -> void:
-	if depleted:
-		draw_circle(Vector2.ZERO, 8.0, Color("#665444")); return
-	match resource_type:
-		"wood":
-			draw_rect(Rect2(-5, 8, 10, 25), Color("#684b36"))
-			draw_circle(Vector2(0, -2), 24.0, Color("#386641"))
-			draw_circle(Vector2(-12, -9), 15.0, Color("#4f7d45"))
-		"stone":
-			draw_colored_polygon(PackedVector2Array([Vector2(-19, 11), Vector2(-11, -13), Vector2(12, -17), Vector2(22, 7), Vector2(10, 17)]), Color("#718078"))
-		"herb":
-			for angle in [0.0, 1.57, 3.14, 4.71]: draw_circle(Vector2.from_angle(angle) * 9.0, 7.0, Color("#63a758"))
-			draw_circle(Vector2.ZERO, 4.0, Color("#e1d16f"))
-	if work_remaining < work_required:
-		var ratio := work_remaining / work_required
-		draw_rect(Rect2(-20, -36, 40, 5), Color("#33282a"))
-		draw_rect(Rect2(-20, -36, 40 * ratio, 5), Color("#e0b85e"))
+func _update_visual_state() -> void:
+	if not is_instance_valid(resource_sprite):
+		return
+	resource_sprite.visible = not depleted
+	depleted_sprite.visible = depleted
+	work_progress.max_value = work_required
+	work_progress.value = work_remaining
+	work_progress.visible = not depleted and work_remaining < work_required
