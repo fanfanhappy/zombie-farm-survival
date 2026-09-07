@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/farming/crop_visual.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/crops/crop_growth_atlas.png" id="2_atlas"]
+
+[node name="CarrotCropVisual" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Stage0" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+texture = ExtResource("2_atlas")
+region_enabled = true
+region_rect = Rect2(0, 16, 16, 16)
+
+[node name="Stage1" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+texture = ExtResource("2_atlas")
+region_enabled = true
+region_rect = Rect2(16, 16, 16, 16)
+
+[node name="Stage2" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+texture = ExtResource("2_atlas")
+region_enabled = true
+region_rect = Rect2(32, 16, 16, 16)
+
+[node name="Stage3" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+texture = ExtResource("2_atlas")
+region_enabled = true
+region_rect = Rect2(48, 16, 16, 16)
+
+[node name="Stage4" type="Sprite2D" parent="."]
+visible = false
+texture_filter = 1
+position = Vector2(0, -8)
+scale = Vector2(2, 2)
+texture = ExtResource("2_atlas")
+region_enabled = true
+region_rect = Rect2(64, 16, 16, 16)

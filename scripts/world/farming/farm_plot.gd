@@ -4,6 +4,11 @@ extends Node2D
 enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
 
 const CELL_SIZE := WorldGrid.CELL_SIZE
+const CROP_VISUAL_SCENES := {
+	"potato": preload("res://scenes/world/farming/crops/potato_crop_visual.tscn"),
+	"carrot": preload("res://scenes/world/farming/crops/carrot_crop_visual.tscn"),
+	"medicinal_herb": preload("res://scenes/world/farming/crops/medicinal_herb_crop_visual.tscn"),
+}
 
 var state := PlotState.EMPTY
 var watered := false
@@ -11,6 +16,7 @@ var growth_days := 0
 var crop_id := ""
 var crop_data: Dictionary = {}
 var highlight_state := 0
+var crop_visual: CropVisual
 
 
 func _ready() -> void:
@@ -18,6 +24,7 @@ func _ready() -> void:
 	z_index = 0
 	add_to_group("mouse_action_targets")
 	add_to_group("farm_plots")
+	_refresh_crop_visual()
 	queue_redraw()
 
 
@@ -79,6 +86,7 @@ func interact(game: Node) -> void:
 				game.show_message("给%s浇水完成，水壶剩余%d/%d" % [get_crop_name(), game.watering_can_water, game.WATERING_CAN_CAPACITY])
 		PlotState.READY:
 			_harvest(game)
+	_refresh_crop_visual()
 	queue_redraw()
 
 
@@ -87,6 +95,7 @@ func advance_day() -> void:
 		growth_days += 1
 		watered = false
 		state = PlotState.READY if growth_days >= int(crop_data.get("growth_days", 2)) else PlotState.GROWING
+		_refresh_crop_visual()
 		queue_redraw()
 
 
@@ -106,6 +115,7 @@ func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
 	growth_days = int(data.get("growth_days", 0))
 	crop_id = str(data.get("crop_id", ""))
 	crop_data = farming_system.get_crop_data(crop_id).duplicate(true) if not crop_id.is_empty() else {}
+	_refresh_crop_visual()
 	queue_redraw()
 
 
@@ -115,6 +125,7 @@ func reset_for_new_game() -> void:
 	growth_days = 0
 	crop_id = ""
 	crop_data = {}
+	_refresh_crop_visual()
 	queue_redraw()
 
 
@@ -140,6 +151,7 @@ func _try_plant_selected_seed(game: Node) -> void:
 	state = PlotState.PLANTED
 	watered = false
 	growth_days = 0
+	_refresh_crop_visual()
 	game.show_message("种下了%s" % get_crop_name())
 
 
@@ -153,20 +165,30 @@ func _harvest(game: Node) -> void:
 	growth_days = 0
 	crop_id = ""
 	crop_data = {}
+	_refresh_crop_visual()
+
+
+func _refresh_crop_visual() -> void:
+	if is_instance_valid(crop_visual):
+		crop_visual.queue_free()
+		crop_visual = null
+	if crop_id.is_empty() or not CROP_VISUAL_SCENES.has(crop_id):
+		return
+	crop_visual = (CROP_VISUAL_SCENES[crop_id] as PackedScene).instantiate() as CropVisual
+	add_child(crop_visual)
+	var stage := 0
+	if state == PlotState.READY:
+		stage = 4
+	elif state == PlotState.GROWING:
+		var required_days := maxi(int(crop_data.get("growth_days", 2)), 1)
+		stage = clampi(ceili(float(growth_days) / float(required_days) * 3.0), 1, 3)
+	crop_visual.show_stage(stage)
 
 
 func _draw() -> void:
 	if state == PlotState.EMPTY:
 		draw_line(Vector2(-7, 8), Vector2(-5, 3), Color("#668b49"), 1.0)
 		draw_line(Vector2(8, -4), Vector2(6, -9), Color("#668b49"), 1.0)
-	elif state in [PlotState.PLANTED, PlotState.GROWING, PlotState.READY]:
-		var size := 4.0 + growth_days * 3.0
-		var leaf_color := Color("#%s" % crop_data.get("leaf_color", "65a653"))
-		var produce_color := Color("#%s" % crop_data.get("produce_color", "d5b061"))
-		draw_line(Vector2(0, 8), Vector2(0, -size), Color("#417747"), 3.0)
-		draw_circle(Vector2(-5, -size + 3), size * 0.55, leaf_color)
-		draw_circle(Vector2(5, -size + 1), size * 0.55, leaf_color.lightened(0.08))
-		if state == PlotState.READY: draw_circle(Vector2(0, 5), 6.0, produce_color)
 	if watered: draw_circle(Vector2(10, -10), 3.0, Color("#68b9d2"))
 	if highlight_state > 0:
 		var highlight_color := Color(1.0, 0.88, 0.3, 0.28) if highlight_state == 1 else Color(0.95, 0.28, 0.25, 0.24)
