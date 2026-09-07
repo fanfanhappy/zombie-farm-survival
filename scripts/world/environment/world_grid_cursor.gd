@@ -4,10 +4,10 @@ extends Node2D
 enum CursorState { HIDDEN, INTERACTABLE, OUT_OF_REACH, BLOCKED }
 
 var state := CursorState.HIDDEN
-var cell_size := 32.0
+var cell_size := WorldGrid.CELL_SIZE
 
 
-func set_cursor(at_position: Vector2, next_state: CursorState, next_cell_size := 32.0) -> void:
+func set_cursor(at_position: Vector2, next_state: CursorState, next_cell_size := WorldGrid.CELL_SIZE) -> void:
 	position = at_position
 	visible = next_state != CursorState.HIDDEN
 	if state == next_state and is_equal_approx(cell_size, next_cell_size):

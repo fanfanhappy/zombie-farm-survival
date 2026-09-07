@@ -1,8 +1,8 @@
 class_name WorldTileMap
 extends Node2D
 
-const TILE_SIZE := Vector2i(16, 16)
-const FARM_CELL_SIZE := 16.0
+const TILE_SIZE := WorldGrid.ART_TILE_SIZE
+const FARM_CELL_SIZE := WorldGrid.CELL_SIZE
 const WORLD_SIZE := Vector2i(41, 26)
 
 const GRASS_TEXTURE := preload("res://assets/art/environment/terrain/terrain_grass_tileset.png")
@@ -46,8 +46,8 @@ func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i,
 	var layer := TileMapLayer.new()
 	layer.name = layer_name
 	# 让瓦片中心与现有32像素交互网格对齐。
-	layer.position = Vector2(-16.0, -16.0)
-	layer.scale = Vector2(2.0, 2.0)
+	layer.position = Vector2(-WorldGrid.HALF_CELL, -WorldGrid.HALF_CELL)
+	layer.scale = WorldGrid.ART_SCALE
 	layer.z_index = layer_z_index
 	var tiles := TileSet.new()
 	tiles.tile_size = TILE_SIZE
@@ -70,7 +70,7 @@ func _refresh_farming_terrain() -> void:
 	for node in get_tree().get_nodes_in_group("farm_plots"):
 		var plot := node as FarmPlot
 		if plot.state != FarmPlot.PlotState.EMPTY:
-			next_cells.append(Vector2i(roundi(plot.position.x / FARM_CELL_SIZE), roundi(plot.position.y / FARM_CELL_SIZE)))
+			next_cells.append(WorldGrid.world_to_cell(plot.position))
 	next_cells.sort()
 	if next_cells == connected_farm_cells:
 		return
@@ -129,8 +129,8 @@ func _build_pond_collision() -> void:
 		var horizontal_range: Vector2i = pond_rows[y]
 		var collision := CollisionShape2D.new()
 		var shape := RectangleShape2D.new()
-		shape.size = Vector2((horizontal_range.y - horizontal_range.x + 1) * 32.0, 30.0)
-		collision.position = Vector2((horizontal_range.x + horizontal_range.y) * 16.0, y * 32.0)
+		shape.size = Vector2((horizontal_range.y - horizontal_range.x + 1) * WorldGrid.CELL_SIZE, WorldGrid.CELL_SIZE - 2.0)
+		collision.position = Vector2((horizontal_range.x + horizontal_range.y) * WorldGrid.HALF_CELL, y * WorldGrid.CELL_SIZE)
 		collision.shape = shape
 		pond_body.add_child(collision)
 
@@ -179,7 +179,7 @@ func _update_grid_cursor() -> void:
 		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH, FARM_CELL_SIZE)
 		cursor_hint = "" if reachable else "目标太远，靠近后才能操作"
 		return
-	var snapped_position := Vector2(roundf(mouse_position.x / FARM_CELL_SIZE) * FARM_CELL_SIZE, roundf(mouse_position.y / FARM_CELL_SIZE) * FARM_CELL_SIZE)
+	var snapped_position := WorldGrid.snap_world_position(mouse_position)
 	grid_cursor.set_cursor(snapped_position, WorldGridCursor.CursorState.BLOCKED, FARM_CELL_SIZE)
 	cursor_hint = "该区域不可耕作"
 

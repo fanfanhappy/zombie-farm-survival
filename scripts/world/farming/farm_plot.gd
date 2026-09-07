@@ -3,7 +3,7 @@ extends Node2D
 
 enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
 
-const CELL_SIZE := 16.0
+const CELL_SIZE := WorldGrid.CELL_SIZE
 
 var state := PlotState.EMPTY
 var watered := false
@@ -171,5 +171,5 @@ func _draw() -> void:
 	if highlight_state > 0:
 		var highlight_color := Color(1.0, 0.88, 0.3, 0.28) if highlight_state == 1 else Color(0.95, 0.28, 0.25, 0.24)
 		var border_color := Color("#ffe36b") if highlight_state == 1 else Color("#ee6158")
-		draw_rect(Rect2(-8, -8, CELL_SIZE, CELL_SIZE), highlight_color, true)
-		draw_rect(Rect2(-7.5, -7.5, CELL_SIZE - 1.0, CELL_SIZE - 1.0), border_color, false, 1.0)
+		draw_rect(Rect2(-WorldGrid.HALF_CELL, -WorldGrid.HALF_CELL, CELL_SIZE, CELL_SIZE), highlight_color, true)
+		draw_rect(Rect2(-WorldGrid.HALF_CELL + 1.0, -WorldGrid.HALF_CELL + 1.0, CELL_SIZE - 2.0, CELL_SIZE - 2.0), border_color, false, 2.0)

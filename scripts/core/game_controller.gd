@@ -2,6 +2,7 @@ extends Node2D
 
 const PLAYER_HOME := Vector2(640, 460)
 const DAY_LENGTH_SECONDS := 90.0
+const DAY_START_PROGRESS := 7.0 / 24.0
 const WATERING_CAN_CAPACITY := 5
 const CHICKEN_SCENE := preload("res://scenes/world/animals/chicken.tscn")
 const HOMESTEAD_SCENE := preload("res://scenes/world/buildings/homestead.tscn")
@@ -42,7 +43,7 @@ const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 
 const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
-var day_progress := 0.25
+var day_progress := DAY_START_PROGRESS
 var last_hour := -1
 var night_spawned := false
 var message_time := 0.0
@@ -96,7 +97,7 @@ func _ready() -> void:
 
 func reset_for_new_game() -> void:
 	day = 1
-	day_progress = 0.25
+	day_progress = DAY_START_PROGRESS
 	last_hour = -1
 	night_spawned = false
 	kills = 0
@@ -325,7 +326,7 @@ func _on_player_died() -> void:
 	if inventory.has_item("potato"): inventory.remove_item("potato", 1)
 	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
 	player.revive(PLAYER_HOME)
-	day_progress = 0.25
+	day_progress = DAY_START_PROGRESS
 
 
 func _nearest_interactable() -> Node:
@@ -431,8 +432,8 @@ func _spawn_world_objects() -> void:
 		var node := resource_scene.instantiate() as HarvestableResource
 		node.position = data[1]; add_child(node); node.setup(data[0])
 	# 耕地使用素材原生的16像素网格；数量加倍后测试区占地范围基本不变。
-	for row in 12:
-		for column in 24:
+	for row in 6:
+		for column in 12:
 			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
 	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
 		var chicken := CHICKEN_SCENE.instantiate() as Chicken
@@ -465,11 +466,17 @@ func _add_wall(at: Vector2, size: Vector2) -> void:
 
 
 func _update_lighting() -> void:
-	var hour := day_progress * 24.0; var light := 1.0
-	if hour < 5.0: light = 0.38
-	elif hour < 7.0: light = lerpf(0.38, 1.0, (hour - 5.0) / 2.0)
-	elif hour > 19.0: light = lerpf(1.0, 0.38, minf((hour - 19.0) / 2.5, 1.0))
-	darkness.color = Color(light, light, lerpf(light, 0.58, 1.0 - light), 1.0)
+	var hour := day_progress * 24.0
+	var night_color := Color(0.48, 0.54, 0.68, 1.0)
+	var dawn_color := Color(0.82, 0.78, 0.72, 1.0)
+	if hour < 5.0:
+		darkness.color = night_color
+	elif hour < 7.0:
+		darkness.color = dawn_color.lerp(Color.WHITE, (hour - 5.0) / 2.0)
+	elif hour <= 19.0:
+		darkness.color = Color.WHITE
+	else:
+		darkness.color = Color.WHITE.lerp(night_color, minf((hour - 19.0) / 2.5, 1.0))
 
 
 func _update_hud() -> void:
@@ -570,7 +577,7 @@ func save_game() -> void:
 func load_game() -> void:
 	var data := SaveSystem.load_game()
 	if data.is_empty(): show_message("没有找到存档"); return
-	day = int(data.get("day", 1)); day_progress = float(data.get("day_progress", 0.25))
+	day = int(data.get("day", 1)); day_progress = float(data.get("day_progress", DAY_START_PROGRESS))
 	weather_system.set_weather(str(data.get("weather", "clear")))
 	var saved_inventory: Dictionary = data.get("inventory", data.get("resources", STARTING_ITEMS))
 	inventory.restore_save_data(saved_inventory)
@@ -807,7 +814,7 @@ func _on_homestead_destroyed() -> void:
 	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
 	homestead.restore_full()
 	day += 1
-	day_progress = 0.25
+	day_progress = DAY_START_PROGRESS
 	night_spawned = false
 
 
@@ -886,7 +893,7 @@ func use_watering_can() -> void:
 
 
 func _advance_to_next_day() -> void:
-	day_progress = 0.25
+	day_progress = DAY_START_PROGRESS
 	day += 1
 	night_spawned = false
 	for remaining_zombie in get_tree().get_nodes_in_group("zombies"): remaining_zombie.queue_free()

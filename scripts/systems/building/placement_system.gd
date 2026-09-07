@@ -4,7 +4,7 @@ extends Node2D
 signal placement_started(item_id: String)
 signal placement_ended
 
-const GRID_SIZE := 32.0
+const GRID_SIZE := WorldGrid.CELL_SIZE
 const MAP_BOUNDS := Rect2(32, 32, 1216, 736)
 const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
 const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
@@ -28,7 +28,7 @@ func setup(world: Node2D, inventory_system: InventorySystem) -> void:
 
 func _process(_delta: float) -> void:
 	if not is_placing(): return
-	global_position = get_global_mouse_position().snapped(Vector2(GRID_SIZE, GRID_SIZE))
+	global_position = WorldGrid.snap_world_position(get_global_mouse_position())
 	rotation = rotation_quarters * PI * 0.5
 	placement_valid = _check_placement_valid()
 	if is_instance_valid(preview_instance):

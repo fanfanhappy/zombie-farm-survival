@@ -55,6 +55,7 @@
 - 树木、石块、草药和地面掉落物改为独立场景，精灵、碰撞与进度条可视化编辑
 - 栅栏、尖刺、捕兽夹和储物箱改为独立场景，放置预览直接复用设施外观
 - 感染者外观与碰撞改为独立场景，普通和快速类型复用同一可视化结构
+- 世界瓦片、耕地高亮和建筑放置统一使用32像素逻辑网格，白天不再全局染色
 
 ## 入口文件
 
@@ -63,6 +64,7 @@
 - 游戏流程：`scripts/core/game_controller.gd`
 - 项目结构规范：`docs/project_structure.md`
 - 命名规范：`docs/naming_conventions.md`
+- 可视化资源规范：`docs/visual_authoring_guidelines.md`
 - 物品目录：`data/items/item_catalog.json`
 
 ## 原型操作
