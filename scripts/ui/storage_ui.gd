@@ -1,5 +1,5 @@
 class_name StorageUI
-extends CanvasLayer
+extends Control
 
 signal storage_closed
 

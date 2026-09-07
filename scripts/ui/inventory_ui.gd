@@ -1,5 +1,5 @@
 class_name InventoryUI
-extends CanvasLayer
+extends Control
 
 signal item_use_requested(item_id: String)
 signal item_drop_requested(item_id: String)

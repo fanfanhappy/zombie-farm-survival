@@ -21,27 +21,27 @@ const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $GameWorld/WorldLighting
-@onready var status_hud: CharacterStatusHUD = $HUD/StatusPanel
-@onready var prompt_label: Label = $HUD/Prompt
-@onready var message_label: Label = $HUD/Message
-@onready var help_label: Label = $HUD/HelpPanel/Margin/Help
+@onready var status_hud: CharacterStatusHUD = $UI/HUD/StatusPanel
+@onready var prompt_label: Label = $UI/HUD/Prompt
+@onready var message_label: Label = $UI/HUD/Message
+@onready var help_label: Label = $UI/HUD/HelpPanel/Margin/Help
 @onready var crafting_system: CraftingSystem = $GameSession/CraftingSystem
-@onready var crafting_panel: PanelContainer = $HUD/CraftingPanel
-@onready var crafting_title: Label = $HUD/CraftingPanel/Margin/Content/Title
-@onready var recipe_list: VBoxContainer = $HUD/CraftingPanel/Margin/Content/RecipeList
+@onready var crafting_panel: PanelContainer = $UI/Menus/CraftingPanel
+@onready var crafting_title: Label = $UI/Menus/CraftingPanel/Margin/Content/Title
+@onready var recipe_list: VBoxContainer = $UI/Menus/CraftingPanel/Margin/Content/RecipeList
 @onready var inventory: InventorySystem = $GameSession/InventorySystem
-@onready var inventory_ui: InventoryUI = $InventoryUI
-@onready var storage_ui: StorageUI = $StorageUI
+@onready var inventory_ui: InventoryUI = $UI/InventoryUI
+@onready var storage_ui: StorageUI = $UI/Menus/StorageUI
 @onready var placement_system: PlacementSystem = $PlacementSystem
 @onready var defense_upgrade_system: DefenseUpgradeSystem = $GameSession/DefenseUpgradeSystem
 @onready var horde_system: HordeSystem = $GameSession/HordeSystem
-@onready var horde_label: Label = $HUD/HordeStatus
+@onready var horde_label: Label = $UI/HUD/HordeStatus
 @onready var farming_system: FarmingSystem = $GameSession/FarmingSystem
 @onready var objective_system: ObjectiveSystem = $GameSession/ObjectiveSystem
-@onready var objective_label: Label = $HUD/ObjectiveStatus
+@onready var objective_label: Label = $UI/HUD/ObjectiveStatus
 @onready var weather_system: WeatherSystem = $GameSession/WeatherSystem
-@onready var weather_label: Label = $HUD/WeatherStatus
-@onready var pause_overlay: ColorRect = $HUD/PauseOverlay
+@onready var weather_label: Label = $UI/HUD/WeatherStatus
+@onready var pause_overlay: ColorRect = $UI/Menus/PauseOverlay
 @onready var world_tile_map: WorldTileMap = $GameWorld/TerrainLayers/WorldTileMap
 @onready var logic_layers: Node2D = $GameWorld/LogicLayers
 @onready var building_layer: Node2D = $GameWorld/DynamicYSortGroup/BuildingLayer
@@ -94,11 +94,11 @@ func _ready() -> void:
 	player.died.connect(_on_player_died)
 	_spawn_world_objects()
 	_create_world_collisions()
-	$HUD/CraftingPanel/Margin/Content/Close.pressed.connect(close_crafting)
-	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Resume.pressed.connect(_set_paused.bind(false))
-	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Save.pressed.connect(save_game)
-	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Load.pressed.connect(load_game)
-	$HUD/PauseOverlay/PausePanel/Margin/Buttons/Quit.pressed.connect(get_tree().quit)
+	$UI/Menus/CraftingPanel/Margin/Content/Close.pressed.connect(close_crafting)
+	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.pressed.connect(_set_paused.bind(false))
+	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Save.pressed.connect(save_game)
+	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Load.pressed.connect(load_game)
+	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Quit.pressed.connect(get_tree().quit)
 	_update_hud()
 	var start_mode := SaveSystem.consume_start_mode()
 	if start_mode == "continue": load_game()
@@ -803,7 +803,7 @@ func _set_paused(paused: bool) -> void:
 	pause_overlay.visible = paused
 	Engine.time_scale = 0.0 if paused else 1.0
 	_set_player_control(not paused)
-	if paused: $HUD/PauseOverlay/PausePanel/Margin/Buttons/Resume.grab_focus()
+	if paused: $UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.grab_focus()
 
 
 func _exit_tree() -> void:
