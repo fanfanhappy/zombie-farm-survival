@@ -65,7 +65,8 @@
 - 项目结构规范：`docs/project_structure.md`
 - 命名规范：`docs/naming_conventions.md`
 - 可视化资源规范：`docs/visual_authoring_guidelines.md`
-- 物品目录：`data/items/item_catalog.json`
+- 物品数据库：`resources/items/item_database.tres`
+- 单件物品：`resources/items/definitions/*.tres`（图标、分类、堆叠和玩法参数均可在检查器修改）
 
 ## 原型操作
 

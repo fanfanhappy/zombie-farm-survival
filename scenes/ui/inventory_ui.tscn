@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/inventory_ui.gd" id="1_script"]
-[ext_resource type="Theme" path="res://resources/themes/survival_ui_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hotbar_ui.tscn" id="2_hotbar"]
+[ext_resource type="PackedScene" path="res://scenes/ui/backpack_ui.tscn" id="3_backpack"]
 
 [node name="InventoryUI" type="Control"]
 layout_mode = 3
@@ -13,128 +14,6 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_script")
 
-[node name="HotbarPanel" type="PanelContainer" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -260.0
-offset_top = -78.0
-offset_right = 260.0
-offset_bottom = -6.0
-grow_horizontal = 2
-grow_vertical = 0
-theme = ExtResource("2_theme")
+[node name="HotbarPanel" parent="." instance=ExtResource("2_hotbar")]
 
-[node name="Margin" type="MarginContainer" parent="HotbarPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
-
-[node name="Hotbar" type="HBoxContainer" parent="HotbarPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 5
-alignment = 1
-
-[node name="BackpackPanel" type="PanelContainer" parent="."]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -260.0
-offset_right = 350.0
-offset_bottom = 260.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = ExtResource("2_theme")
-
-[node name="Margin" type="MarginContainer" parent="BackpackPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 18
-
-[node name="Content" type="VBoxContainer" parent="BackpackPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Header" type="HBoxContainer" parent="BackpackPanel/Margin/Content"]
-layout_mode = 2
-
-[node name="Title" type="Label" parent="BackpackPanel/Margin/Content/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 26
-text = "背包"
-
-[node name="Capacity" type="Label" parent="BackpackPanel/Margin/Content/Header"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 1, 1, 0.68)
-text = "0 / 24 格"
-horizontal_alignment = 2
-vertical_alignment = 1
-
-[node name="CloseButton" type="Button" parent="BackpackPanel/Margin/Content/Header"]
-custom_minimum_size = Vector2(44, 36)
-layout_mode = 2
-text = "×"
-
-[node name="Separator" type="HSeparator" parent="BackpackPanel/Margin/Content"]
-layout_mode = 2
-
-[node name="ItemGrid" type="GridContainer" parent="BackpackPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 248)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 6
-
-[node name="DetailPanel" type="PanelContainer" parent="BackpackPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 128)
-layout_mode = 2
-
-[node name="Margin" type="MarginContainer" parent="BackpackPanel/Margin/Content/DetailPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
-
-[node name="Detail" type="VBoxContainer" parent="BackpackPanel/Margin/Content/DetailPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 7
-
-[node name="ItemName" type="Label" parent="BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.67, 1)
-theme_override_font_sizes/font_size = 19
-text = "选择一个物品"
-
-[node name="Description" type="Label" parent="BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
-custom_minimum_size = Vector2(0, 38)
-layout_mode = 2
-size_flags_vertical = 3
-text = "点击物品查看说明，按住并拖动可放入快捷栏。"
-autowrap_mode = 2
-
-[node name="UseButton" type="Button" parent="BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
-visible = false
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-text = "使用"
-
-[node name="DropButton" type="Button" parent="BackpackPanel/Margin/Content/DetailPanel/Margin/Detail"]
-visible = false
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-text = "丢弃 1 个"
+[node name="BackpackPanel" parent="." instance=ExtResource("3_backpack")]

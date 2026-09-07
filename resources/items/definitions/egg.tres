@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/characters/egg_and_nest.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_script")
+item_id = &"egg"
+display_name = "鸡蛋"
+description = "母鸡产出的新鲜食材。"
+category = "ingredient"
+icon = SubResource("AtlasTexture_icon")
+stack_limit = 30
+usable = false
+sort_order = 32
+

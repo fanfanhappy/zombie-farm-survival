@@ -42,7 +42,7 @@ const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 @onready var enemies_root: Node2D = $GameWorld/DynamicYSortGroup/Enemies
 @onready var ground_items_root: Node2D = $GameWorld/DynamicYSortGroup/GroundItems
 
-const STARTING_ITEMS := {"wooden_club": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
+const STARTING_ITEMS := {"wooden_club": 1, "stone_axe": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
 var day := 1
 var day_progress := DAY_START_PROGRESS
 var last_hour := -1
@@ -112,8 +112,9 @@ func reset_for_new_game() -> void:
 	for chicken in get_tree().get_nodes_in_group("chickens"): (chicken as Chicken).reset_for_new_game()
 	inventory.reset_for_new_game(STARTING_ITEMS)
 	inventory.assign_hotbar_item(0, "wooden_club")
-	inventory.assign_hotbar_item(1, "stone_hoe")
-	inventory.assign_hotbar_item(2, "watering_can")
+	inventory.assign_hotbar_item(1, "stone_axe")
+	inventory.assign_hotbar_item(2, "stone_hoe")
+	inventory.assign_hotbar_item(3, "watering_can")
 	watering_can_water = WATERING_CAN_CAPACITY
 	objective_system.reset_for_new_game()
 	player.reset_for_new_game(PLAYER_HOME)

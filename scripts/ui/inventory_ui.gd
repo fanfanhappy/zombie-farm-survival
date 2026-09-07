@@ -6,11 +6,6 @@ signal item_drop_requested(item_id: String)
 signal inventory_closed
 
 const SLOT_TEXTURE := preload("res://assets/art/ui/inventory/ui_inventory_slots.png")
-const GENERAL_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_general_icons.png")
-const TOOL_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_tool_material_icons.png")
-const FARMING_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_farming_icons.png")
-const FOOD_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_food_icons.png")
-const EGG_ICON_TEXTURE := preload("res://assets/art/characters/egg_and_nest.png")
 const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot.tscn")
 
 
@@ -190,36 +185,9 @@ func apply_slot_style(slot: Button, selected: bool) -> void:
 
 
 func get_item_icon(item_id: String) -> Texture2D:
-	match item_id:
-		"watering_can": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(0, 0))
-		"stone_axe": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(1, 0))
-		"stone_pickaxe": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(2, 0))
-		"stone_hoe": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(3, 0))
-		"repair_hammer": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(0, 1))
-		"wooden_club": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(1, 1))
-		"wood": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(0, 2))
-		"stone": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(2, 2))
-		"scrap": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(3, 2))
-		"potato": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 0))
-		"carrot": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(1, 1))
-		"egg": return _create_atlas_icon(EGG_ICON_TEXTURE, Vector2i(0, 0))
-		"potato_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 8))
-		"carrot_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(1, 8))
-		"herb", "herb_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 5))
-		"meal": return _create_atlas_icon(FOOD_ICON_TEXTURE, Vector2i(1, 0))
-		"bandage": return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(3, 2))
-		"storage_chest": return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(0, 0))
-		"wood_fence": return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(1, 2))
-		"wood_spike": return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(2, 2))
-		"snare_trap": return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(4, 2))
-	return _create_atlas_icon(GENERAL_ICON_TEXTURE, Vector2i(0, 0))
-
-
-func _create_atlas_icon(texture: Texture2D, cell: Vector2i) -> AtlasTexture:
-	var icon := AtlasTexture.new()
-	icon.atlas = texture
-	icon.region = Rect2(cell * 16, Vector2i(16, 16))
-	return icon
+	if inventory == null:
+		return null
+	return inventory.get_item_data(item_id).get("icon") as Texture2D
 
 
 func _create_slot_style(column: int) -> StyleBoxTexture:

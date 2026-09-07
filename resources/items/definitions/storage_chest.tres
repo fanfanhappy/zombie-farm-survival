@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/item_general_icons.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_script")
+item_id = &"storage_chest"
+display_name = "木制储物箱"
+description = "可放置的基地储物设施，拥有12种物品栏位。"
+category = "placeable"
+icon = SubResource("AtlasTexture_icon")
+stack_limit = 10
+usable = true
+sort_order = 12
+placement_type = &"storage_chest"
+

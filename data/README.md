@@ -4,7 +4,7 @@
 
 当前数据入口：
 
-- `items/item_catalog.json`：物品显示名、说明、分类、堆叠上限、武器伤害和排序
+- 物品配置已迁移到 `resources/items/definitions/`，本目录只保留配方等纯表格数据
 - `recipes/basic_recipes.json`：工作台与料理台基础配方
 - `hordes/first_horde.json`：第一次尸潮的波次、间隔与奖励
 - `crops/crop_catalog.json`：作物生长天数、颜色和收获内容

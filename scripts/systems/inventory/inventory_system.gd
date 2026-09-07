@@ -3,8 +3,9 @@ extends Node
 
 signal inventory_changed
 
-const ITEM_CATALOG_PATH := "res://data/items/item_catalog.json"
+const DEFAULT_ITEM_DATABASE := preload("res://resources/items/item_database.tres")
 
+@export var item_database: ItemDatabase = DEFAULT_ITEM_DATABASE
 @export var slot_capacity := 24
 @export var hotbar_capacity := 7
 var items: Dictionary = {}
@@ -168,12 +169,8 @@ func _reset_hotbar() -> void:
 
 
 func _load_item_catalog() -> void:
-	if not FileAccess.file_exists(ITEM_CATALOG_PATH):
-		push_error("物品目录不存在：%s" % ITEM_CATALOG_PATH)
+	item_catalog.clear()
+	if item_database == null:
+		push_error("InventorySystem 未配置物品数据库")
 		return
-	var file := FileAccess.open(ITEM_CATALOG_PATH, FileAccess.READ)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary:
-		item_catalog = parsed
-	else:
-		push_error("物品目录格式无效：%s" % ITEM_CATALOG_PATH)
+	item_catalog = item_database.build_catalog()

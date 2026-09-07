@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/item_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/item_food_icons.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(16, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_script")
+item_id = &"meal"
+display_name = "蔬菜炖菜"
+description = "恢复生命、体力和饥饿。"
+category = "consumable"
+icon = SubResource("AtlasTexture_icon")
+stack_limit = 10
+usable = true
+sort_order = 51
+
