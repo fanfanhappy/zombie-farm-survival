@@ -18,6 +18,10 @@
 [ext_resource type="Script" path="res://scripts/core/camera_rig.gd" id="19_camera_rig"]
 
 [ext_resource type="TileSet" uid="uid://c85i64skxhmie" path="res://resources/tilesets/farm_tilled_terrain.tres" id="15_farm_tileset"]
+[ext_resource type="TileSet" path="res://resources/tilesets/terrain_grass_tileset.tres" id="22_grass_tileset"]
+[ext_resource type="TileSet" path="res://resources/tilesets/terrain_water_tileset.tres" id="23_water_tileset"]
+[ext_resource type="TileSet" path="res://resources/tilesets/terrain_path_tileset.tres" id="24_path_tileset"]
+[ext_resource type="TileSet" path="res://resources/tilesets/buildings/perimeter_fence_tileset.tres" id="25_fence_tileset"]
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -100,11 +104,35 @@ layer = 20
 [node name="WorldTileMap" type="Node2D" parent="GameWorld/TerrainLayers" unique_id=308722699]
 script = ExtResource("14_world_tilemap")
 
+[node name="GroundLayer" type="TileMapLayer" parent="GameWorld/TerrainLayers/WorldTileMap"]
+z_index = -20
+position = Vector2(-16, -16)
+scale = Vector2(2, 2)
+tile_set = ExtResource("22_grass_tileset")
+
+[node name="WaterLayer" type="TileMapLayer" parent="GameWorld/TerrainLayers/WorldTileMap"]
+z_index = -19
+position = Vector2(-16, -16)
+scale = Vector2(2, 2)
+tile_set = ExtResource("23_water_tileset")
+
+[node name="PathLayer" type="TileMapLayer" parent="GameWorld/TerrainLayers/WorldTileMap"]
+z_index = -18
+position = Vector2(-16, -16)
+scale = Vector2(2, 2)
+tile_set = ExtResource("24_path_tileset")
+
 [node name="FarmingTerrainLayer" type="TileMapLayer" parent="GameWorld/TerrainLayers/WorldTileMap" unique_id=193206739]
 z_index = -16
 position = Vector2(-16, -16)
 scale = Vector2(2, 2)
 tile_set = ExtResource("15_farm_tileset")
+
+[node name="FenceLayer" type="TileMapLayer" parent="GameWorld/TerrainLayers/WorldTileMap"]
+z_index = -2
+position = Vector2(-16, -16)
+scale = Vector2(2, 2)
+tile_set = ExtResource("25_fence_tileset")
 
 [node name="WorldResourceLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" instance=ExtResource("18_resource_layer")]
 

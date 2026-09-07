@@ -8,6 +8,10 @@ func _init() -> void:
 	await process_frame
 	await process_frame
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap") is WorldTileMap)
+	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/GroundLayer") is TileMapLayer)
+	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WaterLayer") is TileMapLayer)
+	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/PathLayer") is TileMapLayer)
+	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/FenceLayer") is TileMapLayer)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player") is Player)
 	assert(game.get_node("GameWorld/DynamicYSortGroup").y_sort_enabled)
 	assert(game.get_node("CameraRig") is CameraRig)

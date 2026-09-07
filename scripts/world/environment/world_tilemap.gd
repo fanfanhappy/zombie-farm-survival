@@ -1,31 +1,20 @@
 class_name WorldTileMap
 extends Node2D
 
-const TILE_SIZE := WorldGrid.ART_TILE_SIZE
 const FARM_CELL_SIZE := WorldGrid.CELL_SIZE
 const WORLD_SIZE := Vector2i(41, 26)
 
-const GRASS_TEXTURE := preload("res://assets/art/environment/terrain/terrain_grass_tileset.png")
-const WATER_TEXTURE := preload("res://assets/art/environment/terrain/terrain_water_tileset.png")
-const PATH_TEXTURE := preload("res://assets/art/environment/farming/farm_tilled_dirt_clean_tileset.png")
-const FENCE_TEXTURE := preload("res://assets/art/environment/defenses/defense_fence_tileset.png")
-
-var ground_layer: TileMapLayer
-var water_layer: TileMapLayer
-var path_layer: TileMapLayer
-var farming_layer: TileMapLayer
-var fence_layer: TileMapLayer
+@onready var ground_layer: TileMapLayer = $GroundLayer
+@onready var water_layer: TileMapLayer = $WaterLayer
+@onready var path_layer: TileMapLayer = $PathLayer
+@onready var farming_layer: TileMapLayer = $FarmingTerrainLayer
+@onready var fence_layer: TileMapLayer = $FenceLayer
 var grid_cursor: WorldGridCursor
 var cursor_hint := ""
 var connected_farm_cells: Array[Vector2i] = []
 
 
 func _ready() -> void:
-	ground_layer = _create_layer("GroundLayer", GRASS_TEXTURE, Vector2i(11, 7), -20)
-	water_layer = _create_layer("WaterLayer", WATER_TEXTURE, Vector2i(4, 1), -19)
-	path_layer = _create_layer("PathLayer", PATH_TEXTURE, Vector2i(11, 7), -18)
-	farming_layer = get_node("FarmingTerrainLayer") as TileMapLayer
-	fence_layer = _create_layer("FenceLayer", FENCE_TEXTURE, Vector2i(4, 4), -2)
 	_build_ground()
 	_build_pond()
 	_build_pond_collision()
@@ -40,27 +29,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	_refresh_farming_terrain()
 	_update_grid_cursor()
-
-
-func _create_layer(layer_name: String, texture: Texture2D, atlas_size: Vector2i, layer_z_index: int) -> TileMapLayer:
-	var layer := TileMapLayer.new()
-	layer.name = layer_name
-	# 让瓦片中心与现有32像素交互网格对齐。
-	layer.position = Vector2(-WorldGrid.HALF_CELL, -WorldGrid.HALF_CELL)
-	layer.scale = WorldGrid.ART_SCALE
-	layer.z_index = layer_z_index
-	var tiles := TileSet.new()
-	tiles.tile_size = TILE_SIZE
-	var atlas := TileSetAtlasSource.new()
-	atlas.texture = texture
-	atlas.texture_region_size = TILE_SIZE
-	for y in atlas_size.y:
-		for x in atlas_size.x:
-			atlas.create_tile(Vector2i(x, y))
-	tiles.add_source(atlas, 0)
-	layer.tile_set = tiles
-	add_child(layer)
-	return layer
 
 
 func _refresh_farming_terrain() -> void:
