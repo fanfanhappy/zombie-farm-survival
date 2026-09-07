@@ -12,7 +12,7 @@
 [ext_resource type="Script" uid="uid://ore0wuhwce05" path="res://scripts/systems/weather/weather_system.gd" id="11_weather"]
 [ext_resource type="Script" uid="uid://ceekb058vj7rb" path="res://scripts/systems/building/defense_upgrade_system.gd" id="12_defense_upgrade"]
 [ext_resource type="PackedScene" path="res://scenes/actors/player/player.tscn" id="20_player"]
-[ext_resource type="PackedScene" path="res://scenes/ui/character_status_hud.tscn" id="17_status_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_hud.tscn" id="17_game_hud"]
 [ext_resource type="PackedScene" path="res://scenes/world/environment/world_resource_layer.tscn" id="18_resource_layer"]
 [ext_resource type="Script" uid="uid://ba1k3rg43lg30" path="res://scripts/world/environment/world_tilemap.gd" id="14_world_tilemap"]
 [ext_resource type="Script" path="res://scripts/core/camera_rig.gd" id="19_camera_rig"]
@@ -152,124 +152,7 @@ script = ExtResource("11_weather")
 [node name="Player" parent="GameWorld/DynamicYSortGroup" unique_id=1658304268 instance=ExtResource("20_player")]
 position = Vector2(640, 460)
 
-[node name="HUD" type="Control" parent="UI" unique_id=1722933136]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="StatusPanel" parent="UI/HUD" instance=ExtResource("17_status_hud")]
-
-[node name="HelpPanel" type="PanelContainer" parent="UI/HUD" unique_id=1852047460]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -302.0
-offset_top = 23.0
-offset_right = -117.0
-offset_bottom = 93.0
-grow_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="UI/HUD/HelpPanel" unique_id=454774787]
-layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
-
-[node name="Help" type="Label" parent="UI/HUD/HelpPanel/Margin" unique_id=371216887]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
-theme_override_font_sizes/font_size = 14
-text = "操作说明"
-horizontal_alignment = 2
-
-[node name="Prompt" type="Label" parent="UI/HUD" unique_id=1178874905]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -180.0
-offset_top = -100.0
-offset_right = 180.0
-offset_bottom = -60.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.95, 0.72, 1)
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Message" type="Label" parent="UI/HUD" unique_id=1024884298]
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 250.0
-offset_top = 20.0
-offset_right = -250.0
-offset_bottom = 62.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 17
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="HordeStatus" type="Label" parent="UI/HUD" unique_id=608200604]
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 330.0
-offset_top = 68.0
-offset_right = -330.0
-offset_bottom = 102.0
-grow_horizontal = 2
-theme_override_colors/font_color = Color(1, 0.76, 0.46, 1)
-theme_override_font_sizes/font_size = 17
-text = "距离尸潮：6天"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ObjectiveStatus" type="Label" parent="UI/HUD" unique_id=55817735]
-offset_left = 20.0
-offset_top = 330.0
-offset_right = 430.0
-offset_bottom = 366.0
-theme_override_colors/font_color = Color(1, 0.91, 0.62, 1)
-theme_override_colors/font_outline_color = Color(0.08, 0.1, 0.09, 0.9)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 17
-text = "当前目标"
-vertical_alignment = 1
-
-[node name="WeatherStatus" type="Label" parent="UI/HUD" unique_id=1530098105]
-offset_left = 20.0
-offset_top = 372.0
-offset_right = 300.0
-offset_bottom = 404.0
-theme_override_colors/font_color = Color(0.72, 0.88, 0.94, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 16
-text = "天气：晴朗"
-
-[node name="PrototypeBadge" type="Label" parent="UI/HUD" unique_id=1177012578]
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -190.0
-offset_top = -46.0
-offset_right = -20.0
-offset_bottom = -20.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 1, 1, 0.65)
-theme_override_font_sizes/font_size = 14
-text = "Vertical Slice 0.2"
-horizontal_alignment = 2
+[node name="HUD" parent="UI" unique_id=1722933136 instance=ExtResource("17_game_hud")]
 
 [node name="CraftingPanel" type="PanelContainer" parent="UI/Menus" unique_id=134803110]
 visible = false
