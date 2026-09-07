@@ -18,7 +18,7 @@ position = Vector2(0, -19)
 scale = Vector2(2, 2)
 texture = ExtResource("2_texture")
 region_enabled = true
-region_rect = Rect2(32, 0, 32, 48)
+region_rect = Rect2(32, 0, 16, 48)
 
 [node name="DepletedSprite" type="Sprite2D" parent="."]
 visible = false
