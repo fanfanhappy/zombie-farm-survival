@@ -1,0 +1,14 @@
+[gd_resource type="TileSet" load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/resources/tree_resource.tscn" id="1_tree"]
+[ext_resource type="PackedScene" path="res://scenes/world/resources/stone_resource.tscn" id="2_stone"]
+[ext_resource type="PackedScene" path="res://scenes/world/resources/herb_resource.tscn" id="3_herb"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="harvestable_resources"]
+scenes/0/scene = ExtResource("1_tree")
+scenes/1/scene = ExtResource("2_stone")
+scenes/2/scene = ExtResource("3_herb")
+
+[resource]
+tile_size = Vector2i(32, 32)
+sources/0 = SubResource("harvestable_resources")

@@ -47,6 +47,8 @@ Main
 
 资源物件必须分为两套：`StaticDecorations` 只显示并可选带固定碰撞，不注册交互和掉落；`HarvestableResources` 才包含耐久、工具判定、进度、掉落和重生。两类物件分别使用 `static_decorations` 与 `harvestable_resources` 分组，不能混用场景。
 
+对应的绘制资源分别为 `resources/tilesets/static_decoration_scenes.tres` 和 `resources/tilesets/harvestable_resource_scenes.tres`。
+
 ## Git 安全回退
 
 已经推送到 GitHub 的改动使用 `git revert <提交编号>` 生成反向提交，再推送到远端。这样不会改写历史，适合逐阶段撤销。迁移期间禁止用强制推送覆盖远端历史。

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=4]
 
-[ext_resource type="TileSet" path="res://resources/tilesets/world_resource_scenes.tres" id="1_sejw0"]
+[ext_resource type="TileSet" path="res://resources/tilesets/harvestable_resource_scenes.tres" id="1_sejw0"]
 [ext_resource type="TileSet" path="res://resources/tilesets/static_decoration_scenes.tres" id="2_static"]
 
 [node name="WorldResourceLayers" type="Node2D" unique_id=778720538]
