@@ -1,13 +1,8 @@
 class_name Player
 extends CharacterBody2D
 
-@onready var character_sprite: Sprite2D = $CharacterSprite
-
-const WALK_TEXTURE := preload("res://assets/art/characters/basic_charakter_spritesheet.png")
-const ACTION_TEXTURE := preload("res://assets/art/characters/basic_charakter_actions.png")
-const ANIMATION_FPS := 3.0
-const TOOL_ACTION_FRAME_COUNT := 3
-const TOOL_ACTION_DURATION := TOOL_ACTION_FRAME_COUNT / ANIMATION_FPS
+const PLAYER_VISUAL_SCENE := preload("res://scenes/actors/player/player_visual.tscn")
+var character_sprite: AnimatedSprite2D
 
 signal interaction_requested
 signal attack_requested
@@ -41,7 +36,6 @@ var stamina := 100.0
 var hunger := 100.0
 var thirst := 100.0
 var facing_direction := Vector2.DOWN
-var step_time := 0.0
 var attack_time_left := 0.0
 var hurt_flash_left := 0.0
 var attack_damage := 25.0
@@ -53,10 +47,10 @@ var level := 1
 var experience := 0
 var environment_thirst_multiplier := 1.0
 var tool_action_time_left := 0.0
-var tool_action_row_offset := 0
 
 
 func _ready() -> void:
+	_setup_character_visual()
 	# 1层：战斗与防御设施；2层：树木、矿石和生活设施。
 	collision_layer = 1
 	collision_mask = 3
@@ -90,10 +84,7 @@ func _physics_process(delta: float) -> void:
 		_regenerate_stamina(delta)
 	if direction != Vector2.ZERO:
 		facing_direction = direction.normalized()
-		step_time += delta * ANIMATION_FPS
-	else:
-		step_time = 0.0
-	_update_character_sprite(direction)
+	_update_character_animation(direction)
 	move_and_slide()
 	global_position.x = clampf(global_position.x, 24.0, 1256.0)
 	global_position.y = clampf(global_position.y, 24.0, 776.0)
@@ -265,14 +256,16 @@ func get_next_level_experience() -> int:
 
 
 func play_tool_action(action_type: String) -> void:
-	# 动作表第1组是锄地（0-3行），第2组是砍树（4-7行）。
-	match action_type:
-		"axe": tool_action_row_offset = 4
-		"water": tool_action_row_offset = 8
-		_: tool_action_row_offset = 0
-	tool_action_time_left = TOOL_ACTION_DURATION
+	var animation_name := "%s_%s" % [action_type if action_type in ["hoe", "axe", "water"] else "hoe", _get_direction_name()]
+	var frame_count := character_sprite.sprite_frames.get_frame_count(animation_name)
+	var animation_speed := character_sprite.sprite_frames.get_animation_speed(animation_name)
+	tool_action_time_left = float(frame_count) / maxf(animation_speed, 0.01)
 	velocity = Vector2.ZERO
-	_update_character_sprite(Vector2.ZERO)
+	character_sprite.play(animation_name)
+
+
+func get_tool_action_duration() -> float:
+	return tool_action_time_left
 
 
 func _get_direction_row() -> int:
@@ -281,25 +274,27 @@ func _get_direction_row() -> int:
 	return 0 if facing_direction.y > 0.0 else 1
 
 
-func _update_character_sprite(direction: Vector2) -> void:
+func _get_direction_name() -> String:
+	return ["down", "up", "left", "right"][_get_direction_row()]
+
+
+func _update_character_animation(direction: Vector2) -> void:
 	if not is_instance_valid(character_sprite): return
-	var direction_row := _get_direction_row()
 	if tool_action_time_left > 0.0:
-		character_sprite.texture = ACTION_TEXTURE
-		character_sprite.hframes = 3
-		character_sprite.vframes = 12
-		var elapsed := TOOL_ACTION_DURATION - tool_action_time_left
-		var action_frame := mini(int(elapsed * ANIMATION_FPS), TOOL_ACTION_FRAME_COUNT - 1)
-		character_sprite.frame = (tool_action_row_offset + direction_row) * 3 + action_frame
 		character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
 		return
-	if character_sprite.texture != WALK_TEXTURE:
-		character_sprite.texture = WALK_TEXTURE
-		character_sprite.hframes = 4
-		character_sprite.vframes = 4
-	var animation_frame := 0 if direction == Vector2.ZERO else int(step_time) % 4
-	character_sprite.frame = direction_row * 4 + animation_frame
+	var animation_name := "%s_%s" % ["idle" if direction == Vector2.ZERO else "walk", _get_direction_name()]
+	if character_sprite.animation != animation_name:
+		character_sprite.play(animation_name)
 	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
+
+
+func _setup_character_visual() -> void:
+	var legacy_sprite := get_node_or_null("CharacterSprite") as Sprite2D
+	if is_instance_valid(legacy_sprite):
+		legacy_sprite.hide()
+	character_sprite = PLAYER_VISUAL_SCENE.instantiate() as AnimatedSprite2D
+	add_child(character_sprite)
 
 
 func _draw() -> void:

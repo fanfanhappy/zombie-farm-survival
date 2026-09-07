@@ -284,7 +284,7 @@ func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
 			return
 		player.facing_direction = player.global_position.direction_to(target.global_position)
 		target.interact(self)
-		mouse_action_cooldown = player.TOOL_ACTION_DURATION
+		mouse_action_cooldown = player.get_tool_action_duration()
 		return
 	if player.try_mouse_attack(mouse_world_position): mouse_action_cooldown = player.attack_cooldown
 	else: mouse_action_cooldown = 0.1
