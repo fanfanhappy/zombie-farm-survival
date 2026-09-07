@@ -1,30 +1,26 @@
 class_name DefenseStructure
 extends StaticBody2D
 
-var defense_type := "fence"
+@export_enum("fence", "spike") var defense_type := "fence"
 var max_health := 100.0
 var health := 100.0
 var upgrade_level := 1
 var spike_damage := 10.0
+@onready var visual: Node2D = $Visual
+@onready var level_label: Label = $LevelLabel
+@onready var health_bar: ProgressBar = $HealthBar
 
 
 func setup(type: String) -> void:
-	collision_layer = 1
-	collision_mask = 0
 	defense_type = type
 	if type == "spike": max_health = 60.0; health = 60.0
 	add_to_group("defenses")
 	add_to_group("interactables")
-	var collision := CollisionShape2D.new()
-	var rectangle := RectangleShape2D.new()
-	rectangle.size = Vector2(48, 20) if type == "fence" else Vector2(32, 32)
-	collision.shape = rectangle
-	add_child(collision)
-	queue_redraw()
+	_update_visual_state()
 
 
 func take_damage(amount: float) -> void:
-	health -= amount; queue_redraw()
+	health -= amount; _update_visual_state()
 	if health <= 0.0: queue_free()
 
 
@@ -56,7 +52,7 @@ func interact(game: Node) -> void:
 		game.spend_resource(item_id, int(repair_cost[item_id]))
 	health = minf(health + 40.0, max_health)
 	game.show_message("维修完成，耐久恢复到%d/%d" % [int(health), int(max_health)])
-	queue_redraw()
+	_update_visual_state()
 
 
 func get_item_id() -> String:
@@ -72,7 +68,7 @@ func apply_upgrade(new_level: int, upgrade_data: Dictionary) -> void:
 	max_health = float(upgrade_data.get("max_health", max_health))
 	spike_damage = float(upgrade_data.get("spike_damage", spike_damage))
 	health = max_health
-	queue_redraw()
+	_update_visual_state()
 
 
 func try_dismantle(game: Node) -> bool:
@@ -93,14 +89,12 @@ func try_dismantle(game: Node) -> bool:
 
 
 
-func _draw() -> void:
-	if defense_type == "fence":
-		draw_rect(Rect2(-24, -8, 48, 16), [Color("#765237"), Color("#846547"), Color("#66706d")][upgrade_level - 1])
-		for x in [-18, 0, 18]: draw_rect(Rect2(x - 3, -13, 6, 26), Color("#9b7047"))
-	else:
-		for x in [-10, 0, 10]: draw_colored_polygon(PackedVector2Array([Vector2(x - 5, 13), Vector2(x, -14), Vector2(x + 5, 13)]), [Color("#a58a65"), Color("#b6a276"), Color("#9ca7a3")][upgrade_level - 1])
-	draw_string(ThemeDB.fallback_font, Vector2(-5, 28), "Lv%d" % upgrade_level, HORIZONTAL_ALIGNMENT_CENTER, 18, 11, Color.WHITE)
-	var ratio := clampf(health / max_health, 0.0, 1.0)
-	if ratio < 1.0:
-		draw_rect(Rect2(-15, -24, 30, 4), Color("#3b2625"))
-		draw_rect(Rect2(-15, -24, 30 * ratio, 4), Color("#7cc35b"))
+func _update_visual_state() -> void:
+	if not is_instance_valid(visual):
+		return
+	var colors := [Color("#765237"), Color("#846547"), Color("#66706d")] if defense_type == "fence" else [Color("#a58a65"), Color("#b6a276"), Color("#9ca7a3")]
+	visual.modulate = colors[clampi(upgrade_level - 1, 0, 2)]
+	level_label.text = "Lv%d" % upgrade_level
+	health_bar.max_value = max_health
+	health_bar.value = health
+	health_bar.visible = health < max_health

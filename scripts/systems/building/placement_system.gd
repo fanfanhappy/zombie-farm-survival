@@ -6,6 +6,10 @@ signal placement_ended
 
 const GRID_SIZE := 32.0
 const MAP_BOUNDS := Rect2(32, 32, 1216, 736)
+const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
+const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
+const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
+const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 
 var game_world: Node2D
 var inventory: InventorySystem
@@ -13,6 +17,7 @@ var selected_item_id := ""
 var placement_type := ""
 var rotation_quarters := 0
 var placement_valid := false
+var preview_instance: Node2D
 
 
 func setup(world: Node2D, inventory_system: InventorySystem) -> void:
@@ -26,7 +31,8 @@ func _process(_delta: float) -> void:
 	global_position = get_global_mouse_position().snapped(Vector2(GRID_SIZE, GRID_SIZE))
 	rotation = rotation_quarters * PI * 0.5
 	placement_valid = _check_placement_valid()
-	queue_redraw()
+	if is_instance_valid(preview_instance):
+		preview_instance.modulate = Color(0.45, 1.0, 0.55, 0.72) if placement_valid else Color(1.0, 0.38, 0.34, 0.72)
 
 
 func begin_placement(item_id: String) -> void:
@@ -38,6 +44,7 @@ func begin_placement(item_id: String) -> void:
 	selected_item_id = item_id
 	placement_type = item_data.get("placement_type", "")
 	rotation_quarters = 0
+	_create_preview()
 	visible = true
 	placement_started.emit(item_id)
 	game_world.show_message("左键放置　R旋转　右键或Esc取消")
@@ -53,9 +60,10 @@ func try_place() -> bool:
 	if not inventory.remove_item(selected_item_id, 1):
 		cancel_placement(); return false
 	var structure: Node2D
-	if placement_type == "storage_chest": structure = StorageChest.new()
-	elif placement_type == "snare_trap": structure = SnareTrap.new()
-	else: structure = DefenseStructure.new()
+	if placement_type == "storage_chest": structure = STORAGE_CHEST_SCENE.instantiate()
+	elif placement_type == "snare_trap": structure = SNARE_TRAP_SCENE.instantiate()
+	elif placement_type == "fence": structure = FENCE_SCENE.instantiate()
+	else: structure = SPIKE_SCENE.instantiate()
 	structure.position = global_position
 	structure.rotation = rotation
 	game_world.add_child(structure)
@@ -69,7 +77,9 @@ func cancel_placement() -> void:
 	selected_item_id = ""
 	placement_type = ""
 	visible = false
-	queue_redraw()
+	if is_instance_valid(preview_instance):
+		preview_instance.queue_free()
+	preview_instance = null
 	placement_ended.emit()
 
 
@@ -93,19 +103,24 @@ func _check_placement_valid() -> bool:
 	return get_world_2d().direct_space_state.intersect_shape(query, 8).is_empty()
 
 
-func _draw() -> void:
-	if not is_placing(): return
-	var color := Color(0.35, 0.9, 0.45, 0.65) if placement_valid else Color(0.95, 0.28, 0.25, 0.65)
-	if placement_type == "fence":
-		draw_rect(Rect2(-24, -8, 48, 16), color)
-		for x in [-18, 0, 18]: draw_rect(Rect2(x - 3, -13, 6, 26), color)
-	elif placement_type == "storage_chest":
-		draw_rect(Rect2(-21, -14, 42, 28), color)
-		draw_rect(Rect2(-4, -2, 8, 10), color.lightened(0.18))
-	elif placement_type == "snare_trap":
-		draw_arc(Vector2.ZERO, 15.0, 0.0, TAU, 18, color, 5.0)
-		for angle in range(0, 360, 45):
-			var direction := Vector2.from_angle(deg_to_rad(angle))
-			draw_line(direction * 9.0, direction * 18.0, color, 4.0)
-	else:
-		for x in [-10, 0, 10]: draw_colored_polygon(PackedVector2Array([Vector2(x - 5, 13), Vector2(x, -14), Vector2(x + 5, 13)]), color)
+func _create_preview() -> void:
+	if is_instance_valid(preview_instance):
+		preview_instance.queue_free()
+	var preview_scene: PackedScene
+	match placement_type:
+		"fence": preview_scene = FENCE_SCENE
+		"storage_chest": preview_scene = STORAGE_CHEST_SCENE
+		"snare_trap": preview_scene = SNARE_TRAP_SCENE
+		_: preview_scene = SPIKE_SCENE
+	preview_instance = preview_scene.instantiate() as Node2D
+	preview_instance.process_mode = Node.PROCESS_MODE_DISABLED
+	if preview_instance is CollisionObject2D:
+		preview_instance.collision_layer = 0
+		preview_instance.collision_mask = 0
+	if preview_instance is Area2D:
+		preview_instance.monitoring = false
+	add_child(preview_instance)
+	for helper_name in ["LevelLabel", "HealthBar", "ChargesLabel"]:
+		var helper := preview_instance.get_node_or_null(helper_name) as CanvasItem
+		if is_instance_valid(helper):
+			helper.hide()

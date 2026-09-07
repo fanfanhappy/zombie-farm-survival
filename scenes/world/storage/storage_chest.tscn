@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/storage/storage_chest.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/item_general_icons.png" id="2_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_chest"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chest"]
+size = Vector2(42, 30)
+
+[node name="StorageChest" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="Visual" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2.5, 2.5)
+texture = SubResource("AtlasTexture_chest")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_chest")

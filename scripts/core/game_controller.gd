@@ -9,6 +9,10 @@ const TREE_RESOURCE_SCENE := preload("res://scenes/world/resources/tree_resource
 const STONE_RESOURCE_SCENE := preload("res://scenes/world/resources/stone_resource.tscn")
 const HERB_RESOURCE_SCENE := preload("res://scenes/world/resources/herb_resource.tscn")
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
+const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
+const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
+const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
+const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -610,7 +614,8 @@ func _restore_defenses(saved_defenses: Array) -> void:
 	for node in get_tree().get_nodes_in_group("defenses"): node.queue_free()
 	for entry in saved_defenses:
 		if not entry is Dictionary: continue
-		var structure := DefenseStructure.new()
+		var structure_scene: PackedScene = FENCE_SCENE if str(entry.get("type", "fence")) == "fence" else SPIKE_SCENE
+		var structure := structure_scene.instantiate() as DefenseStructure
 		structure.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		structure.rotation = float(entry.get("rotation", 0.0))
 		add_child(structure)
@@ -633,7 +638,7 @@ func _restore_storage_chests(saved_chests: Array) -> void:
 	for node in get_tree().get_nodes_in_group("storage_chests"): node.queue_free()
 	for entry in saved_chests:
 		if not entry is Dictionary: continue
-		var chest := StorageChest.new()
+		var chest := STORAGE_CHEST_SCENE.instantiate() as StorageChest
 		chest.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		chest.rotation = float(entry.get("rotation", 0.0))
 		add_child(chest)
@@ -651,7 +656,7 @@ func _restore_snare_traps(saved_traps: Array) -> void:
 	for node in get_tree().get_nodes_in_group("snare_traps"): node.queue_free()
 	for entry in saved_traps:
 		if not entry is Dictionary: continue
-		var trap := SnareTrap.new()
+		var trap := SNARE_TRAP_SCENE.instantiate() as SnareTrap
 		trap.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
 		trap.rotation = float(entry.get("rotation", 0.0))
 		trap.charges = int(entry.get("charges", SnareTrap.MAX_CHARGES))
