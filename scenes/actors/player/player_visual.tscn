@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://bhkko1q2yaykj"]
 
-[ext_resource type="SpriteFrames" path="res://resources/animations/player_sprite_frames.tres" id="1_frames"]
+[ext_resource type="SpriteFrames" uid="uid://c3a1xnc26w1xh" path="res://resources/animations/player_sprite_frames.tres" id="1_frames"]
 
-[node name="PlayerAnimation" type="AnimatedSprite2D"]
+[node name="PlayerAnimation" type="AnimatedSprite2D" unique_id=112841164]
 texture_filter = 1
 position = Vector2(0, -7)
 scale = Vector2(2, 2)

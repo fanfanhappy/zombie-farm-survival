@@ -1,15 +1,15 @@
-[gd_resource type="TileSet" load_steps=3 format=3]
+[gd_resource type="TileSet" format=3 uid="uid://btlwpcbijj0w0"]
 
-[ext_resource type="Texture2D" path="res://assets/art/environment/terrain/terrain_water_tileset.png" id="1_texture"]
+[ext_resource type="Texture2D" uid="uid://sn2iaf1054j8" path="res://assets/art/environment/terrain/terrain_water_tileset.png" id="1_texture"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_water"]
 texture = ExtResource("1_texture")
-texture_region_size = Vector2i(16, 16)
+0:0/animation_columns = 4
+0:0/animation_frame_0/duration = 0.2
+0:0/animation_frame_1/duration = 0.2
+0:0/animation_frame_2/duration = 0.2
+0:0/animation_frame_3/duration = 0.2
 0:0/0 = 0
-1:0/0 = 0
-2:0/0 = 0
-3:0/0 = 0
 
 [resource]
-tile_size = Vector2i(16, 16)
 sources/0 = SubResource("TileSetAtlasSource_water")

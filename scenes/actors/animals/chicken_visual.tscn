@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://8ldb8w1qpvfw"]
 
-[ext_resource type="SpriteFrames" path="res://resources/animations/chicken_sprite_frames.tres" id="1_frames"]
+[ext_resource type="SpriteFrames" uid="uid://cicmg3uneovd6" path="res://resources/animations/chicken_sprite_frames.tres" id="1_frames"]
 
-[node name="ChickenAnimation" type="AnimatedSprite2D"]
+[node name="ChickenAnimation" type="AnimatedSprite2D" unique_id=120673526]
 texture_filter = 1
 scale = Vector2(2, 2)
 sprite_frames = ExtResource("1_frames")

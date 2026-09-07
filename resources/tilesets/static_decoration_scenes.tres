@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=5 format=3]
+[gd_resource type="TileSet" format=3 uid="uid://cghyqb0r221rk"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/decorations/static_tree_decoration.tscn" id="1_tree"]
 [ext_resource type="PackedScene" path="res://scenes/world/decorations/static_stone_decoration.tscn" id="2_stone"]

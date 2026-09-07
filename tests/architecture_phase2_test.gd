@@ -2,6 +2,14 @@ extends SceneTree
 
 
 func _init() -> void:
+	_validate_sprite_frames("res://resources/animations/player_sprite_frames.tres", [
+		&"idle_down", &"idle_left", &"idle_right", &"idle_up",
+		&"walk_down", &"walk_left", &"walk_right", &"walk_up",
+		&"axe_down", &"axe_left", &"axe_right", &"axe_up",
+		&"hoe_down", &"hoe_left", &"hoe_right", &"hoe_up",
+		&"water_down", &"water_left", &"water_right", &"water_up",
+	])
+	_validate_sprite_frames("res://resources/animations/chicken_sprite_frames.tres", [&"chicken_a", &"chicken_b"])
 	var scene := load("res://scenes/game/game_world.tscn") as PackedScene
 	var game := scene.instantiate()
 	root.add_child(game)
@@ -92,3 +100,21 @@ func _init() -> void:
 	assert(main_menu.get_node("Center/Menu/Margin/Content/ContinueButton") is Button)
 	print("ARCHITECTURE_AND_NEW_GAME_REGRESSION_OK")
 	quit()
+
+
+func _validate_sprite_frames(resource_path: String, required_animations: Array[StringName]) -> void:
+	var frames := load(resource_path) as SpriteFrames
+	assert(is_instance_valid(frames))
+	for animation_name in required_animations:
+		assert(frames.has_animation(animation_name))
+		assert(frames.get_frame_count(animation_name) > 0)
+		assert(frames.get_animation_speed(animation_name) > 0.0)
+		for frame_index in frames.get_frame_count(animation_name):
+			var texture := frames.get_frame_texture(animation_name, frame_index)
+			assert(is_instance_valid(texture))
+			if texture is AtlasTexture:
+				var atlas_texture := texture as AtlasTexture
+				assert(is_instance_valid(atlas_texture.atlas))
+				var atlas_size := atlas_texture.atlas.get_size()
+				assert(atlas_texture.region.position.x >= 0.0 and atlas_texture.region.position.y >= 0.0)
+				assert(atlas_texture.region.end.x <= atlas_size.x and atlas_texture.region.end.y <= atlas_size.y)
