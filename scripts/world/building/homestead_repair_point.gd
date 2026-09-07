@@ -7,7 +7,6 @@ var homestead: HomesteadCore
 func setup(home: HomesteadCore) -> void:
 	homestead = home
 	add_to_group("interactables")
-	queue_redraw()
 
 
 func get_interaction_prompt() -> String:
@@ -36,9 +35,3 @@ func interact(game: Node) -> void:
 		game.spend_resource(item_id, int(cost[item_id]))
 	homestead.repair(55.0)
 	game.show_message("农舍耐久恢复到%d/%d" % [int(homestead.health), int(homestead.max_health)])
-
-
-func _draw() -> void:
-	draw_rect(Rect2(-17, -10, 34, 20), Color("#8a6845"))
-	draw_rect(Rect2(-8, -17, 16, 7), Color("#9e815f"))
-	draw_circle(Vector2(0, 0), 4.0, Color("#d8c07d"))

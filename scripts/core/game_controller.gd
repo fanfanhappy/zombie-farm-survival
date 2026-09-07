@@ -15,6 +15,11 @@ const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
 const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
 const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
+const WORKBENCH_SCENE := preload("res://scenes/world/facilities/workbench.tscn")
+const KITCHEN_SCENE := preload("res://scenes/world/facilities/kitchen.tscn")
+const SLEEP_POINT_SCENE := preload("res://scenes/world/facilities/sleep_point.tscn")
+const WATER_PUMP_SCENE := preload("res://scenes/world/facilities/water_pump.tscn")
+const REPAIR_POINT_SCENE := preload("res://scenes/world/facilities/homestead_repair_point.tscn")
 
 @onready var player: Player = $Player
 @onready var darkness: CanvasModulate = $Darkness
@@ -439,10 +444,10 @@ func _spawn_world_objects() -> void:
 		var chicken := CHICKEN_SCENE.instantiate() as Chicken
 		chicken.setup(chicken_data[0], chicken_data[1])
 		add_child(chicken)
-	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
-	var kitchen := CraftingStation.new(); kitchen.position = Vector2(1040, 325); add_child(kitchen); kitchen.setup("kitchen")
-	var sleep_point := SleepPoint.new(); sleep_point.position = Vector2(930, 425); add_child(sleep_point)
-	var water_pump := WaterPump.new(); water_pump.position = Vector2(755, 435); add_child(water_pump)
+	var workbench := WORKBENCH_SCENE.instantiate() as CraftingStation; workbench.position = Vector2(625, 330); add_child(workbench)
+	var kitchen := KITCHEN_SCENE.instantiate() as CraftingStation; kitchen.position = Vector2(1040, 325); add_child(kitchen)
+	var sleep_point := SLEEP_POINT_SCENE.instantiate() as SleepPoint; sleep_point.position = Vector2(930, 425); add_child(sleep_point)
+	var water_pump := WATER_PUMP_SCENE.instantiate() as WaterPump; water_pump.position = Vector2(755, 435); add_child(water_pump)
 
 
 func _create_world_collisions() -> void:
@@ -453,7 +458,7 @@ func _create_world_collisions() -> void:
 	add_child(homestead)
 	homestead.setup(Vector2(300, 220))
 	homestead.destroyed.connect(_on_homestead_destroyed)
-	var repair_point := HomesteadRepairPoint.new()
+	var repair_point := REPAIR_POINT_SCENE.instantiate() as HomesteadRepairPoint
 	repair_point.position = Vector2(840, 420)
 	add_child(repair_point)
 	repair_point.setup(homestead)

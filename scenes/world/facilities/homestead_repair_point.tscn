@@ -1,0 +1,40 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/building/homestead_repair_point.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sign"]
+bg_color = Color(0.42, 0.29, 0.17, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.72, 0.55, 0.3, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="HomesteadRepairPoint" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sign" type="Panel" parent="Visual"]
+offset_left = -18.0
+offset_top = -14.0
+offset_right = 18.0
+offset_bottom = 10.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_sign")
+mouse_filter = 2
+
+[node name="HammerHandle" type="Polygon2D" parent="Visual"]
+position = Vector2(2, -4)
+rotation = -0.785398
+polygon = PackedVector2Array(-2, -10, 2, -10, 2, 11, -2, 11)
+color = Color(0.78, 0.57, 0.3, 1)
+
+[node name="HammerHead" type="Polygon2D" parent="Visual"]
+position = Vector2(-5, -11)
+rotation = -0.785398
+polygon = PackedVector2Array(-8, -4, 8, -4, 8, 4, -8, 4)
+color = Color(0.78, 0.82, 0.8, 1)

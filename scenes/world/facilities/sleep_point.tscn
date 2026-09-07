@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/homestead/sleep_point.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/art/environment/facilities/basic_furniture.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(30, 54)
+
+[node name="SleepPoint" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="BedSprite" type="Sprite2D" parent="Visual"]
+texture_filter = 1
+position = Vector2(0, -16)
+scale = Vector2(2, 2)
+texture = ExtResource("2_texture")
+region_enabled = true
+region_rect = Rect2(0, 32, 16, 32)
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(0, -11)
+shape = SubResource("RectangleShape2D_body")
