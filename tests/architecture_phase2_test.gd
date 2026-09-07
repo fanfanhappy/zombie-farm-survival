@@ -42,5 +42,42 @@ func _init() -> void:
 	await process_frame
 	assert(get_nodes_in_group("zombies")[0].get_parent().name == "Enemies")
 	assert(get_nodes_in_group("ground_items")[0].get_parent().name == "GroundItems")
-	print("ARCHITECTURE_PHASE2_OK")
+	game.inventory.add_item("bandage", 3)
+	game.inventory.assign_hotbar_item(4, "bandage")
+	game.objective_system.current_index = 2
+	var first_plot := get_nodes_in_group("farm_plots")[0] as FarmPlot
+	first_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED, "watered": true}, game.farming_system)
+	var fence := load("res://scenes/world/defenses/fence.tscn").instantiate() as DefenseStructure
+	game.building_layer.add_child(fence)
+	fence.setup("fence")
+	var chest := load("res://scenes/world/storage/storage_chest.tscn").instantiate() as StorageChest
+	game.building_layer.add_child(chest)
+	await process_frame
+	assert(game._serialize_defenses().size() == 1)
+	assert(game._serialize_storage_chests().size() == 1)
+	assert(game._serialize_ground_items().size() == 1)
+	assert(game._serialize_farm_plots().size() == 72)
+	game.reset_for_new_game()
+	assert(game.inventory.get_amount("bandage") == 0)
+	assert(game.inventory.get_amount("stone_hoe") == 1)
+	assert(game.inventory.get_hotbar_item(0) == "wooden_club")
+	assert(game.inventory.get_hotbar_item(1) == "stone_hoe")
+	assert(game.inventory.get_hotbar_item(2) == "watering_can")
+	assert(game.inventory.get_hotbar_item(4).is_empty())
+	assert(game.objective_system.current_index == 0)
+	assert(first_plot.state == FarmPlot.PlotState.EMPTY)
+	assert(game.player.position == game.PLAYER_HOME)
+	await process_frame
+	assert(get_nodes_in_group("zombies").is_empty())
+	assert(get_nodes_in_group("ground_items").is_empty())
+	assert(get_nodes_in_group("defenses").is_empty())
+	assert(get_nodes_in_group("storage_chests").is_empty())
+	assert(int(ProjectSettings.get_setting("display/window/size/mode")) == 3)
+	assert(str(ProjectSettings.get_setting("display/window/stretch/mode")) == "canvas_items")
+	var main_menu := (load("res://scenes/ui/main_menu.tscn") as PackedScene).instantiate()
+	root.add_child(main_menu)
+	await process_frame
+	assert(main_menu.get_node("Center/Menu/Margin/Content/NewGameButton") is Button)
+	assert(main_menu.get_node("Center/Menu/Margin/Content/ContinueButton") is Button)
+	print("ARCHITECTURE_AND_NEW_GAME_REGRESSION_OK")
 	quit()
