@@ -10,6 +10,7 @@ const GENERAL_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_general_ic
 const TOOL_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_tool_material_icons.png")
 const FARMING_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_farming_icons.png")
 const FOOD_ICON_TEXTURE := preload("res://assets/art/ui/icons/item_food_icons.png")
+const EGG_ICON_TEXTURE := preload("res://assets/art/characters/egg_and_nest.png")
 
 
 class DraggableItemSlot extends Button:
@@ -279,6 +280,7 @@ func get_item_icon(item_id: String) -> Texture2D:
 		"scrap": return _create_atlas_icon(TOOL_ICON_TEXTURE, Vector2i(3, 2))
 		"potato": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 0))
 		"carrot": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(1, 1))
+		"egg": return _create_atlas_icon(EGG_ICON_TEXTURE, Vector2i(0, 0))
 		"potato_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 8))
 		"carrot_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(1, 8))
 		"herb", "herb_seed": return _create_atlas_icon(FARMING_ICON_TEXTURE, Vector2i(0, 5))

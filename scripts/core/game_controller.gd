@@ -97,6 +97,7 @@ func reset_for_new_game() -> void:
 	for trap in get_tree().get_nodes_in_group("snare_traps"): trap.queue_free()
 	for ground_item in get_tree().get_nodes_in_group("ground_items"): ground_item.queue_free()
 	for plot in get_tree().get_nodes_in_group("farm_plots"): (plot as FarmPlot).reset_for_new_game()
+	for chicken in get_tree().get_nodes_in_group("chickens"): (chicken as Chicken).reset_for_new_game()
 	inventory.reset_for_new_game(STARTING_ITEMS)
 	inventory.assign_hotbar_item(0, "wooden_club")
 	inventory.assign_hotbar_item(1, "stone_hoe")
@@ -420,6 +421,10 @@ func _spawn_world_objects() -> void:
 	for row in 12:
 		for column in 24:
 			var plot := FarmPlot.new(); plot.position = Vector2(224 + column * FarmPlot.CELL_SIZE, 448 + row * FarmPlot.CELL_SIZE); add_child(plot)
+	for chicken_data in [[Vector2(1010, 555), 0], [Vector2(1080, 590), 1], [Vector2(1125, 535), 0]]:
+		var chicken := Chicken.new()
+		chicken.setup(chicken_data[0], chicken_data[1])
+		add_child(chicken)
 	var workbench := CraftingStation.new(); workbench.position = Vector2(625, 330); add_child(workbench); workbench.setup("workbench")
 	var kitchen := CraftingStation.new(); kitchen.position = Vector2(1040, 325); add_child(kitchen); kitchen.setup("kitchen")
 	var sleep_point := SleepPoint.new(); sleep_point.position = Vector2(930, 425); add_child(sleep_point)
@@ -544,6 +549,8 @@ func save_game() -> void:
 	data["version"] = 17
 	data["snare_traps"] = _serialize_snare_traps()
 	data["watering_can_water"] = watering_can_water
+	data["chickens"] = _serialize_chickens()
+	data["version"] = 18
 	show_message("游戏已保存" if SaveSystem.save_game(data) else "保存失败")
 
 
@@ -577,6 +584,7 @@ func load_game() -> void:
 	_restore_snare_traps(data.get("snare_traps", []))
 	_restore_ground_items(data.get("ground_items", []))
 	_restore_farm_plots(data.get("farm_plots", []))
+	_restore_chickens(data.get("chickens", []))
 	kills = int(data.get("kills", 0)); hordes_survived = int(data.get("hordes_survived", 0))
 	objective_system.restore_save_data(data.get("objectives", {}))
 	_update_hud(); show_message("存档已读取")
@@ -654,6 +662,20 @@ func _serialize_ground_items() -> Array[Dictionary]:
 	for node in get_tree().get_nodes_in_group("ground_items"):
 		result.append((node as GroundItem).create_save_data())
 	return result
+
+
+func _serialize_chickens() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for node in get_tree().get_nodes_in_group("chickens"):
+		result.append((node as Chicken).create_save_data())
+	return result
+
+
+func _restore_chickens(saved_chickens: Array) -> void:
+	var chickens := get_tree().get_nodes_in_group("chickens")
+	for index in mini(saved_chickens.size(), chickens.size()):
+		if saved_chickens[index] is Dictionary:
+			(chickens[index] as Chicken).restore_save_data(saved_chickens[index])
 
 
 func _restore_ground_items(saved_items: Array) -> void:
@@ -855,6 +877,7 @@ func _advance_to_next_day() -> void:
 	night_spawned = false
 	for remaining_zombie in get_tree().get_nodes_in_group("zombies"): remaining_zombie.queue_free()
 	for plot in get_tree().get_nodes_in_group("farm_plots"): plot.advance_day()
+	for chicken in get_tree().get_nodes_in_group("chickens"): chicken.advance_day()
 	weather_system.choose_weather_for_day(day)
 	if bool(weather_system.get_current_data().get("waters_crops", false)):
 		for plot in get_tree().get_nodes_in_group("farm_plots"): plot.water_from_rain()

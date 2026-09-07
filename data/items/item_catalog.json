@@ -133,6 +133,13 @@
     "stack_limit": 50,
     "sort_order": 41
   },
+  "egg": {
+    "name": "鸡蛋",
+    "description": "母鸡每天可能产出的新鲜食材，后续可用于烹饪。",
+    "category": "ingredient",
+    "stack_limit": 30,
+    "sort_order": 42
+  },
   "potato_seed": {
     "name": "土豆种子",
     "description": "在开垦过的农田格中播种。",
