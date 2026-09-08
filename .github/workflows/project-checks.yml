@@ -1,0 +1,25 @@
+name: Godot项目检查
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取仓库
+        uses: actions/checkout@v4
+      - name: 安装Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: 导入项目与注册资源类型
+        run: godot --headless --editor --path . --quit
+      - name: 检查资源数据库
+        run: godot --headless --path . --script res://tests/resource_database_test.gd
+      - name: 检查架构和新游戏重置
+        run: godot --headless --path . --script res://tests/architecture_phase2_test.gd
