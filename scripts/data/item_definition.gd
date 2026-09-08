@@ -18,6 +18,7 @@ extends Resource
 @export var placement_type: StringName
 @export var crop_id: StringName
 @export var attack_damage := 0.0
+@export var consumable_effect: ConsumableEffectDefinition
 
 
 func to_dictionary() -> Dictionary:

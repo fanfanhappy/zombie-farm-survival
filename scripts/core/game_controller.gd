@@ -57,6 +57,7 @@ var mouse_action_cooldown := 0.0
 var watering_can_water := WATERING_CAN_CAPACITY
 var persistence := GamePersistence.new()
 var targeting := WorldTargetingService.new()
+var item_use_system := ItemUseSystem.new()
 
 
 func _ready() -> void:
@@ -501,29 +502,19 @@ func _craft_recipe(recipe_id: String) -> void:
 
 
 func apply_recipe_effect(effect: Dictionary) -> void:
-	if effect.has("equip_weapon"):
-		var item_id := str(effect["equip_weapon"])
-		var item_data := inventory.get_item_data(item_id)
-		player.equip_weapon(item_id, item_data.get("name", item_id), float(effect.get("attack_damage", item_data.get("attack_damage", 25.0))))
+	item_use_system.apply_recipe_effect(self, effect)
 
 
 func _use_bandage() -> void:
-	if player.health >= player.max_health: show_message("生命值已经满了"); return
-	if not spend_resource("bandage", 1): show_message("没有绷带"); return
-	player.heal(35.0); show_message("使用绷带，恢复35点生命")
+	item_use_system.use_consumable(self, "bandage")
 
 
 func _eat_meal() -> void:
-	if not spend_resource("meal", 1): show_message("没有炖菜"); return
-	player.heal(20.0); player.restore_stamina(45.0); player.restore_hunger(60.0); player.apply_well_fed(60.0)
-	show_message("吃下炖菜：饥饿+60，60秒内攻击+20%、体力恢复+35%")
+	item_use_system.use_consumable(self, "meal")
 
 
 func _eat_potato() -> void:
-	if player.hunger >= player.max_hunger: show_message("现在还不饿"); return
-	if not spend_resource("potato", 1): show_message("没有土豆"); return
-	player.restore_hunger(18.0)
-	show_message("吃下土豆，恢复18点饥饿")
+	item_use_system.use_consumable(self, "potato")
 
 
 func save_game() -> void:
@@ -593,26 +584,7 @@ func _restore_farm_plots(entries: Array) -> void:
 
 
 func _on_inventory_item_use_requested(item_id: String) -> void:
-	var item_data := inventory.get_item_data(item_id)
-	if item_data.get("category", "") == "placeable":
-		if inventory_ui.is_backpack_open(): inventory_ui.close_backpack()
-		placement_system.begin_placement(item_id)
-	elif item_data.get("category", "") == "weapon":
-		player.equip_weapon(item_id, item_data.get("name", item_id), float(item_data.get("attack_damage", 25.0)))
-		show_message("已装备：%s" % item_data.get("name", item_id))
-	elif item_data.get("category", "") == "seed":
-		show_message("已选中：%s，靠近开垦后的农田按E播种" % item_data.get("name", item_id))
-	elif item_data.get("category", "") == "tool":
-		if get_selected_hotbar_item_id() == item_id:
-			show_message("已选中工具：%s" % item_data.get("name", item_id))
-		else:
-			show_message("请先把%s拖入快捷栏" % item_data.get("name", item_id))
-	else:
-		match item_id:
-			"bandage": _use_bandage()
-			"meal": _eat_meal()
-			"potato": _eat_potato()
-			_: show_message("这个物品目前不能直接使用")
+	item_use_system.handle_item_use(self, item_id)
 	inventory_ui.refresh()
 
 
