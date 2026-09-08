@@ -50,7 +50,9 @@ func _init() -> void:
 		assert(not enemy.enemy_id.is_empty())
 		assert(enemy.max_health > 0.0)
 		assert(enemy.move_speed > 0.0)
-		if not enemy.drop_item_id.is_empty(): assert(item_catalog.has(String(enemy.drop_item_id)))
+		for loot_entry in enemy.loot_table:
+			assert(loot_entry is LootEntry)
+			assert(item_catalog.has(String((loot_entry as LootEntry).item_id)))
 	for wave in horde.waves:
 		assert(wave is HordeWaveDefinition)
 		for enemy_entry in (wave as HordeWaveDefinition).enemies:

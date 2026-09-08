@@ -19,19 +19,17 @@ extends Resource
 @export_range(0, 10000, 1) var experience_reward := 12
 
 @export_group("可视化")
+@export var visual_scene: PackedScene
 @export var visual_scale := Vector2.ONE
 @export var body_tint := Color("#73945c")
 
-@export_group("随机掉落")
-@export var drop_item_id: StringName
-@export_range(0.0, 1.0, 0.01) var drop_chance := 0.0
-@export_range(1, 99, 1) var drop_min_amount := 1
-@export_range(1, 99, 1) var drop_max_amount := 1
+@export_group("掉落表")
+@export var loot_table: Array[LootEntry] = []
 
 
 func roll_drop() -> Dictionary:
-	if drop_item_id.is_empty() or randf() >= drop_chance:
-		return {}
-	var minimum := mini(drop_min_amount, drop_max_amount)
-	var maximum := maxi(drop_min_amount, drop_max_amount)
-	return {"item_id": String(drop_item_id), "amount": randi_range(minimum, maximum)}
+	for entry in loot_table:
+		if entry == null: continue
+		var result := entry.roll()
+		if not result.is_empty(): return result
+	return {}

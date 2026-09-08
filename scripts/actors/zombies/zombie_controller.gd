@@ -32,6 +32,7 @@ func setup(player: Player, home: HomesteadCore, enemy_definition: EnemyDefinitio
 	homestead = home
 	definition = enemy_definition
 	if definition != null:
+		_apply_visual_scene(definition.visual_scene)
 		enemy_id = definition.enemy_id
 		move_speed = definition.move_speed
 		max_health = definition.max_health
@@ -50,6 +51,18 @@ func setup(player: Player, home: HomesteadCore, enemy_definition: EnemyDefinitio
 	health_bar.visible = false
 	add_to_group("zombies")
 	_update_visual_state()
+
+
+func _apply_visual_scene(scene: PackedScene) -> void:
+	if scene == null: return
+	var replacement := scene.instantiate() as Node2D
+	if replacement == null:
+		push_warning("敌人外观场景根节点必须是 Node2D")
+		return
+	visual.replace_by(replacement)
+	visual.queue_free()
+	visual = replacement
+	head = visual.get_node_or_null("Head") as Polygon2D
 
 
 func _physics_process(delta: float) -> void:

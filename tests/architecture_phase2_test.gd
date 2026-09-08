@@ -44,7 +44,8 @@ func _init() -> void:
 	var normal_enemy: EnemyDefinition = game.enemy_database.get_definition(&"normal_infected")
 	assert(normal_enemy != null)
 	assert(normal_enemy.max_health == 50.0)
-	assert(normal_enemy.drop_item_id == &"herb")
+	assert(not normal_enemy.loot_table.is_empty())
+	assert((normal_enemy.loot_table[0] as LootEntry).item_id == &"herb")
 	assert(game.defense_upgrade_system.catalog.size() == 2)
 	assert(game.crafting_system.recipes.size() == 11)
 	assert(game.crafting_system.get_recipes_for_station("workbench").size() == 10)
@@ -218,7 +219,7 @@ func _init() -> void:
 	assert((complete_save_data.get("inventory") as Dictionary).has("items"))
 	assert(game.inventory.remove_item("bandage", 3))
 	assert(game.inventory.get_hotbar_item(8).is_empty())
-	normal_enemy.drop_chance = 1.0
+	(normal_enemy.loot_table[0] as LootEntry).chance = 1.0
 	var ground_item_count := get_nodes_in_group("ground_items").size()
 	spawned_zombie.take_damage(spawned_zombie.max_health, game.player)
 	await process_frame

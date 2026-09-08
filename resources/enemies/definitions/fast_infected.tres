@@ -1,6 +1,15 @@
-[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/enemy_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/data/loot_entry.gd" id="2_loot"]
+[ext_resource type="PackedScene" path="res://scenes/actors/zombies/infected_visual.tscn" id="3_visual"]
+
+[sub_resource type="Resource" id="Loot_herb"]
+script = ExtResource("2_loot")
+item_id = &"herb"
+chance = 0.55
+min_amount = 1
+max_amount = 2
 
 [resource]
 script = ExtResource("1_script")
@@ -15,9 +24,7 @@ homestead_attack_damage = 10.0
 defense_attack_damage = 12.0
 attack_interval = 0.7
 experience_reward = 20
+visual_scene = ExtResource("3_visual")
 visual_scale = Vector2(0.86, 0.86)
 body_tint = Color(0.568627, 0.658824, 0.396078, 1)
-drop_item_id = &"herb"
-drop_chance = 0.55
-drop_min_amount = 1
-drop_max_amount = 2
+loot_table = Array[ExtResource("2_loot")]([SubResource("Loot_herb")])
