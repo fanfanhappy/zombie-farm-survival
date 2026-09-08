@@ -211,7 +211,8 @@ func _init() -> void:
 	assert(game._serialize_ground_items().size() == 1)
 	assert(game._serialize_farm_plots().size() == 72)
 	var complete_save_data: Dictionary = game.persistence.create_save_data(game)
-	assert(int(complete_save_data.get("version")) == 19)
+	assert(int(complete_save_data.get("version")) == 20)
+	assert(complete_save_data.get("enemies") is Array)
 	var saved_plot := (complete_save_data.get("farm_plots") as Array)[0] as Dictionary
 	assert(saved_plot.has("cell_x") and saved_plot.has("cell_y"))
 	var saved_chicken := (complete_save_data.get("chickens") as Array)[0] as Dictionary

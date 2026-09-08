@@ -4,7 +4,7 @@ extends RefCounted
 
 func create_save_data(game: Node) -> Dictionary:
 	return {
-		"version": 19, "day": game.day, "day_progress": game.day_progress,
+		"version": 20, "day": game.day, "day_progress": game.day_progress,
 		"weather": game.weather_system.current_weather_id,
 		"inventory": game.inventory.create_save_data(),
 		"player_position": {"x": game.player.position.x, "y": game.player.position.y},
@@ -19,6 +19,7 @@ func create_save_data(game: Node) -> Dictionary:
 		"kills": game.kills, "hordes_survived": game.hordes_survived,
 		"defenses": serialize_defenses(game), "storage_chests": serialize_storage_chests(game),
 		"snare_traps": serialize_snare_traps(game), "ground_items": serialize_ground_items(game),
+		"enemies": serialize_enemies(game),
 		"farm_plots": serialize_farm_plots(game), "chickens": serialize_chickens(game),
 		"watering_can_water": game.watering_can_water,
 		"objectives": game.objective_system.create_save_data(),
@@ -54,6 +55,7 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 	restore_storage_chests(game, data.get("storage_chests", []))
 	restore_snare_traps(game, data.get("snare_traps", []))
 	restore_ground_items(game, data.get("ground_items", []))
+	restore_enemies(game, data.get("enemies", []))
 	restore_farm_plots(game, data.get("farm_plots", []), int(data.get("version", 0)))
 	restore_chickens(game, data.get("chickens", []), int(data.get("version", 0)))
 	game.kills = int(data.get("kills", 0))
@@ -166,6 +168,21 @@ func serialize_chickens(game: Node) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for node in game.get_tree().get_nodes_in_group("chickens"): result.append((node as Chicken).create_save_data())
 	return result
+
+
+func serialize_enemies(game: Node) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for node in game.get_tree().get_nodes_in_group("zombies"):
+		var enemy := node as Zombie
+		result.append({"enemy_id": String(enemy.enemy_id), "x": enemy.position.x, "y": enemy.position.y, "health": enemy.health})
+	return result
+
+
+func restore_enemies(game: Node, entries: Array) -> void:
+	_clear_group_immediately(game, "zombies")
+	for entry in entries:
+		if not entry is Dictionary: continue
+		game._spawn_zombie(StringName(str(entry.get("enemy_id", "normal_infected"))), Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0))), float(entry.get("health", -1.0)))
 
 
 func restore_chickens(game: Node, entries: Array, save_version := 19) -> void:

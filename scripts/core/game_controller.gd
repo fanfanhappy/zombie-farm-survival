@@ -396,19 +396,27 @@ func _spawn_night_threat() -> void:
 		get_tree().create_timer(index * 0.4).timeout.connect(_spawn_zombie.bind(enemy_id))
 
 
-func _spawn_zombie(enemy_kind: Variant = &"normal_infected") -> void:
+func _spawn_zombie(enemy_kind: Variant = &"normal_infected", saved_position := Vector2.INF, saved_health := -1.0) -> void:
 	var enemy_id := StringName("fast_infected" if enemy_kind is bool and enemy_kind else "normal_infected" if enemy_kind is bool else str(enemy_kind))
 	var enemy_definition := enemy_database.get_definition(enemy_id)
 	if enemy_definition == null:
 		push_error("找不到敌人配置：%s" % enemy_id)
 		return
 	var zombie := ZOMBIE_SCENE.instantiate() as Zombie
-	match randi() % 4:
-		0: zombie.position = Vector2(randf_range(40, 1240), 40)
-		1: zombie.position = Vector2(randf_range(40, 1240), 760)
-		2: zombie.position = Vector2(40, randf_range(40, 760))
-		_: zombie.position = Vector2(1240, randf_range(40, 760))
+	if saved_position.is_finite():
+		zombie.position = saved_position
+	else:
+		var bounds: Rect2 = player.world_settings.get_player_bounds()
+		match randi() % 4:
+			0: zombie.position = Vector2(randf_range(bounds.position.x, bounds.end.x), bounds.position.y)
+			1: zombie.position = Vector2(randf_range(bounds.position.x, bounds.end.x), bounds.end.y)
+			2: zombie.position = Vector2(bounds.position.x, randf_range(bounds.position.y, bounds.end.y))
+			_: zombie.position = Vector2(bounds.end.x, randf_range(bounds.position.y, bounds.end.y))
 	enemies_root.add_child(zombie); zombie.setup(player, homestead, enemy_definition)
+	if saved_health >= 0.0:
+		zombie.health = clampf(saved_health, 0.1, zombie.max_health)
+		zombie.health_bar.value = zombie.health
+		zombie.health_bar.visible = zombie.health < zombie.max_health
 	zombie.defeated.connect(_on_zombie_defeated)
 
 
