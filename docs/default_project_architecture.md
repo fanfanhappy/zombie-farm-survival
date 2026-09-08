@@ -28,6 +28,7 @@ Main
 8. UI 子模块使用独立 `.tscn`，统一放在 UI CanvasLayer 下；脚本只更新数据和响应操作。
 9. 世界状态与美术资源分离，替换图片、动画、TileSet 或 UI 场景不应破坏存档。
 10. 每个迁移阶段必须通过无界面启动和功能回归测试后单独提交。
+11. 只含一两个节点且只在主世界使用一次的包装场景应直接内联；可复用实体、复杂界面和可独立布置的地图分组继续保留为子场景，避免 `game_world.tscn` 无限膨胀。
 
 ## 当前可视化编辑入口
 
@@ -37,9 +38,9 @@ Main
 - 初始建筑：`scenes/world/buildings/initial_buildings.tscn`
 - 初始设施：`scenes/world/facilities/initial_facilities.tscn`
 - 地图瓦片：`resources/tilesets/`
-- 资源绘制层：`scenes/world/environment/world_resource_layer.tscn`
+- 资源绘制层：`game_world.tscn` 中的 `GameWorld/DynamicYSortGroup/ResourceNodes`
 - 水体碰撞：`resources/tilesets/terrain_water_tileset.tres`（随水瓦片自动同步）
-- 地图边界碰撞：`scenes/world/environment/world_boundaries.tscn`
+- 地图边界碰撞：`game_world.tscn` 中的 `GameWorld/LogicLayers/WorldBoundaries`
 - 常驻 HUD：`scenes/ui/game_hud.tscn`
 - 弹窗菜单：`scenes/ui/game_menus.tscn`
 - 背包与快捷栏：`scenes/ui/inventory_ui.tscn`

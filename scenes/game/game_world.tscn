@@ -13,7 +13,6 @@
 [ext_resource type="Script" uid="uid://ba1k3rg43lg30" path="res://scripts/world/environment/world_tilemap.gd" id="14_world_tilemap"]
 [ext_resource type="TileSet" uid="uid://c85i64skxhmie" path="res://resources/tilesets/farm_tilled_terrain.tres" id="15_farm_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/ui/game_hud.tscn" id="17_game_hud"]
-[ext_resource type="PackedScene" uid="uid://bhgw10rlhx6sq" path="res://scenes/world/environment/world_resource_layer.tscn" id="18_resource_layer"]
 [ext_resource type="Script" uid="uid://jbrxlwkv1q2k" path="res://scripts/core/camera_rig.gd" id="19_camera_rig"]
 [ext_resource type="PackedScene" uid="uid://dmm386f3fb0nf" path="res://scenes/actors/player/player.tscn" id="20_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/game_menus.tscn" id="21_game_menus"]
@@ -21,12 +20,19 @@
 [ext_resource type="TileSet" uid="uid://btlwpcbijj0w0" path="res://resources/tilesets/terrain_water_tileset.tres" id="23_water_tileset"]
 [ext_resource type="TileSet" uid="uid://bd2ebmvf3a7p5" path="res://resources/tilesets/terrain_path_tileset.tres" id="24_path_tileset"]
 [ext_resource type="TileSet" uid="uid://d0yashubokrhx" path="res://resources/tilesets/buildings/perimeter_fence_tileset.tres" id="25_fence_tileset"]
-[ext_resource type="PackedScene" path="res://scenes/world/environment/world_grid_cursor.tscn" id="26_grid_cursor"]
 [ext_resource type="PackedScene" path="res://scenes/world/farming/initial_farm_plots.tscn" id="28_farm_plots"]
 [ext_resource type="PackedScene" path="res://scenes/world/animals/initial_animals.tscn" id="29_animals"]
 [ext_resource type="PackedScene" path="res://scenes/world/facilities/initial_facilities.tscn" id="30_facilities"]
 [ext_resource type="PackedScene" path="res://scenes/world/buildings/initial_buildings.tscn" id="31_buildings"]
-[ext_resource type="PackedScene" path="res://scenes/world/environment/world_boundaries.tscn" id="32_boundaries"]
+[ext_resource type="Script" path="res://scripts/world/environment/world_grid_cursor.gd" id="33_grid_cursor_script"]
+[ext_resource type="TileSet" uid="uid://cghyqb0r221rk" path="res://resources/tilesets/static_decoration_scenes.tres" id="34_static_resources"]
+[ext_resource type="TileSet" uid="uid://ceo1rwaab0a4l" path="res://resources/tilesets/harvestable_resource_scenes.tres" id="35_harvestable_resources"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_world_horizontal"]
+size = Vector2(1280, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_world_vertical"]
+size = Vector2(10, 800)
 
 [node name="Main" type="Node2D" unique_id=1325255420]
 script = ExtResource("1_main")
@@ -99,11 +105,32 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAEAAMAAAACAAEAAAAEABUAAAACAAEAAAAFAAMAAAACAAEAAAAFABUAAAACAAEAAAAGAAMAAAACAAEAAAAGABUAAAACAAEAAAAHAAMAAAACAAEAAAAHABUAAAACAAEAAAAIAAMAAAACAAEAAAAIABUAAAACAAEAAAAJAAMAAAACAAEAAAAJABUAAAACAAEAAAAKAAMAAAACAAEAAAAKABUAAAACAAEAAAALAAMAAAACAAEAAAALABUAAAACAAEAAAAMAAMAAAACAAEAAAAMABUAAAACAAEAAAANAAMAAAACAAEAAAANABUAAAACAAEAAAAOAAMAAAACAAEAAAAOABUAAAACAAEAAAAPAAMAAAACAAEAAAAPABUAAAACAAEAAAAQAAMAAAACAAEAAAAQABUAAAACAAEAAAARAAMAAAACAAEAAAARABUAAAACAAEAAAASAAMAAAACAAEAAAATAAMAAAACAAEAAAAUAAMAAAACAAEAAAAVAAMAAAACAAEAAAAWAAMAAAACAAEAAAAWABUAAAACAAEAAAAXAAMAAAACAAEAAAAXABUAAAACAAEAAAAYAAMAAAACAAEAAAAYABUAAAACAAEAAAAZAAMAAAACAAEAAAAZABUAAAACAAEAAAAaAAMAAAACAAEAAAAaABUAAAACAAEAAAAbAAMAAAACAAEAAAAbABUAAAACAAEAAAAcAAMAAAACAAEAAAAcABUAAAACAAEAAAAdAAMAAAACAAEAAAAdABUAAAACAAEAAAAeAAMAAAACAAEAAAAeABUAAAACAAEAAAAfAAMAAAACAAEAAAAfABUAAAACAAEAAAAgAAMAAAACAAEAAAAgABUAAAACAAEAAAAhAAMAAAACAAEAAAAhABUAAAACAAEAAAAiAAMAAAACAAEAAAAiABUAAAACAAEAAAAjAAMAAAACAAEAAAAjABUAAAACAAEAAAADAAQAAAAAAAIAAAAkAAQAAAAAAAIAAAADAAUAAAAAAAIAAAAkAAUAAAAAAAIAAAADAAYAAAAAAAIAAAAkAAYAAAAAAAIAAAADAAcAAAAAAAIAAAAkAAcAAAAAAAIAAAADAAgAAAAAAAIAAAAkAAgAAAAAAAIAAAADAAkAAAAAAAIAAAAkAAkAAAAAAAIAAAADAAoAAAAAAAIAAAAkAAoAAAAAAAIAAAADAAsAAAAAAAIAAAAkAAsAAAAAAAIAAAADAAwAAAAAAAIAAAAkAAwAAAAAAAIAAAADAA0AAAAAAAIAAAAkAA0AAAAAAAIAAAADAA4AAAAAAAIAAAAkAA4AAAAAAAIAAAADAA8AAAAAAAIAAAAkAA8AAAAAAAIAAAADABAAAAAAAAIAAAAkABAAAAAAAAIAAAADABEAAAAAAAIAAAAkABEAAAAAAAIAAAADABIAAAAAAAIAAAAkABIAAAAAAAIAAAADABMAAAAAAAIAAAAkABMAAAAAAAIAAAADABQAAAAAAAIAAAAkABQAAAAAAAIAAAA=")
 tile_set = ExtResource("25_fence_tileset")
 
-[node name="WorldGridCursor" parent="GameWorld/TerrainLayers/WorldTileMap" unique_id=313056595 instance=ExtResource("26_grid_cursor")]
+[node name="WorldGridCursor" type="Node2D" parent="GameWorld/TerrainLayers/WorldTileMap" unique_id=313056595]
+visible = false
+z_index = 8
+script = ExtResource("33_grid_cursor_script")
 
 [node name="LogicLayers" type="Node2D" parent="GameWorld" unique_id=926283075]
 
-[node name="WorldBoundaries" parent="GameWorld/LogicLayers" unique_id=1053664990 instance=ExtResource("32_boundaries")]
+[node name="WorldBoundaries" type="StaticBody2D" parent="GameWorld/LogicLayers" unique_id=1053664990]
+collision_layer = 1
+collision_mask = 0
+
+[node name="TopBoundary" type="CollisionShape2D" parent="GameWorld/LogicLayers/WorldBoundaries"]
+position = Vector2(640, 5)
+shape = SubResource("RectangleShape2D_world_horizontal")
+
+[node name="BottomBoundary" type="CollisionShape2D" parent="GameWorld/LogicLayers/WorldBoundaries"]
+position = Vector2(640, 795)
+shape = SubResource("RectangleShape2D_world_horizontal")
+
+[node name="LeftBoundary" type="CollisionShape2D" parent="GameWorld/LogicLayers/WorldBoundaries"]
+position = Vector2(5, 400)
+shape = SubResource("RectangleShape2D_world_vertical")
+
+[node name="RightBoundary" type="CollisionShape2D" parent="GameWorld/LogicLayers/WorldBoundaries"]
+position = Vector2(1275, 400)
+shape = SubResource("RectangleShape2D_world_vertical")
 
 [node name="DynamicYSortGroup" type="Node2D" parent="GameWorld" unique_id=206508843]
 y_sort_enabled = true
@@ -114,7 +141,14 @@ y_sort_enabled = true
 
 [node name="ResourceNodes" type="Node2D" parent="GameWorld/DynamicYSortGroup" unique_id=542830464]
 
-[node name="WorldResourceLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" unique_id=743393317 instance=ExtResource("18_resource_layer")]
+[node name="StaticDecorations" type="TileMapLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" unique_id=847632176]
+position = Vector2(-16, -16)
+tile_set = ExtResource("34_static_resources")
+
+[node name="HarvestableResources" type="TileMapLayer" parent="GameWorld/DynamicYSortGroup/ResourceNodes" unique_id=260434640]
+position = Vector2(-16, -16)
+tile_map_data = PackedByteArray("AAAFAAwAAAAAAAAAAAAiAAYAAAAAAAAAAAAhABIAAAAAAAAAAAASAAUAAAAAAAAAAAASABAAAAAAAAAAAQAgAA8AAAAAAAAAAQATABQAAAAAAAAAAQARABMAAAAAAAAAAgAgABMAAAAAAAAAAgASAAQAAAAAAAAAAgAXAA0AAAAAAAAAAQA=")
+tile_set = ExtResource("35_harvestable_resources")
 
 [node name="Facilities" parent="GameWorld/DynamicYSortGroup" unique_id=1289008919 instance=ExtResource("30_facilities")]
 

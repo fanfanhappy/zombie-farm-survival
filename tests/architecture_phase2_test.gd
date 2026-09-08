@@ -9,6 +9,13 @@ class HarvestGameMock:
 
 
 func _init() -> void:
+	for obsolete_scene_path in [
+		"res://scenes/world/environment/pond_collision.tscn",
+		"res://scenes/world/environment/world_boundaries.tscn",
+		"res://scenes/world/environment/world_grid_cursor.tscn",
+		"res://scenes/world/environment/world_resource_layer.tscn",
+	]:
+		assert(not FileAccess.file_exists(obsolete_scene_path))
 	_validate_sprite_frames("res://resources/animations/player_sprite_frames.tres", [
 		&"idle_down", &"idle_left", &"idle_right", &"idle_up",
 		&"walk_down", &"walk_left", &"walk_right", &"walk_up",
@@ -82,7 +89,7 @@ func _init() -> void:
 	assert(game.get_node("UI/Menus/PauseOverlay") is ColorRect)
 	assert(get_nodes_in_group("farm_plots").size() == 72)
 	assert(get_nodes_in_group("chickens").size() == 3)
-	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes/WorldResourceLayer")
+	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes")
 	assert(resource_layers.get_node("StaticDecorations") is TileMapLayer)
 	var harvestable_layer := resource_layers.get_node("HarvestableResources") as TileMapLayer
 	assert(harvestable_layer != null)
