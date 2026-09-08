@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="WeatherDatabase" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/weather_database.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/weather/definitions/clear.tres" id="2_clear"]
+[ext_resource type="Resource" path="res://resources/weather/definitions/rain.tres" id="3_rain"]
+[ext_resource type="Resource" path="res://resources/weather/definitions/heat.tres" id="4_heat"]
+
+[resource]
+script = ExtResource("1_script")
+weather_types = [ExtResource("2_clear"), ExtResource("3_rain"), ExtResource("4_heat")]

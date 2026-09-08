@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+objective_id = &"defeat_first_zombie"
+title = "击败一只感染者"
+condition_type = "kills"
+condition_target = &""
+condition_amount = 1
+reward = {"stone": 2}

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ObjectiveDatabase" load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/objective_database.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/gather_wood.tres" id="2_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/till_first_plot.tres" id="3_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/plant_first_crop.tres" id="4_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/craft_bandage.tres" id="5_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/place_first_defense.tres" id="6_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/defeat_first_zombie.tres" id="7_obj"]
+[ext_resource type="Resource" path="res://resources/objectives/definitions/survive_first_horde.tres" id="8_obj"]
+
+[resource]
+script = ExtResource("1_script")
+objectives = [ExtResource("2_obj"), ExtResource("3_obj"), ExtResource("4_obj"), ExtResource("5_obj"), ExtResource("6_obj"), ExtResource("7_obj"), ExtResource("8_obj")]

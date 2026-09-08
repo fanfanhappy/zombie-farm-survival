@@ -7,8 +7,9 @@ signal wave_started(wave_number: int, total_waves: int)
 signal horde_completed
 signal state_changed
 
-const HORDE_DATA_PATH := "res://data/hordes/first_horde.json"
+const DEFAULT_HORDE_DEFINITION := preload("res://resources/hordes/first_horde.tres")
 
+@export var horde_definition: HordeDefinition = DEFAULT_HORDE_DEFINITION
 var waves: Array = []
 var active := false
 var current_wave_index := -1
@@ -106,14 +107,10 @@ func _finish_horde() -> void:
 
 
 func _load_horde_data() -> void:
-	if not FileAccess.file_exists(HORDE_DATA_PATH):
-		push_error("尸潮数据不存在：%s" % HORDE_DATA_PATH)
+	waves.clear()
+	reward.clear()
+	if horde_definition == null:
+		push_error("HordeSystem 未配置尸潮资源")
 		return
-	var file := FileAccess.open(HORDE_DATA_PATH, FileAccess.READ)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary:
-		waves = parsed.get("waves", [])
-		reward = parsed.get("reward", {})
-	else:
-		push_error("尸潮数据格式无效：%s" % HORDE_DATA_PATH)
-
+	waves = horde_definition.waves.duplicate(true)
+	reward = horde_definition.reward.duplicate(true)

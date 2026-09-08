@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defense_upgrade_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+defense_type = &"spike"
+display_name = "木尖刺"
+levels = {"2": {"max_health": 100, "spike_damage": 18, "cost": {"wood": 3, "stone": 3}}, "3": {"max_health": 160, "spike_damage": 28, "cost": {"wood": 6, "stone": 6, "scrap": 2}}}

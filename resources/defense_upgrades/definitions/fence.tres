@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defense_upgrade_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+defense_type = &"fence"
+display_name = "木栅栏"
+levels = {"2": {"max_health": 160, "cost": {"wood": 4, "stone": 2}}, "3": {"max_health": 240, "cost": {"wood": 8, "stone": 5, "scrap": 1}}}

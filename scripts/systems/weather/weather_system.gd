@@ -3,18 +3,17 @@ extends Node
 
 signal weather_changed(weather_id: String, weather_data: Dictionary)
 
-const CATALOG_PATH := "res://data/weather/weather_catalog.json"
+const DEFAULT_WEATHER_DATABASE := preload("res://resources/weather/weather_database.tres")
+@export var weather_database: WeatherDatabase = DEFAULT_WEATHER_DATABASE
 var catalog: Dictionary = {}
 var current_weather_id := "clear"
 
 
 func _ready() -> void:
-	var file := FileAccess.open(CATALOG_PATH, FileAccess.READ)
-	if file == null:
-		push_error("天气目录不存在：%s" % CATALOG_PATH)
+	if weather_database == null:
+		push_error("WeatherSystem 未配置天气数据库")
 		return
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary: catalog = parsed
+	catalog = weather_database.build_catalog()
 
 
 func choose_weather_for_day(day: int) -> void:

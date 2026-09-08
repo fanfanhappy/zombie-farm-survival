@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="HordeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/horde_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+horde_id = &"first_horde"
+display_name = "第一次尸潮"
+trigger_interval_days = 7
+waves = [{"normal": 5, "fast": 0, "spawn_interval": 0.55, "next_wave_delay": 5.0}, {"normal": 7, "fast": 1, "spawn_interval": 0.45, "next_wave_delay": 6.0}, {"normal": 9, "fast": 2, "spawn_interval": 0.35, "next_wave_delay": 0.0}]
+reward = {"scrap": 3, "potato_seed": 2}

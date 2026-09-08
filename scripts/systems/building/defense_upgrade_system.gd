@@ -1,18 +1,17 @@
 class_name DefenseUpgradeSystem
 extends Node
 
-const CATALOG_PATH := "res://data/building/defense_upgrades.json"
+const DEFAULT_UPGRADE_DATABASE := preload("res://resources/defense_upgrades/defense_upgrade_database.tres")
 const MAX_LEVEL := 3
+@export var upgrade_database: DefenseUpgradeDatabase = DEFAULT_UPGRADE_DATABASE
 var catalog: Dictionary = {}
 
 
 func _ready() -> void:
-	var file := FileAccess.open(CATALOG_PATH, FileAccess.READ)
-	if file == null:
-		push_error("防御升级目录不存在：%s" % CATALOG_PATH)
+	if upgrade_database == null:
+		push_error("DefenseUpgradeSystem 未配置升级数据库")
 		return
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary: catalog = parsed
+	catalog = upgrade_database.build_catalog()
 
 
 func get_upgrade_data(structure: DefenseStructure) -> Dictionary:

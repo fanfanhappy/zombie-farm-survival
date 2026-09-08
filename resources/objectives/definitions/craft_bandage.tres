@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+objective_id = &"craft_bandage"
+title = "制作一份简易绷带"
+condition_type = "inventory"
+condition_target = &"bandage"
+condition_amount = 1
+reward = {"herb": 2}

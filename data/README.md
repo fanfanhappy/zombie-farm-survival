@@ -6,6 +6,6 @@
 
 - 物品配置已迁移到 `resources/items/definitions/`，本目录只保留配方等纯表格数据
 - 配方已迁移到 `resources/recipes/definitions/`，工作台与厨房配方可在检查器修改
-- `hordes/first_horde.json`：第一次尸潮的波次、间隔与奖励
+- 尸潮配置已迁移到 `resources/hordes/`
 - 作物配置已迁移到 `resources/crops/definitions/`，生长与收获内容可在检查器修改
-- `objectives/first_week_objectives.json`：第一周目标、条件与奖励
+- 天气、任务和防御升级配置已迁移到 `resources/` 对应模块

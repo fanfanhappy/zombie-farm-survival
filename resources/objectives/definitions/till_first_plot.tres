@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+objective_id = &"till_first_plot"
+title = "开垦第一块土地"
+condition_type = "tilled_plots"
+condition_target = &""
+condition_amount = 1
+reward = {"potato_seed": 1}

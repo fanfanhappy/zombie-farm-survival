@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+objective_id = &"place_first_defense"
+title = "放置一项防御设施"
+condition_type = "defenses"
+condition_target = &""
+condition_amount = 1
+reward = {"wood": 5}

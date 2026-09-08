@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DefenseUpgradeDatabase" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/defense_upgrade_database.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/defense_upgrades/definitions/fence.tres" id="2_fence"]
+[ext_resource type="Resource" path="res://resources/defense_upgrades/definitions/spike.tres" id="3_spike"]
+
+[resource]
+script = ExtResource("1_script")
+definitions = [ExtResource("2_fence"), ExtResource("3_spike")]

@@ -1,5 +1,0 @@
-{
-  "clear": { "name": "晴朗", "weight": 55, "thirst_multiplier": 1.0 },
-  "rain": { "name": "降雨", "weight": 30, "thirst_multiplier": 0.75, "waters_crops": true },
-  "heat": { "name": "炎热", "weight": 15, "thirst_multiplier": 1.5 }
-}

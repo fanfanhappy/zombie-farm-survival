@@ -4,8 +4,9 @@ extends Node
 signal objective_text_changed(text: String)
 signal objective_completed(title: String, reward_text: String)
 
-const OBJECTIVE_DATA_PATH := "res://data/objectives/first_week_objectives.json"
+const DEFAULT_OBJECTIVE_DATABASE := preload("res://resources/objectives/objective_database.tres")
 
+@export var objective_database: ObjectiveDatabase = DEFAULT_OBJECTIVE_DATABASE
 var objectives: Array = []
 var current_index := 0
 var completed_ids: Array[String] = []
@@ -80,10 +81,8 @@ func _emit_current_text() -> void:
 
 
 func _load_objectives() -> void:
-	if not FileAccess.file_exists(OBJECTIVE_DATA_PATH):
-		push_error("目标数据不存在：%s" % OBJECTIVE_DATA_PATH)
+	objectives.clear()
+	if objective_database == null:
+		push_error("ObjectiveSystem 未配置目标数据库")
 		return
-	var file := FileAccess.open(OBJECTIVE_DATA_PATH, FileAccess.READ)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Array: objectives = parsed
-	else: push_error("目标数据格式无效：%s" % OBJECTIVE_DATA_PATH)
+	objectives = objective_database.build_list()
