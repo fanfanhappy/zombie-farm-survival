@@ -13,13 +13,13 @@ const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot
 @onready var selected_item_label: Label = $HotbarPanel/Margin/Content/SelectedItem
 @onready var backpack_panel: PanelContainer = $BackpackPanel
 @onready var capacity_label: Label = $BackpackPanel/Margin/Content/Header/Capacity
-@onready var item_grid: GridContainer = $BackpackPanel/Margin/Content/ItemScroll/ItemGrid
-@onready var search_input: LineEdit = $BackpackPanel/Margin/Content/FilterBar/Search
-@onready var category_filter: OptionButton = $BackpackPanel/Margin/Content/FilterBar/Category
-@onready var detail_name: Label = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/ItemName
-@onready var detail_description: Label = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/Description
-@onready var use_button: Button = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/UseButton
-@onready var drop_button: Button = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/DropButton
+@onready var item_grid: GridContainer = $BackpackPanel/Margin/Content/Body/LeftColumn/ItemScroll/ItemGrid
+@onready var search_input: LineEdit = $BackpackPanel/Margin/Content/Body/LeftColumn/FilterBar/Search
+@onready var category_filter: OptionButton = $BackpackPanel/Margin/Content/Body/LeftColumn/FilterBar/Category
+@onready var detail_name: Label = $BackpackPanel/Margin/Content/Body/DetailPanel/Margin/Detail/ItemName
+@onready var detail_description: Label = $BackpackPanel/Margin/Content/Body/DetailPanel/Margin/Detail/Description
+@onready var use_button: Button = $BackpackPanel/Margin/Content/Body/DetailPanel/Margin/Detail/UseButton
+@onready var drop_button: Button = $BackpackPanel/Margin/Content/Body/DetailPanel/Margin/Detail/DropButton
 
 var inventory: InventorySystem
 var selected_item_id := ""
@@ -280,7 +280,7 @@ func _apply_inventory_theme() -> void:
 	var hotbar_style := _create_panel_style(Color("#3f2927dc"), Color("#b67b58"), 3)
 	backpack_panel.add_theme_stylebox_override("panel", backpack_style)
 	$HotbarPanel.add_theme_stylebox_override("panel", hotbar_style)
-	$BackpackPanel/Margin/Content/DetailPanel.add_theme_stylebox_override("panel", _create_panel_style(Color("#3e2927d9"), Color("#95664f"), 2))
+	$BackpackPanel/Margin/Content/Body/DetailPanel.add_theme_stylebox_override("panel", _create_panel_style(Color("#3e2927d9"), Color("#95664f"), 2))
 	$BackpackPanel/Margin/Content/Header/Title.add_theme_color_override("font_color", Color("#ffe5ae"))
 	capacity_label.add_theme_color_override("font_color", Color("#e8cda5"))
 	for button in [$BackpackPanel/Margin/Content/Header/CloseButton, use_button, drop_button]:

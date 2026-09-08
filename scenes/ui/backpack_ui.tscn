@@ -9,10 +9,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -350.0
-offset_top = -260.0
-offset_right = 350.0
-offset_bottom = 260.0
+offset_left = -380.0
+offset_top = -252.0
+offset_right = 380.0
+offset_bottom = 158.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_theme")
@@ -54,70 +54,80 @@ text = "×"
 [node name="Separator" type="HSeparator" parent="Margin/Content"]
 layout_mode = 2
 
-[node name="FilterBar" type="HBoxContainer" parent="Margin/Content"]
+[node name="Body" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="LeftColumn" type="VBoxContainer" parent="Margin/Content/Body"]
+custom_minimum_size = Vector2(454, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="FilterBar" type="HBoxContainer" parent="Margin/Content/Body/LeftColumn"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Search" type="LineEdit" parent="Margin/Content/FilterBar"]
+[node name="Search" type="LineEdit" parent="Margin/Content/Body/LeftColumn/FilterBar"]
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "搜索物品名称……"
 clear_button_enabled = true
 
-[node name="Category" type="OptionButton" parent="Margin/Content/FilterBar"]
+[node name="Category" type="OptionButton" parent="Margin/Content/Body/LeftColumn/FilterBar"]
 custom_minimum_size = Vector2(150, 38)
 layout_mode = 2
 tooltip_text = "按物品类型筛选"
 
-[node name="ItemScroll" type="ScrollContainer" parent="Margin/Content"]
-custom_minimum_size = Vector2(0, 205)
+[node name="ItemScroll" type="ScrollContainer" parent="Margin/Content/Body/LeftColumn"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="ItemGrid" type="GridContainer" parent="Margin/Content/ItemScroll"]
+[node name="ItemGrid" type="GridContainer" parent="Margin/Content/Body/LeftColumn/ItemScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 6
 
-[node name="DetailPanel" type="PanelContainer" parent="Margin/Content"]
-custom_minimum_size = Vector2(0, 128)
+[node name="DetailPanel" type="PanelContainer" parent="Margin/Content/Body"]
+custom_minimum_size = Vector2(230, 0)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="Margin/Content/DetailPanel"]
+[node name="Margin" type="MarginContainer" parent="Margin/Content/Body/DetailPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="Detail" type="VBoxContainer" parent="Margin/Content/DetailPanel/Margin"]
+[node name="Detail" type="VBoxContainer" parent="Margin/Content/Body/DetailPanel/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="ItemName" type="Label" parent="Margin/Content/DetailPanel/Margin/Detail"]
+[node name="ItemName" type="Label" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.67, 1)
 theme_override_font_sizes/font_size = 19
 text = "选择一个物品"
 
-[node name="Description" type="Label" parent="Margin/Content/DetailPanel/Margin/Detail"]
+[node name="Description" type="Label" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_vertical = 3
 text = "点击物品查看说明，按住并拖动可放入快捷栏。"
 autowrap_mode = 2
 
-[node name="UseButton" type="Button" parent="Margin/Content/DetailPanel/Margin/Detail"]
+[node name="UseButton" type="Button" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 visible = false
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 text = "使用"
 
-[node name="DropButton" type="Button" parent="Margin/Content/DetailPanel/Margin/Detail"]
+[node name="DropButton" type="Button" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 visible = false
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
