@@ -1,8 +1,11 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/actors/player/player_attack_effect.gd" id="1_script"]
 
 [node name="PlayerAttackEffect" type="Node2D"]
 visible = false
 z_index = 2
+script = ExtResource("1_script")
 
 [node name="SlashArc" type="Line2D" parent="."]
 points = PackedVector2Array(34.72, -17.22, 37.81, -13.55, 40.11, -9.35, 41.52, -4.77, 42, 0, 41.52, 4.77, 40.11, 9.35, 37.81, 13.55, 34.72, 17.22)

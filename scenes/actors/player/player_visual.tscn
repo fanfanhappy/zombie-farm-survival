@@ -1,6 +1,7 @@
-[gd_scene format=3 uid="uid://bhkko1q2yaykj"]
+[gd_scene load_steps=3 format=3 uid="uid://bhkko1q2yaykj"]
 
 [ext_resource type="SpriteFrames" uid="uid://c3a1xnc26w1xh" path="res://resources/animations/player_sprite_frames.tres" id="1_frames"]
+[ext_resource type="Script" path="res://scripts/actors/player/player_animation_controller.gd" id="2_script"]
 
 [node name="PlayerAnimation" type="AnimatedSprite2D" unique_id=112841164]
 texture_filter = 1
@@ -9,3 +10,4 @@ scale = Vector2(2, 2)
 sprite_frames = ExtResource("1_frames")
 animation = &"idle_down"
 autoplay = "idle_down"
+script = ExtResource("2_script")

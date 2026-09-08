@@ -4,8 +4,8 @@ extends CharacterBody2D
 func _enter_tree() -> void:
 	add_to_group("player")
 
-@onready var character_sprite: AnimatedSprite2D = $PlayerAnimation
-@onready var attack_effect: Node2D = $AttackEffect
+@onready var character_sprite: PlayerAnimationController = $PlayerAnimation
+@onready var attack_effect: PlayerAttackEffect = $AttackEffect
 
 signal interaction_requested
 signal attack_requested
@@ -258,41 +258,20 @@ func get_next_level_experience() -> int:
 
 
 func play_tool_action(action_type: String) -> void:
-	var animation_name := "%s_%s" % [action_type if action_type in ["hoe", "axe", "water"] else "hoe", _get_direction_name()]
-	var frame_count := character_sprite.sprite_frames.get_frame_count(animation_name)
-	var animation_speed := character_sprite.sprite_frames.get_animation_speed(animation_name)
-	tool_action_time_left = float(frame_count) / maxf(animation_speed, 0.01)
+	tool_action_time_left = character_sprite.play_tool_action(action_type, facing_direction)
 	velocity = Vector2.ZERO
-	character_sprite.play(animation_name)
 
 
 func get_tool_action_duration() -> float:
 	return tool_action_time_left
 
 
-func _get_direction_row() -> int:
-	if absf(facing_direction.x) > absf(facing_direction.y):
-		return 3 if facing_direction.x > 0.0 else 2
-	return 0 if facing_direction.y > 0.0 else 1
-
-
-func _get_direction_name() -> String:
-	return ["down", "up", "left", "right"][_get_direction_row()]
-
-
 func _update_character_animation(direction: Vector2) -> void:
 	if not is_instance_valid(character_sprite): return
-	if tool_action_time_left > 0.0:
-		character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
-		return
-	var animation_name := "%s_%s" % ["idle" if direction == Vector2.ZERO else "walk", _get_direction_name()]
-	if character_sprite.animation != animation_name:
-		character_sprite.play(animation_name)
-	character_sprite.modulate = Color("#ffb3ad") if hurt_flash_left > 0.0 else Color.WHITE
+	character_sprite.update_locomotion(direction, facing_direction, tool_action_time_left > 0.0)
+	character_sprite.update_damage_tint(hurt_flash_left > 0.0)
 
 
 func _update_attack_effect() -> void:
-	if not is_instance_valid(attack_effect):
-		return
-	attack_effect.visible = attack_time_left > attack_cooldown - 0.14
-	attack_effect.rotation = facing_direction.angle()
+	if is_instance_valid(attack_effect):
+		attack_effect.update_effect(attack_time_left, attack_cooldown, facing_direction)
