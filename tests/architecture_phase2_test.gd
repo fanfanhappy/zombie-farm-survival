@@ -41,13 +41,25 @@ func _init() -> void:
 	assert(potato_data.get("visual_scene") is PackedScene)
 	assert(int(potato_data.get("growth_days")) == 2)
 	assert((potato_data.get("harvest") as Dictionary).get("potato") == 3)
-	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/GroundLayer") is TileMapLayer)
-	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WaterLayer") is TileMapLayer)
-	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/PathLayer") is TileMapLayer)
-	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/FenceLayer") is TileMapLayer)
+	var ground_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/GroundLayer") as TileMapLayer
+	assert(ground_layer != null)
+	assert(not ground_layer.get_used_cells().is_empty())
+	var water_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/WaterLayer") as TileMapLayer
+	assert(water_layer != null)
+	assert(water_layer.tile_set.get_physics_layers_count() == 1)
+	var water_atlas := water_layer.tile_set.get_source(0) as TileSetAtlasSource
+	assert(water_atlas != null)
+	var water_tile_data := water_atlas.get_tile_data(Vector2i.ZERO, 0)
+	assert(water_tile_data.get_collision_polygons_count(0) == 1)
+	assert(not water_layer.get_used_cells().is_empty())
+	var path_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/PathLayer") as TileMapLayer
+	assert(path_layer != null)
+	assert(not path_layer.get_used_cells().is_empty())
+	var fence_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/FenceLayer") as TileMapLayer
+	assert(fence_layer != null)
+	assert(fence_layer.get_used_cells().size() == 94)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WorldGridCursor") is WorldGridCursor)
-	assert(game.get_node("GameWorld/LogicLayers/PondCollision") is StaticBody2D)
-	assert(game.get_node("GameWorld/LogicLayers/PondCollision").get_child_count() == 7)
+	assert(not game.has_node("GameWorld/LogicLayers/PondCollision"))
 	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries") is StaticBody2D)
 	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries").get_child_count() == 4)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player") is Player)

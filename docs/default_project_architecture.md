@@ -38,7 +38,8 @@ Main
 - 初始设施：`scenes/world/facilities/initial_facilities.tscn`
 - 地图瓦片：`resources/tilesets/`
 - 资源绘制层：`scenes/world/environment/world_resource_layer.tscn`
-- 池塘与边界碰撞：`scenes/world/environment/pond_collision.tscn`、`world_boundaries.tscn`
+- 水体碰撞：`resources/tilesets/terrain_water_tileset.tres`（随水瓦片自动同步）
+- 地图边界碰撞：`scenes/world/environment/world_boundaries.tscn`
 - 常驻 HUD：`scenes/ui/game_hud.tscn`
 - 弹窗菜单：`scenes/ui/game_menus.tscn`
 - 背包与快捷栏：`scenes/ui/inventory_ui.tscn`
