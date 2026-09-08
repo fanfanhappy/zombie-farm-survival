@@ -9,7 +9,7 @@ extends Resource
 
 @export_group("生长与收获")
 @export_range(1, 30, 1) var growth_days := 1
-@export var harvest: Dictionary = {}
+@export var harvest: Array[ItemAmount] = []
 
 
 func to_dictionary() -> Dictionary:
@@ -19,5 +19,5 @@ func to_dictionary() -> Dictionary:
 		"seed_item": String(seed_item_id),
 		"visual_scene": visual_scene,
 		"growth_days": growth_days,
-		"harvest": harvest.duplicate(true),
+		"harvest": ItemAmount.list_to_dictionary(harvest),
 	}

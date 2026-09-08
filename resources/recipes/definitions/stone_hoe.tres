@@ -1,11 +1,28 @@
-[gd_resource type="Resource" script_class="RecipeDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="RecipeDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/recipe_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="2_item"]
+
+[sub_resource type="Resource" id="Ingredient_0"]
+script = ExtResource("2_item")
+item_id = &"wood"
+amount = 3
+
+[sub_resource type="Resource" id="Ingredient_1"]
+script = ExtResource("2_item")
+item_id = &"stone"
+amount = 2
+
+[sub_resource type="Resource" id="Result_0"]
+script = ExtResource("2_item")
+item_id = &"stone_hoe"
+amount = 1
+
 
 [resource]
 script = ExtResource("1_script")
 recipe_id = &"stone_hoe"
 display_name = "石锄"
 station = "workbench"
-ingredients = {"wood": 3, "stone": 2}
-results = {"stone_hoe": 1}
+ingredients = Array[ExtResource("2_item")]([SubResource("Ingredient_0"), SubResource("Ingredient_1")])
+results = Array[ExtResource("2_item")]([SubResource("Result_0")])

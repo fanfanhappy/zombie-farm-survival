@@ -112,5 +112,5 @@ func _load_horde_data() -> void:
 	if horde_definition == null:
 		push_error("HordeSystem 未配置尸潮资源")
 		return
-	waves = horde_definition.waves.duplicate(true)
-	reward = horde_definition.reward.duplicate(true)
+	waves = horde_definition.get_wave_dictionaries()
+	reward = ItemAmount.list_to_dictionary(horde_definition.reward)

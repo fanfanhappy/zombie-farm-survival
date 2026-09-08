@@ -1,7 +1,18 @@
-[gd_resource type="Resource" script_class="CropDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/crop_definition.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/world/farming/crops/medicinal_herb_crop_visual.tscn" id="2_visual"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="3_item"]
+
+[sub_resource type="Resource" id="Harvest_0"]
+script = ExtResource("3_item")
+item_id = &"herb"
+amount = 3
+
+[sub_resource type="Resource" id="Harvest_1"]
+script = ExtResource("3_item")
+item_id = &"herb_seed"
+amount = 1
 
 [resource]
 script = ExtResource("1_script")
@@ -10,4 +21,4 @@ display_name = "药草"
 seed_item_id = &"herb_seed"
 visual_scene = ExtResource("2_visual")
 growth_days = 2
-harvest = {"herb": 3, "herb_seed": 1}
+harvest = Array[ExtResource("3_item")]([SubResource("Harvest_0"), SubResource("Harvest_1")])

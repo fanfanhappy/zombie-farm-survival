@@ -1,6 +1,12 @@
-[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="2_item"]
+
+[sub_resource type="Resource" id="Reward_0"]
+script = ExtResource("2_item")
+item_id = &"scrap"
+amount = 2
 
 [resource]
 script = ExtResource("1_script")
@@ -9,4 +15,4 @@ title = "守过第一次尸潮"
 condition_type = "hordes_survived"
 condition_target = &""
 condition_amount = 1
-reward = {"scrap": 2}
+reward = Array[ExtResource("2_item")]([SubResource("Reward_0")])

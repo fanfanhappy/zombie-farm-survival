@@ -40,7 +40,9 @@ func _init() -> void:
 
 	var horde := load("res://resources/hordes/first_horde.tres") as HordeDefinition
 	assert(horde.waves.size() == 3)
-	for item_id in horde.reward: assert(item_catalog.has(item_id))
+	for reward_entry in horde.reward:
+		assert(reward_entry is ItemAmount)
+		assert(item_catalog.has(String((reward_entry as ItemAmount).item_id)))
 	var enemy_database := load("res://resources/enemies/enemy_database.tres") as EnemyDatabase
 	assert(enemy_database.enemies.size() == 2)
 	for enemy in enemy_database.enemies:
@@ -50,8 +52,9 @@ func _init() -> void:
 		assert(enemy.move_speed > 0.0)
 		if not enemy.drop_item_id.is_empty(): assert(item_catalog.has(String(enemy.drop_item_id)))
 	for wave in horde.waves:
-		for enemy_id in (wave as Dictionary).get("enemies", {}):
-			assert(enemy_database.has_definition(StringName(enemy_id)))
+		assert(wave is HordeWaveDefinition)
+		for enemy_entry in (wave as HordeWaveDefinition).enemies:
+			assert(enemy_database.has_definition((enemy_entry as EnemySpawnEntry).enemy_id))
 
 	var upgrades := (load("res://resources/defense_upgrades/defense_upgrade_database.tres") as DefenseUpgradeDatabase).build_catalog()
 	assert(upgrades.size() == 2)

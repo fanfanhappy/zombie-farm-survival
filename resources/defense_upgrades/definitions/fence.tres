@@ -1,9 +1,48 @@
-[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/defense_upgrade_definition.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/data/defense_upgrade_level.gd" id="2_level"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="3_item"]
+
+[sub_resource type="Resource" id="L2_wood"]
+script = ExtResource("3_item")
+item_id = &"wood"
+amount = 4
+
+[sub_resource type="Resource" id="L2_stone"]
+script = ExtResource("3_item")
+item_id = &"stone"
+amount = 2
+
+[sub_resource type="Resource" id="Level_2"]
+script = ExtResource("2_level")
+level = 2
+cost = Array[ExtResource("3_item")]([SubResource("L2_wood"), SubResource("L2_stone")])
+max_health = 160.0
+
+[sub_resource type="Resource" id="L3_wood"]
+script = ExtResource("3_item")
+item_id = &"wood"
+amount = 8
+
+[sub_resource type="Resource" id="L3_stone"]
+script = ExtResource("3_item")
+item_id = &"stone"
+amount = 5
+
+[sub_resource type="Resource" id="L3_scrap"]
+script = ExtResource("3_item")
+item_id = &"scrap"
+amount = 1
+
+[sub_resource type="Resource" id="Level_3"]
+script = ExtResource("2_level")
+level = 3
+cost = Array[ExtResource("3_item")]([SubResource("L3_wood"), SubResource("L3_stone"), SubResource("L3_scrap")])
+max_health = 240.0
 
 [resource]
 script = ExtResource("1_script")
 defense_type = &"fence"
 display_name = "木栅栏"
-levels = {"2": {"max_health": 160, "cost": {"wood": 4, "stone": 2}}, "3": {"max_health": 240, "cost": {"wood": 8, "stone": 5, "scrap": 1}}}
+levels = Array[ExtResource("2_level")]([SubResource("Level_2"), SubResource("Level_3")])
