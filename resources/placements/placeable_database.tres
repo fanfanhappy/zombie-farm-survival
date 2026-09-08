@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlaceableDatabase" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/placeable_database.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/placements/definitions/fence.tres" id="2_fence"]
+[ext_resource type="Resource" path="res://resources/placements/definitions/spike.tres" id="3_spike"]
+[ext_resource type="Resource" path="res://resources/placements/definitions/snare_trap.tres" id="4_trap"]
+[ext_resource type="Resource" path="res://resources/placements/definitions/storage_chest.tres" id="5_chest"]
+
+[resource]
+script = ExtResource("1_script")
+definitions = [ExtResource("2_fence"), ExtResource("3_spike"), ExtResource("4_trap"), ExtResource("5_chest")]

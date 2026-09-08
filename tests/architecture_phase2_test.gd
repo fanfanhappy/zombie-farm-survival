@@ -26,6 +26,8 @@ func _init() -> void:
 	await process_frame
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap") is WorldTileMap)
 	assert(game.get_node("GameSession/PlacementSystem") is PlacementSystem)
+	assert(game.placement_system.placeable_catalog.size() == 4)
+	assert((game.placement_system.placeable_catalog.get("fence") as Dictionary).get("scene") is PackedScene)
 	assert(game.get_node("GameSession/HordeSpawner") is HordeSystem)
 	assert(game.get_node("GameSession/WeatherController") is WeatherSystem)
 	assert(game.crafting_system.recipes.size() == 11)

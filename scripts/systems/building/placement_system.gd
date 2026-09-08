@@ -6,11 +6,9 @@ signal placement_ended
 
 const GRID_SIZE := WorldGrid.CELL_SIZE
 const MAP_BOUNDS := Rect2(32, 32, 1216, 736)
-const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
-const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
-const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
-const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
+const DEFAULT_PLACEABLE_DATABASE := preload("res://resources/placements/placeable_database.tres")
 
+@export var placeable_database: PlaceableDatabase = DEFAULT_PLACEABLE_DATABASE
 var game_controller: Node2D
 var placement_parent: Node2D
 var inventory: InventorySystem
@@ -19,6 +17,12 @@ var placement_type := ""
 var rotation_quarters := 0
 var placement_valid := false
 var preview_instance: Node2D
+var placeable_catalog: Dictionary = {}
+
+
+func _ready() -> void:
+	if placeable_database != null:
+		placeable_catalog = placeable_database.build_catalog()
 
 
 func setup(controller: Node2D, world_parent: Node2D, inventory_system: InventorySystem) -> void:
@@ -45,6 +49,9 @@ func begin_placement(item_id: String) -> void:
 	if item_data.get("category", "") != "placeable": return
 	selected_item_id = item_id
 	placement_type = item_data.get("placement_type", "")
+	if not placeable_catalog.has(placement_type):
+		game_controller.show_message("没有配置该物品的放置场景")
+		return
 	rotation_quarters = 0
 	_create_preview()
 	visible = true
@@ -61,11 +68,8 @@ func try_place() -> bool:
 	if not is_placing() or not placement_valid: return false
 	if not inventory.remove_item(selected_item_id, 1):
 		cancel_placement(); return false
-	var structure: Node2D
-	if placement_type == "storage_chest": structure = STORAGE_CHEST_SCENE.instantiate()
-	elif placement_type == "snare_trap": structure = SNARE_TRAP_SCENE.instantiate()
-	elif placement_type == "fence": structure = FENCE_SCENE.instantiate()
-	else: structure = SPIKE_SCENE.instantiate()
+	var definition: Dictionary = placeable_catalog.get(placement_type, {})
+	var structure := (definition.get("scene") as PackedScene).instantiate() as Node2D
 	structure.position = global_position
 	structure.rotation = rotation
 	placement_parent.add_child(structure)
@@ -91,7 +95,8 @@ func is_placing() -> bool:
 
 func _check_placement_valid() -> bool:
 	if global_position.distance_to(game_controller.player.global_position) > 240.0: return false
-	var footprint := Vector2(48, 20) if placement_type == "fence" else (Vector2(42, 30) if placement_type == "storage_chest" else Vector2(32, 32))
+	var definition: Dictionary = placeable_catalog.get(placement_type, {})
+	var footprint: Vector2 = definition.get("footprint", Vector2(32, 32))
 	var corners := [Vector2(-footprint.x, -footprint.y) * 0.5, Vector2(footprint.x, footprint.y) * 0.5]
 	for corner in corners:
 		if not MAP_BOUNDS.has_point(global_position + corner.rotated(rotation)): return false
@@ -108,12 +113,10 @@ func _check_placement_valid() -> bool:
 func _create_preview() -> void:
 	if is_instance_valid(preview_instance):
 		preview_instance.queue_free()
-	var preview_scene: PackedScene
-	match placement_type:
-		"fence": preview_scene = FENCE_SCENE
-		"storage_chest": preview_scene = STORAGE_CHEST_SCENE
-		"snare_trap": preview_scene = SNARE_TRAP_SCENE
-		_: preview_scene = SPIKE_SCENE
+	var definition: Dictionary = placeable_catalog.get(placement_type, {})
+	var preview_scene := definition.get("scene") as PackedScene
+	if preview_scene == null:
+		return
 	preview_instance = preview_scene.instantiate() as Node2D
 	preview_instance.process_mode = Node.PROCESS_MODE_DISABLED
 	if preview_instance is CollisionObject2D:
