@@ -12,6 +12,12 @@ var crop_data: Dictionary = {}
 var highlight_state := 0
 var crop_visual: CropVisual
 
+@export_group("格子高亮")
+@export var reachable_fill_color := Color(1.0, 0.88, 0.3, 0.28)
+@export var reachable_border_color := Color("#ffe36b")
+@export var blocked_fill_color := Color(0.95, 0.28, 0.25, 0.24)
+@export var blocked_border_color := Color("#ee6158")
+
 
 func _ready() -> void:
 	# 农田与地面同层，玩家使用更高显示层避免被耕地遮挡。
@@ -194,5 +200,5 @@ func _refresh_state_visuals() -> void:
 	var reachable := highlight_state == 1
 	var fill := highlight.get_node("Fill") as Polygon2D
 	var border := highlight.get_node("Border") as Line2D
-	fill.color = Color(1.0, 0.88, 0.3, 0.28) if reachable else Color(0.95, 0.28, 0.25, 0.24)
-	border.default_color = Color("#ffe36b") if reachable else Color("#ee6158")
+	fill.color = reachable_fill_color if reachable else blocked_fill_color
+	border.default_color = reachable_border_color if reachable else blocked_border_color

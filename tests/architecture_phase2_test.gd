@@ -12,10 +12,10 @@ func _init() -> void:
 	for obsolete_scene_path in [
 		"res://scenes/world/environment/pond_collision.tscn",
 		"res://scenes/world/environment/world_boundaries.tscn",
-		"res://scenes/world/environment/world_grid_cursor.tscn",
 		"res://scenes/world/environment/world_resource_layer.tscn",
 	]:
 		assert(not FileAccess.file_exists(obsolete_scene_path))
+	assert(load("res://scenes/world/environment/world_grid_cursor.tscn") is PackedScene)
 	_validate_sprite_frames("res://resources/animations/player_sprite_frames.tres", [
 		&"idle_down", &"idle_left", &"idle_right", &"idle_up",
 		&"walk_down", &"walk_left", &"walk_right", &"walk_up",
