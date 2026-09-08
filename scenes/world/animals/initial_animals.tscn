@@ -7,11 +7,14 @@
 [node name="Chicken01" parent="." instance=ExtResource("1_chicken")]
 position = Vector2(1010, 555)
 chicken_index = 0
+persistence_id = &"farm_chicken_01"
 
 [node name="Chicken02" parent="." instance=ExtResource("1_chicken")]
 position = Vector2(1080, 590)
 chicken_index = 1
+persistence_id = &"farm_chicken_02"
 
 [node name="Chicken03" parent="." instance=ExtResource("1_chicken")]
 position = Vector2(1125, 535)
 chicken_index = 0
+persistence_id = &"farm_chicken_03"

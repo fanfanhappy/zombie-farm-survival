@@ -8,6 +8,7 @@ var roam_target := Vector2.ZERO
 var decision_time := 0.0
 var egg_ready := false
 @export var chicken_index := 0
+@export var persistence_id: StringName
 @onready var sprite: AnimatedSprite2D = $ChickenAnimation
 
 
@@ -76,7 +77,11 @@ func reset_for_new_game() -> void:
 
 
 func create_save_data() -> Dictionary:
-	return {"x": position.x, "y": position.y, "egg_ready": egg_ready}
+	return {"persistence_id": get_persistence_id(), "x": position.x, "y": position.y, "egg_ready": egg_ready}
+
+
+func get_persistence_id() -> String:
+	return String(persistence_id) if not persistence_id.is_empty() else String(name)
 
 
 func restore_save_data(data: Dictionary) -> void:

@@ -4,7 +4,7 @@ extends RefCounted
 
 func create_save_data(game: Node) -> Dictionary:
 	return {
-		"version": 18, "day": game.day, "day_progress": game.day_progress,
+		"version": 19, "day": game.day, "day_progress": game.day_progress,
 		"weather": game.weather_system.current_weather_id,
 		"inventory": game.inventory.create_save_data(),
 		"player_position": {"x": game.player.position.x, "y": game.player.position.y},
@@ -37,14 +37,15 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 	game.player.max_stamina = float(data.get("max_stamina", game.player.max_stamina))
 	game.player.health = clampf(float(data.get("health", game.player.max_health)), 0.0, game.player.max_health)
 	game.player.stamina = clampf(float(data.get("stamina", game.player.max_stamina)), 0.0, game.player.max_stamina)
-	game.player.hunger = float(data.get("hunger", game.player.max_hunger))
-	game.player.thirst = float(data.get("thirst", game.player.max_thirst))
+	game.player.hunger = clampf(float(data.get("hunger", game.player.max_hunger)), 0.0, game.player.max_hunger)
+	game.player.thirst = clampf(float(data.get("thirst", game.player.max_thirst)), 0.0, game.player.max_thirst)
 	game.player.level = int(data.get("level", 1))
 	game.player.experience = int(data.get("experience", 0))
 	game.player.well_fed_time = float(data.get("well_fed_time", 0.0))
 	game.watering_can_water = clampi(int(data.get("watering_can_water", game.WATERING_CAN_CAPACITY)), 0, game.WATERING_CAN_CAPACITY)
 	var weapon_id := str(data.get("equipped_weapon_id", "wooden_club"))
-	if not game.inventory.has_item(weapon_id): game.inventory.add_item(weapon_id, 1)
+	if not game.inventory.has_item(weapon_id):
+		weapon_id = String(game.player.definition.starting_weapon_id)
 	var weapon_data: Dictionary = game.inventory.get_item_data(weapon_id)
 	game.player.equip_weapon(weapon_id, weapon_data.get("name", data.get("weapon", "木棒")), float(weapon_data.get("attack_damage", data.get("attack_damage", 25.0))))
 	game.homestead.health = clampf(float(data.get("homestead_health", game.homestead.max_health)), 1.0, game.homestead.max_health)
@@ -53,8 +54,8 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 	restore_storage_chests(game, data.get("storage_chests", []))
 	restore_snare_traps(game, data.get("snare_traps", []))
 	restore_ground_items(game, data.get("ground_items", []))
-	restore_farm_plots(game, data.get("farm_plots", []))
-	restore_chickens(game, data.get("chickens", []))
+	restore_farm_plots(game, data.get("farm_plots", []), int(data.get("version", 0)))
+	restore_chickens(game, data.get("chickens", []), int(data.get("version", 0)))
 	game.kills = int(data.get("kills", 0))
 	game.hordes_survived = int(data.get("hordes_survived", 0))
 	game.objective_system.restore_save_data(data.get("objectives", {}))
@@ -69,7 +70,7 @@ func serialize_defenses(game: Node) -> Array[Dictionary]:
 
 
 func restore_defenses(game: Node, entries: Array) -> void:
-	for node in game.get_tree().get_nodes_in_group("defenses"): node.queue_free()
+	_clear_group_immediately(game, "defenses")
 	for entry in entries:
 		if not entry is Dictionary: continue
 		var type := str(entry.get("type", "fence"))
@@ -95,7 +96,7 @@ func serialize_storage_chests(game: Node) -> Array[Dictionary]:
 
 
 func restore_storage_chests(game: Node, entries: Array) -> void:
-	for node in game.get_tree().get_nodes_in_group("storage_chests"): node.queue_free()
+	_clear_group_immediately(game, "storage_chests")
 	var scene := _get_placeable_scene(game, "storage_chest")
 	if scene == null: return
 	for entry in entries:
@@ -114,7 +115,7 @@ func serialize_snare_traps(game: Node) -> Array[Dictionary]:
 
 
 func restore_snare_traps(game: Node, entries: Array) -> void:
-	for node in game.get_tree().get_nodes_in_group("snare_traps"): node.queue_free()
+	_clear_group_immediately(game, "snare_traps")
 	var scene := _get_placeable_scene(game, "snare_trap")
 	if scene == null: return
 	for entry in entries:
@@ -132,8 +133,19 @@ func serialize_farm_plots(game: Node) -> Array[Dictionary]:
 	return result
 
 
-func restore_farm_plots(game: Node, entries: Array) -> void:
+func restore_farm_plots(game: Node, entries: Array, save_version := 19) -> void:
 	var plots := game.get_tree().get_nodes_in_group("farm_plots")
+	if save_version >= 19:
+		var plots_by_cell: Dictionary = {}
+		for plot_node in plots:
+			var plot := plot_node as FarmPlot
+			plots_by_cell[WorldGrid.world_to_cell(plot.global_position)] = plot
+		for entry in entries:
+			if not entry is Dictionary: continue
+			var cell := Vector2i(int(entry.get("cell_x", 0)), int(entry.get("cell_y", 0)))
+			var target := plots_by_cell.get(cell) as FarmPlot
+			if target != null: target.restore_save_data(entry, game.farming_system)
+		return
 	for index in mini(entries.size(), plots.size()):
 		if entries[index] is Dictionary: (plots[index] as FarmPlot).restore_save_data(entries[index], game.farming_system)
 
@@ -145,7 +157,7 @@ func serialize_ground_items(game: Node) -> Array[Dictionary]:
 
 
 func restore_ground_items(game: Node, entries: Array) -> void:
-	for node in game.get_tree().get_nodes_in_group("ground_items"): node.queue_free()
+	_clear_group_immediately(game, "ground_items")
 	for entry in entries:
 		if entry is Dictionary: game._spawn_ground_item(str(entry.get("item_id", "wood")), int(entry.get("amount", 1)), Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0))))
 
@@ -156,10 +168,27 @@ func serialize_chickens(game: Node) -> Array[Dictionary]:
 	return result
 
 
-func restore_chickens(game: Node, entries: Array) -> void:
+func restore_chickens(game: Node, entries: Array, save_version := 19) -> void:
 	var chickens := game.get_tree().get_nodes_in_group("chickens")
+	if save_version >= 19:
+		var chickens_by_id: Dictionary = {}
+		for chicken_node in chickens:
+			var chicken := chicken_node as Chicken
+			chickens_by_id[chicken.get_persistence_id()] = chicken
+		for entry in entries:
+			if not entry is Dictionary: continue
+			var target := chickens_by_id.get(str(entry.get("persistence_id", ""))) as Chicken
+			if target != null: target.restore_save_data(entry)
+		return
 	for index in mini(entries.size(), chickens.size()):
 		if entries[index] is Dictionary: (chickens[index] as Chicken).restore_save_data(entries[index])
+
+
+func _clear_group_immediately(game: Node, group_name: StringName) -> void:
+	for node in game.get_tree().get_nodes_in_group(group_name):
+		var parent := node.get_parent()
+		if parent != null: parent.remove_child(node)
+		node.queue_free()
 
 
 func _get_placeable_scene(game: Node, placement_type: String) -> PackedScene:

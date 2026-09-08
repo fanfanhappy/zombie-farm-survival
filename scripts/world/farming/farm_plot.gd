@@ -100,7 +100,8 @@ func water_from_rain() -> void:
 
 
 func create_save_data() -> Dictionary:
-	return {"state": state, "watered": watered, "growth_days": growth_days, "crop_id": crop_id}
+	var cell := WorldGrid.world_to_cell(global_position)
+	return {"cell_x": cell.x, "cell_y": cell.y, "state": state, "watered": watered, "growth_days": growth_days, "crop_id": crop_id}
 
 
 func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
