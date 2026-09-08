@@ -143,7 +143,10 @@ func _init() -> void:
 	assert(spawned_zombie.get_parent().name == "Enemies")
 	assert(spawned_zombie.definition == normal_enemy)
 	assert(spawned_zombie.get_node("HealthBar") is ProgressBar)
-	assert(get_nodes_in_group("ground_items")[0].get_parent().name == "GroundItems")
+	var spawned_ground_item := get_nodes_in_group("ground_items")[0] as GroundItem
+	assert(spawned_ground_item.get_parent().name == "GroundItems")
+	assert(spawned_ground_item.icon is Texture2D)
+	assert(spawned_ground_item.get_node("ItemIcon").texture == spawned_ground_item.icon)
 	game.inventory.add_item("bandage", 3)
 	game.inventory.assign_hotbar_item(4, "bandage")
 	game.objective_system.current_index = 2

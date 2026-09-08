@@ -633,7 +633,8 @@ func _spawn_ground_item(item_id: String, amount: int, at_position: Vector2) -> v
 	var ground_item := GROUND_ITEM_SCENE.instantiate() as GroundItem
 	ground_item.position = at_position
 	ground_items_root.add_child(ground_item)
-	ground_item.setup(item_id, amount, inventory.get_display_name(item_id))
+	var item_data: Dictionary = inventory.get_item_data(item_id)
+	ground_item.setup(item_id, amount, inventory.get_display_name(item_id), item_data.get("icon") as Texture2D)
 
 
 func _try_dismantle_nearest() -> void:

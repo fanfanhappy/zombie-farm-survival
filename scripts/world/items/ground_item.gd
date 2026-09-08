@@ -4,14 +4,18 @@ extends Node2D
 var item_id := ""
 var amount := 1
 var display_name := ""
+var icon: Texture2D
+@onready var background: Polygon2D = $Background
+@onready var item_icon: Sprite2D = $ItemIcon
 @onready var item_label: Label = $ItemLabel
 @onready var amount_label: Label = $AmountLabel
 
 
-func setup(id: String, quantity := 1, shown_name := "") -> void:
+func setup(id: String, quantity := 1, shown_name := "", shown_icon: Texture2D = null) -> void:
 	item_id = id
 	amount = quantity
 	display_name = shown_name if not shown_name.is_empty() else id
+	icon = shown_icon
 	add_to_group("ground_items")
 	add_to_group("interactables")
 	_update_visual()
@@ -45,5 +49,10 @@ func create_save_data() -> Dictionary:
 func _update_visual() -> void:
 	if not is_instance_valid(item_label):
 		return
+	item_icon.texture = icon
+	item_icon.visible = icon != null
+	background.visible = icon == null
+	item_label.visible = icon == null
 	item_label.text = display_name
 	amount_label.text = str(amount)
+	amount_label.visible = amount > 1
