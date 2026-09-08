@@ -6,9 +6,6 @@ extends StaticBody2D
 
 
 func _ready() -> void:
-	# 外观和碰撞由对应的设施场景维护，脚本只负责交互行为。
-	collision_layer = 2
-	collision_mask = 0
 	add_to_group("interactables")
 
 

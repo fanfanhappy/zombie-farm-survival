@@ -538,54 +538,6 @@ func load_game() -> void:
 	show_message("存档已读取")
 
 
-func _serialize_defenses() -> Array[Dictionary]:
-	return persistence.serialize_defenses(self)
-
-
-func _restore_defenses(entries: Array) -> void:
-	persistence.restore_defenses(self, entries)
-
-
-func _serialize_storage_chests() -> Array[Dictionary]:
-	return persistence.serialize_storage_chests(self)
-
-
-func _restore_storage_chests(entries: Array) -> void:
-	persistence.restore_storage_chests(self, entries)
-
-
-func _serialize_snare_traps() -> Array[Dictionary]:
-	return persistence.serialize_snare_traps(self)
-
-
-func _restore_snare_traps(entries: Array) -> void:
-	persistence.restore_snare_traps(self, entries)
-
-
-func _serialize_farm_plots() -> Array[Dictionary]:
-	return persistence.serialize_farm_plots(self)
-
-
-func _serialize_ground_items() -> Array[Dictionary]:
-	return persistence.serialize_ground_items(self)
-
-
-func _serialize_chickens() -> Array[Dictionary]:
-	return persistence.serialize_chickens(self)
-
-
-func _restore_chickens(entries: Array) -> void:
-	persistence.restore_chickens(self, entries)
-
-
-func _restore_ground_items(entries: Array) -> void:
-	persistence.restore_ground_items(self, entries)
-
-
-func _restore_farm_plots(entries: Array) -> void:
-	persistence.restore_farm_plots(self, entries)
-
-
 func _on_inventory_item_use_requested(item_id: String) -> void:
 	item_use_system.handle_item_use(self, item_id)
 	inventory_ui.refresh()

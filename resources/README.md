@@ -9,8 +9,9 @@ Godot 已加工资源目录。这里保存可由检查器编辑和复用的 Reso
 - `animations`：SpriteFrames 动画。
 - `items、crops、recipes`：物品、作物和配方数据库。
 - `placements、defense_upgrades`：放置与升级配置。
-- `weather、objectives、hordes`：世界规则和进度配置。
+- `weather、objectives、hordes、enemies`：世界规则、敌人和进度配置。
 - `tilesets、themes`：地图瓦片与全局 UI 样式。
+- `settings`：玩家、世界、农田和游戏规则的集中可视化配置。
 
 ## 维护规则
 

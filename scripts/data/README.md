@@ -6,6 +6,12 @@
 
 ## 当前文件
 
+- `item_amount.gd`：所有配方、奖励、收获和初始背包共用的“物品ID+数量”子资源。
+- `game_rules_definition.gd`、`player_definition.gd`、`world_settings.gd`、`farming_action_settings.gd`：集中可调玩法规则。
+- `horde_wave_definition.gd`、`enemy_spawn_entry.gd`、`defense_upgrade_level.gd`、`loot_entry.gd`：尸潮、升级和掉落的强类型子资源。
+- `inventory_visual_style.gd`：背包与快捷栏视觉资源定义。
+- `consumable_effect_definition.gd`、`recipe_effect_definition.gd`：物品和配方效果资源定义。
+
 - `crop_database.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `crop_definition.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `defense_upgrade_database.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。

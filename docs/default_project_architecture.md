@@ -45,7 +45,7 @@ Main
 - 弹窗菜单：`scenes/ui/game_menus.tscn`
 - 背包与快捷栏：`scenes/ui/inventory_ui.tscn`
 
-运行时只动态创建确实会变化的对象，例如敌人、掉落物、玩家放置物和配方按钮。初始地图、碰撞、建筑、设施、农田、动物、动画和 UI 均应优先在编辑器中调整。
+运行时只动态创建确实会变化的对象，例如敌人、掉落物和玩家放置物。重复列表使用可复用条目场景实例化，例如 `crafting_recipe_entry.tscn`；初始地图、碰撞、建筑、设施、农田、动物、动画和 UI 均应优先在编辑器中调整。
 
 资源物件必须分为两套：`StaticDecorations` 只显示并可选带固定碰撞，不注册交互和掉落；`HarvestableResources` 才包含耐久、工具判定、进度、掉落和重生。两类物件分别使用 `static_decorations` 与 `harvestable_resources` 分组，不能混用场景。
 

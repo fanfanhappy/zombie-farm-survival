@@ -206,10 +206,10 @@ func _init() -> void:
 	var chest := load("res://scenes/world/storage/storage_chest.tscn").instantiate() as StorageChest
 	game.building_layer.add_child(chest)
 	await process_frame
-	assert(game._serialize_defenses().size() == 1)
-	assert(game._serialize_storage_chests().size() == 1)
-	assert(game._serialize_ground_items().size() == 1)
-	assert(game._serialize_farm_plots().size() == 72)
+	assert(game.persistence.serialize_defenses(game).size() == 1)
+	assert(game.persistence.serialize_storage_chests(game).size() == 1)
+	assert(game.persistence.serialize_ground_items(game).size() == 1)
+	assert(game.persistence.serialize_farm_plots(game).size() == 72)
 	var complete_save_data: Dictionary = game.persistence.create_save_data(game)
 	assert(int(complete_save_data.get("version")) == 20)
 	assert(complete_save_data.get("enemies") is Array)
