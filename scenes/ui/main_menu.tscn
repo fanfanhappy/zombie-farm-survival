@@ -112,3 +112,9 @@ text = "存档状态"
 horizontal_alignment = 1
 
 [node name="SettingsUI" parent="." instance=ExtResource("2_settings_ui")]
+
+[node name="OverwriteConfirmation" type="ConfirmationDialog" parent="."]
+title = "开始新游戏"
+dialog_text = "开始新游戏将删除上一局存档。\n确定要重新开始吗？"
+ok_button_text = "删除旧存档并开始"
+cancel_button_text = "取消"

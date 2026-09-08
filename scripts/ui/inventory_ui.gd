@@ -5,8 +5,10 @@ signal item_use_requested(item_id: String)
 signal item_drop_requested(item_id: String)
 signal inventory_closed
 
-const SLOT_TEXTURE := preload("res://assets/art/ui/inventory/ui_inventory_slots.png")
 const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot.tscn")
+const DEFAULT_VISUAL_STYLE := preload("res://resources/themes/inventory_visual_style.tres")
+
+@export var visual_style: Resource = DEFAULT_VISUAL_STYLE
 
 
 @onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Hotbar
@@ -240,10 +242,10 @@ func _clear_container(container: Container) -> void:
 
 
 func apply_slot_style(slot: Button, selected: bool) -> void:
-	slot.add_theme_stylebox_override("normal", _create_slot_style(2 if selected else 0))
-	slot.add_theme_stylebox_override("hover", _create_slot_style(1))
-	slot.add_theme_stylebox_override("pressed", _create_slot_style(2))
-	slot.add_theme_stylebox_override("focus", _create_slot_style(1))
+	slot.add_theme_stylebox_override("normal", visual_style.slot_selected if selected else visual_style.slot_normal)
+	slot.add_theme_stylebox_override("hover", visual_style.slot_hover)
+	slot.add_theme_stylebox_override("pressed", visual_style.slot_selected)
+	slot.add_theme_stylebox_override("focus", visual_style.slot_hover)
 
 
 func get_item_icon(item_id: String) -> Texture2D:
@@ -252,41 +254,14 @@ func get_item_icon(item_id: String) -> Texture2D:
 	return inventory.get_item_data(item_id).get("icon") as Texture2D
 
 
-func _create_slot_style(column: int) -> StyleBoxTexture:
-	var texture := AtlasTexture.new()
-	texture.atlas = SLOT_TEXTURE
-	texture.region = Rect2(column * 48, 96, 48, 48)
-	var style := StyleBoxTexture.new()
-	style.texture = texture
-	style.texture_margin_left = 9.0
-	style.texture_margin_top = 9.0
-	style.texture_margin_right = 9.0
-	style.texture_margin_bottom = 9.0
-	return style
-
-
 func _apply_inventory_theme() -> void:
-	var backpack_style := _create_panel_style(Color("#5a3934e8"), Color("#d9ac78"), 4)
-	var hotbar_style := _create_panel_style(Color("#3f2927dc"), Color("#b67b58"), 3)
-	backpack_panel.add_theme_stylebox_override("panel", backpack_style)
-	$HotbarPanel.add_theme_stylebox_override("panel", hotbar_style)
-	$BackpackPanel/Margin/Content/Body/DetailPanel.add_theme_stylebox_override("panel", _create_panel_style(Color("#3e2927d9"), Color("#95664f"), 2))
-	$BackpackPanel/Margin/Content/Header/Title.add_theme_color_override("font_color", Color("#ffe5ae"))
-	capacity_label.add_theme_color_override("font_color", Color("#e8cda5"))
+	backpack_panel.add_theme_stylebox_override("panel", visual_style.backpack_panel)
+	$HotbarPanel.add_theme_stylebox_override("panel", visual_style.hotbar_panel)
+	$BackpackPanel/Margin/Content/Body/DetailPanel.add_theme_stylebox_override("panel", visual_style.detail_panel)
+	$BackpackPanel/Margin/Content/Header/Title.add_theme_color_override("font_color", visual_style.title_color)
+	capacity_label.add_theme_color_override("font_color", visual_style.capacity_color)
 	for button in [$BackpackPanel/Margin/Content/Header/CloseButton, use_button, drop_button]:
-		button.add_theme_stylebox_override("normal", _create_panel_style(Color("#b77b55"), Color("#f0c68e"), 2))
-		button.add_theme_stylebox_override("hover", _create_panel_style(Color("#d09260"), Color("#fff0bd"), 2))
-		button.add_theme_stylebox_override("pressed", _create_panel_style(Color("#8f5a48"), Color("#f0c68e"), 2))
-		button.add_theme_color_override("font_color", Color("#fff5dc"))
-
-
-func _create_panel_style(background: Color, border: Color, width: int) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.border_color = border
-	style.set_border_width_all(width)
-	style.corner_radius_top_left = 5
-	style.corner_radius_top_right = 5
-	style.corner_radius_bottom_left = 5
-	style.corner_radius_bottom_right = 5
-	return style
+		button.add_theme_stylebox_override("normal", visual_style.button_normal)
+		button.add_theme_stylebox_override("hover", visual_style.button_hover)
+		button.add_theme_stylebox_override("pressed", visual_style.button_pressed)
+		button.add_theme_color_override("font_color", visual_style.button_text_color)

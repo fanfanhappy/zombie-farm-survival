@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/components/crafting_recipe_entry.gd" id="1_script"]
+
+[node name="CraftingRecipeEntry" type="Button"]
+custom_minimum_size = Vector2(0, 42)
+text_overrun_behavior = 3
+script = ExtResource("1_script")

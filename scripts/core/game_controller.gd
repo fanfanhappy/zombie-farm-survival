@@ -7,6 +7,7 @@ const WATERING_CAN_CAPACITY := 5
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.tres")
+const CRAFTING_RECIPE_ENTRY_SCENE := preload("res://scenes/ui/components/crafting_recipe_entry.tscn")
 
 @export var enemy_database: EnemyDatabase = DEFAULT_ENEMY_DATABASE
 
@@ -477,11 +478,10 @@ func open_crafting(station_type: String, display_name: String) -> void:
 	crafting_title.text = display_name
 	for child in recipe_list.get_children(): child.queue_free()
 	for recipe in crafting_system.get_recipes_for_station(station_type):
-		var button := Button.new()
-		button.text = crafting_system.format_recipe(recipe, self)
-		button.custom_minimum_size.y = 42.0
-		button.pressed.connect(_craft_recipe.bind(recipe["id"]))
-		recipe_list.add_child(button)
+		var entry := CRAFTING_RECIPE_ENTRY_SCENE.instantiate() as CraftingRecipeEntry
+		entry.configure(str(recipe["id"]), crafting_system.format_recipe(recipe, self))
+		entry.craft_requested.connect(_craft_recipe)
+		recipe_list.add_child(entry)
 	crafting_panel.visible = true
 	_set_player_control(false)
 
