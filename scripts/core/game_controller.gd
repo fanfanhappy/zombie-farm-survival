@@ -5,10 +5,6 @@ const DAY_LENGTH_SECONDS := 90.0
 const DAY_START_PROGRESS := 7.0 / 24.0
 const WATERING_CAN_CAPACITY := 5
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
-const FENCE_SCENE := preload("res://scenes/world/defenses/fence.tscn")
-const SPIKE_SCENE := preload("res://scenes/world/defenses/spike.tscn")
-const SNARE_TRAP_SCENE := preload("res://scenes/world/defenses/snare_trap.tscn")
-const STORAGE_CHEST_SCENE := preload("res://scenes/world/storage/storage_chest.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
@@ -54,6 +50,7 @@ var hordes_survived := 0
 var mouse_action_held := false
 var mouse_action_cooldown := 0.0
 var watering_can_water := WATERING_CAN_CAPACITY
+var persistence := GamePersistence.new()
 
 
 func _ready() -> void:
@@ -529,153 +526,68 @@ func _eat_potato() -> void:
 
 
 func save_game() -> void:
-	if horde_system.active: show_message("尸潮期间不能保存"); return
-	var data := {"version": 15, "day": day, "day_progress": day_progress, "weather": weather_system.current_weather_id, "inventory": inventory.create_save_data(), "player_position": {"x": player.position.x, "y": player.position.y}, "health": player.health, "max_health": player.max_health, "stamina": player.stamina, "max_stamina": player.max_stamina, "hunger": player.hunger, "thirst": player.thirst, "level": player.level, "experience": player.experience, "well_fed_time": player.well_fed_time, "homestead_health": homestead.health, "equipped_weapon_id": player.equipped_weapon_id, "weapon": player.equipped_weapon, "attack_damage": player.attack_damage, "kills": kills, "hordes_survived": hordes_survived, "defenses": _serialize_defenses(), "storage_chests": _serialize_storage_chests(), "ground_items": _serialize_ground_items(), "farm_plots": _serialize_farm_plots(), "objectives": objective_system.create_save_data()}
-	data["version"] = 17
-	data["snare_traps"] = _serialize_snare_traps()
-	data["watering_can_water"] = watering_can_water
-	data["chickens"] = _serialize_chickens()
-	data["version"] = 18
-	show_message("游戏已保存" if SaveSystem.save_game(data) else "保存失败")
+	if horde_system.active:
+		show_message("尸潮期间不能保存")
+		return
+	show_message("游戏已保存" if SaveSystem.save_game(persistence.create_save_data(self)) else "保存失败")
 
 
 func load_game() -> void:
 	var data := SaveSystem.load_game()
-	if data.is_empty(): show_message("没有找到存档"); return
-	day = int(data.get("day", 1)); day_progress = float(data.get("day_progress", DAY_START_PROGRESS))
-	weather_system.set_weather(str(data.get("weather", "clear")))
-	var saved_inventory: Dictionary = data.get("inventory", data.get("resources", STARTING_ITEMS))
-	inventory.restore_save_data(saved_inventory)
-	var position_data: Dictionary = data.get("player_position", {})
-	player.position = Vector2(float(position_data.get("x", PLAYER_HOME.x)), float(position_data.get("y", PLAYER_HOME.y)))
-	player.max_health = float(data.get("max_health", player.max_health))
-	player.max_stamina = float(data.get("max_stamina", player.max_stamina))
-	player.health = clampf(float(data.get("health", player.max_health)), 0.0, player.max_health)
-	player.stamina = clampf(float(data.get("stamina", player.max_stamina)), 0.0, player.max_stamina)
-	player.hunger = float(data.get("hunger", player.max_hunger))
-	player.thirst = float(data.get("thirst", player.max_thirst))
-	player.level = int(data.get("level", 1))
-	player.experience = int(data.get("experience", 0))
-	player.well_fed_time = float(data.get("well_fed_time", 0.0))
-	watering_can_water = clampi(int(data.get("watering_can_water", WATERING_CAN_CAPACITY)), 0, WATERING_CAN_CAPACITY)
-	var weapon_id := str(data.get("equipped_weapon_id", "wooden_club"))
-	if not inventory.has_item(weapon_id): inventory.add_item(weapon_id, 1)
-	var weapon_data := inventory.get_item_data(weapon_id)
-	player.equip_weapon(weapon_id, weapon_data.get("name", data.get("weapon", "木棒")), float(weapon_data.get("attack_damage", data.get("attack_damage", 25.0))))
-	homestead.health = clampf(float(data.get("homestead_health", homestead.max_health)), 1.0, homestead.max_health)
-	homestead.repair(0.0)
-	_restore_defenses(data.get("defenses", []))
-	_restore_storage_chests(data.get("storage_chests", []))
-	_restore_snare_traps(data.get("snare_traps", []))
-	_restore_ground_items(data.get("ground_items", []))
-	_restore_farm_plots(data.get("farm_plots", []))
-	_restore_chickens(data.get("chickens", []))
-	kills = int(data.get("kills", 0)); hordes_survived = int(data.get("hordes_survived", 0))
-	objective_system.restore_save_data(data.get("objectives", {}))
-	_update_hud(); show_message("存档已读取")
+	if data.is_empty():
+		show_message("没有找到存档")
+		return
+	persistence.restore_save_data(self, data)
+	_update_hud()
+	show_message("存档已读取")
 
 
 func _serialize_defenses() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("defenses"):
-		var structure := node as DefenseStructure
-		result.append({"type": structure.defense_type, "x": structure.position.x, "y": structure.position.y, "rotation": structure.rotation, "health": structure.health, "upgrade_level": structure.upgrade_level, "max_health": structure.max_health, "spike_damage": structure.spike_damage})
-	return result
+	return persistence.serialize_defenses(self)
 
 
-func _restore_defenses(saved_defenses: Array) -> void:
-	for node in get_tree().get_nodes_in_group("defenses"): node.queue_free()
-	for entry in saved_defenses:
-		if not entry is Dictionary: continue
-		var structure_scene: PackedScene = FENCE_SCENE if str(entry.get("type", "fence")) == "fence" else SPIKE_SCENE
-		var structure := structure_scene.instantiate() as DefenseStructure
-		structure.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
-		structure.rotation = float(entry.get("rotation", 0.0))
-		building_layer.add_child(structure)
-		structure.setup(str(entry.get("type", "fence")))
-		structure.upgrade_level = int(entry.get("upgrade_level", 1))
-		structure.max_health = float(entry.get("max_health", structure.max_health))
-		structure.spike_damage = float(entry.get("spike_damage", structure.spike_damage))
-		structure.health = float(entry.get("health", structure.max_health))
-		structure.queue_redraw()
+func _restore_defenses(entries: Array) -> void:
+	persistence.restore_defenses(self, entries)
 
 
 func _serialize_storage_chests() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("storage_chests"):
-		result.append((node as StorageChest).create_save_data())
-	return result
+	return persistence.serialize_storage_chests(self)
 
 
-func _restore_storage_chests(saved_chests: Array) -> void:
-	for node in get_tree().get_nodes_in_group("storage_chests"): node.queue_free()
-	for entry in saved_chests:
-		if not entry is Dictionary: continue
-		var chest := STORAGE_CHEST_SCENE.instantiate() as StorageChest
-		chest.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
-		chest.rotation = float(entry.get("rotation", 0.0))
-		building_layer.add_child(chest)
-		chest.restore_items(entry.get("items", {}))
+func _restore_storage_chests(entries: Array) -> void:
+	persistence.restore_storage_chests(self, entries)
 
 
 func _serialize_snare_traps() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("snare_traps"):
-		result.append((node as SnareTrap).create_save_data())
-	return result
+	return persistence.serialize_snare_traps(self)
 
 
-func _restore_snare_traps(saved_traps: Array) -> void:
-	for node in get_tree().get_nodes_in_group("snare_traps"): node.queue_free()
-	for entry in saved_traps:
-		if not entry is Dictionary: continue
-		var trap := SNARE_TRAP_SCENE.instantiate() as SnareTrap
-		trap.position = Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0)))
-		trap.rotation = float(entry.get("rotation", 0.0))
-		trap.charges = int(entry.get("charges", SnareTrap.MAX_CHARGES))
-		building_layer.add_child(trap)
+func _restore_snare_traps(entries: Array) -> void:
+	persistence.restore_snare_traps(self, entries)
 
 
 func _serialize_farm_plots() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("farm_plots"):
-		result.append((node as FarmPlot).create_save_data())
-	return result
+	return persistence.serialize_farm_plots(self)
 
 
 func _serialize_ground_items() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("ground_items"):
-		result.append((node as GroundItem).create_save_data())
-	return result
+	return persistence.serialize_ground_items(self)
 
 
 func _serialize_chickens() -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for node in get_tree().get_nodes_in_group("chickens"):
-		result.append((node as Chicken).create_save_data())
-	return result
+	return persistence.serialize_chickens(self)
 
 
-func _restore_chickens(saved_chickens: Array) -> void:
-	var chickens := get_tree().get_nodes_in_group("chickens")
-	for index in mini(saved_chickens.size(), chickens.size()):
-		if saved_chickens[index] is Dictionary:
-			(chickens[index] as Chicken).restore_save_data(saved_chickens[index])
+func _restore_chickens(entries: Array) -> void:
+	persistence.restore_chickens(self, entries)
 
 
-func _restore_ground_items(saved_items: Array) -> void:
-	for node in get_tree().get_nodes_in_group("ground_items"): node.queue_free()
-	for entry in saved_items:
-		if not entry is Dictionary: continue
-		_spawn_ground_item(str(entry.get("item_id", "wood")), int(entry.get("amount", 1)), Vector2(float(entry.get("x", 0.0)), float(entry.get("y", 0.0))))
+func _restore_ground_items(entries: Array) -> void:
+	persistence.restore_ground_items(self, entries)
 
 
-func _restore_farm_plots(saved_plots: Array) -> void:
-	var plots := get_tree().get_nodes_in_group("farm_plots")
-	for index in mini(saved_plots.size(), plots.size()):
-		if saved_plots[index] is Dictionary:
-			(plots[index] as FarmPlot).restore_save_data(saved_plots[index], farming_system)
+func _restore_farm_plots(entries: Array) -> void:
+	persistence.restore_farm_plots(self, entries)
 
 
 func _on_inventory_item_use_requested(item_id: String) -> void:
