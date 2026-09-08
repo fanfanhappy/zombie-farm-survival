@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/world/farming/crops/carrot_crop_visual.tscn" id="2_visual"]
+
+[resource]
+script = ExtResource("1_script")
+crop_id = &"carrot"
+display_name = "胡萝卜"
+seed_item_id = &"carrot_seed"
+visual_scene = ExtResource("2_visual")
+growth_days = 1
+harvest = {"carrot": 4, "carrot_seed": 1}

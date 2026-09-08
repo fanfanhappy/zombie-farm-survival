@@ -4,12 +4,6 @@ extends Node2D
 enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
 
 const CELL_SIZE := WorldGrid.CELL_SIZE
-const CROP_VISUAL_SCENES := {
-	"potato": preload("res://scenes/world/farming/crops/potato_crop_visual.tscn"),
-	"carrot": preload("res://scenes/world/farming/crops/carrot_crop_visual.tscn"),
-	"medicinal_herb": preload("res://scenes/world/farming/crops/medicinal_herb_crop_visual.tscn"),
-}
-
 var state := PlotState.EMPTY
 var watered := false
 var growth_days := 0
@@ -172,9 +166,12 @@ func _refresh_crop_visual() -> void:
 	if is_instance_valid(crop_visual):
 		crop_visual.queue_free()
 		crop_visual = null
-	if crop_id.is_empty() or not CROP_VISUAL_SCENES.has(crop_id):
+	if crop_id.is_empty():
 		return
-	crop_visual = (CROP_VISUAL_SCENES[crop_id] as PackedScene).instantiate() as CropVisual
+	var visual_scene := crop_data.get("visual_scene") as PackedScene
+	if visual_scene == null:
+		return
+	crop_visual = visual_scene.instantiate() as CropVisual
 	add_child(crop_visual)
 	var stage := 0
 	if state == PlotState.READY:

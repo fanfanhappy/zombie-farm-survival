@@ -1,8 +1,9 @@
 class_name FarmingSystem
 extends Node
 
-const CROP_CATALOG_PATH := "res://data/crops/crop_catalog.json"
+const DEFAULT_CROP_DATABASE := preload("res://resources/crops/crop_database.tres")
 
+@export var crop_database: CropDatabase = DEFAULT_CROP_DATABASE
 var crop_catalog: Dictionary = {}
 
 
@@ -20,13 +21,8 @@ func get_crop_from_seed(item_data: Dictionary) -> String:
 
 
 func _load_crop_catalog() -> void:
-	if not FileAccess.file_exists(CROP_CATALOG_PATH):
-		push_error("作物目录不存在：%s" % CROP_CATALOG_PATH)
+	crop_catalog.clear()
+	if crop_database == null:
+		push_error("FarmingSystem 未配置作物数据库")
 		return
-	var file := FileAccess.open(CROP_CATALOG_PATH, FileAccess.READ)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary:
-		crop_catalog = parsed
-	else:
-		push_error("作物目录格式无效：%s" % CROP_CATALOG_PATH)
-
+	crop_catalog = crop_database.build_catalog()

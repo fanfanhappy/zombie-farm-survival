@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CropDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_definition.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/world/farming/crops/medicinal_herb_crop_visual.tscn" id="2_visual"]
+
+[resource]
+script = ExtResource("1_script")
+crop_id = &"medicinal_herb"
+display_name = "药草"
+seed_item_id = &"herb_seed"
+visual_scene = ExtResource("2_visual")
+growth_days = 2
+harvest = {"herb": 3, "herb_seed": 1}

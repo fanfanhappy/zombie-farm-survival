@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CropDatabase" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/crop_database.gd" id="1_script"]
+[ext_resource type="Resource" path="res://resources/crops/definitions/potato.tres" id="2_potato"]
+[ext_resource type="Resource" path="res://resources/crops/definitions/carrot.tres" id="3_carrot"]
+[ext_resource type="Resource" path="res://resources/crops/definitions/medicinal_herb.tres" id="4_herb"]
+
+[resource]
+script = ExtResource("1_script")
+crops = [ExtResource("2_potato"), ExtResource("3_carrot"), ExtResource("4_herb")]
