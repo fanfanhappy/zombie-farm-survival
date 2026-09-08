@@ -10,11 +10,37 @@ const DEFAULT_WORLD_SETTINGS := preload("res://resources/settings/world_settings
 @onready var grid_cursor: WorldGridCursor = $WorldGridCursor
 var cursor_hint := ""
 var connected_farm_cells: Array[Vector2i] = []
+var farm_plots_by_cell: Dictionary = {}
+var terrain_refresh_queued := false
+
+
+func _ready() -> void:
+	call_deferred("_index_farm_plots")
 
 
 func _process(_delta: float) -> void:
-	_refresh_farming_terrain()
 	_update_grid_cursor()
+
+
+func _index_farm_plots() -> void:
+	farm_plots_by_cell.clear()
+	for node in get_tree().get_nodes_in_group("farm_plots"):
+		var plot := node as FarmPlot
+		farm_plots_by_cell[WorldGrid.world_to_cell(plot.global_position)] = plot
+		if not plot.plot_state_changed.is_connected(_queue_terrain_refresh):
+			plot.plot_state_changed.connect(_queue_terrain_refresh)
+	_refresh_farming_terrain()
+
+
+func _queue_terrain_refresh() -> void:
+	if terrain_refresh_queued: return
+	terrain_refresh_queued = true
+	call_deferred("_run_queued_terrain_refresh")
+
+
+func _run_queued_terrain_refresh() -> void:
+	terrain_refresh_queued = false
+	_refresh_farming_terrain()
 
 
 func _refresh_farming_terrain() -> void:
@@ -59,12 +85,7 @@ func _update_grid_cursor() -> void:
 
 
 func _find_hovered_farm_plot(mouse_position: Vector2) -> FarmPlot:
-	var hovered_plot: FarmPlot
-	var nearest_distance := FARM_CELL_SIZE * 0.5
-	for node in get_tree().get_nodes_in_group("farm_plots"):
-		var plot := node as FarmPlot
-		var distance := mouse_position.distance_to(plot.global_position)
-		if distance <= nearest_distance:
-			hovered_plot = plot
-			nearest_distance = distance
-	return hovered_plot
+	var cell := WorldGrid.world_to_cell(mouse_position)
+	var plot := farm_plots_by_cell.get(cell) as FarmPlot
+	if plot == null or mouse_position.distance_to(plot.global_position) > FARM_CELL_SIZE * 0.5: return null
+	return plot

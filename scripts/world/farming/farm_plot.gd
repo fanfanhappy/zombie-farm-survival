@@ -1,6 +1,10 @@
 class_name FarmPlot
 extends Node2D
 
+signal plot_state_changed
+
+const DEFAULT_ACTION_SETTINGS := preload("res://resources/settings/farming_action_settings.tres")
+
 enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
 
 const CELL_SIZE := WorldGrid.CELL_SIZE
@@ -17,6 +21,8 @@ var crop_visual: CropVisual
 @export var reachable_border_color := Color("#ffe36b")
 @export var blocked_fill_color := Color(0.95, 0.28, 0.25, 0.24)
 @export var blocked_border_color := Color("#ee6158")
+@export_group("玩法设置")
+@export var action_settings: Resource = DEFAULT_ACTION_SETTINGS
 
 
 func _ready() -> void:
@@ -46,10 +52,10 @@ func get_interaction_prompt() -> String:
 
 func get_stamina_cost() -> float:
 	match state:
-		PlotState.EMPTY: return 6.0
-		PlotState.TILLED: return 2.0
-		PlotState.PLANTED, PlotState.GROWING: return 3.0 if not watered else 0.0
-		PlotState.READY: return 4.0
+		PlotState.EMPTY: return action_settings.till_cost
+		PlotState.TILLED: return action_settings.plant_cost
+		PlotState.PLANTED, PlotState.GROWING: return action_settings.water_cost if not watered else 0.0
+		PlotState.READY: return action_settings.harvest_cost
 	return 0.0
 
 
@@ -88,6 +94,7 @@ func interact(game: Node) -> void:
 			_harvest(game)
 	_refresh_crop_visual()
 	_refresh_state_visuals()
+	plot_state_changed.emit()
 
 
 func advance_day() -> void:
@@ -97,12 +104,14 @@ func advance_day() -> void:
 		state = PlotState.READY if growth_days >= int(crop_data.get("growth_days", 2)) else PlotState.GROWING
 		_refresh_crop_visual()
 		_refresh_state_visuals()
+		plot_state_changed.emit()
 
 
 func water_from_rain() -> void:
 	if state in [PlotState.PLANTED, PlotState.GROWING]:
 		watered = true
 		_refresh_state_visuals()
+		plot_state_changed.emit()
 
 
 func create_save_data() -> Dictionary:
@@ -118,6 +127,7 @@ func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
 	crop_data = farming_system.get_crop_data(crop_id).duplicate(true) if not crop_id.is_empty() else {}
 	_refresh_crop_visual()
 	_refresh_state_visuals()
+	plot_state_changed.emit()
 
 
 func reset_for_new_game() -> void:
@@ -128,6 +138,7 @@ func reset_for_new_game() -> void:
 	crop_data = {}
 	_refresh_crop_visual()
 	_refresh_state_visuals()
+	plot_state_changed.emit()
 
 
 func get_crop_name() -> String:
