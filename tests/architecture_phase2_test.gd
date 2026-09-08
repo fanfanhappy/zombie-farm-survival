@@ -28,6 +28,8 @@ func _init() -> void:
 	assert(game.get_node("GameSession/PlacementSystem") is PlacementSystem)
 	assert(game.get_node("GameSession/HordeSpawner") is HordeSystem)
 	assert(game.get_node("GameSession/WeatherController") is WeatherSystem)
+	assert(game.crafting_system.recipes.size() == 11)
+	assert(game.crafting_system.get_recipes_for_station("workbench").size() == 10)
 	assert(game.farming_system.crop_catalog.size() == 3)
 	var potato_data: Dictionary = game.farming_system.get_crop_data("potato")
 	assert(potato_data.get("visual_scene") is PackedScene)

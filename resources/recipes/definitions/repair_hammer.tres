@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/recipe_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+recipe_id = &"repair_hammer"
+display_name = "维修锤"
+station = "workbench"
+ingredients = {"wood": 3, "stone": 1}
+results = {"repair_hammer": 1}

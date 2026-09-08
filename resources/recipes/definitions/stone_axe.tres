@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/recipe_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+recipe_id = &"stone_axe"
+display_name = "石斧"
+station = "workbench"
+ingredients = {"wood": 5, "stone": 3}
+results = {"stone_axe": 1}

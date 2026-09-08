@@ -1,8 +1,9 @@
 class_name CraftingSystem
 extends Node
 
-const RECIPES_PATH := "res://data/recipes/basic_recipes.json"
+const DEFAULT_RECIPE_DATABASE := preload("res://resources/recipes/recipe_database.tres")
 
+@export var recipe_database: RecipeDatabase = DEFAULT_RECIPE_DATABASE
 var recipes: Dictionary = {}
 
 
@@ -50,12 +51,8 @@ func format_recipe(recipe: Dictionary, game: Node) -> String:
 
 
 func _load_recipes() -> void:
-	if not FileAccess.file_exists(RECIPES_PATH):
-		push_error("配方文件不存在：%s" % RECIPES_PATH)
+	recipes.clear()
+	if recipe_database == null:
+		push_error("CraftingSystem 未配置配方数据库")
 		return
-	var file := FileAccess.open(RECIPES_PATH, FileAccess.READ)
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if parsed is Dictionary:
-		recipes = parsed
-	else:
-		push_error("配方文件格式无效：%s" % RECIPES_PATH)
+	recipes = recipe_database.build_catalog()

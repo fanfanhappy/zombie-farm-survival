@@ -68,6 +68,7 @@
 - 物品数据库：`resources/items/item_database.tres`
 - 单件物品：`resources/items/definitions/*.tres`（图标、分类、堆叠和玩法参数均可在检查器修改）
 - 作物数据库：`resources/crops/crop_database.tres`（生长天数、收获物和作物场景均可视化配置）
+- 配方数据库：`resources/recipes/recipe_database.tres`（材料、产物和工作站可视化配置）
 
 ## 原型操作
 

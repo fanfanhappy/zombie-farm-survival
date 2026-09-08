@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="RecipeDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/recipe_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+recipe_id = &"bandage"
+display_name = "简易绷带"
+station = "workbench"
+ingredients = {"herb": 2}
+results = {"bandage": 1}
