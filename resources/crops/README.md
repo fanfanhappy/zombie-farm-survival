@@ -4,3 +4,10 @@
 - `definitions/` 中每个 `.tres` 对应一种作物，可修改种子 ID、生长天数、收获内容和外观场景。
 - 作物每个阶段的图片与节点位置在 `scenes/world/farming/crops/` 的独立场景中修改。
 - 新增作物时复制同类定义和外观场景，不需要修改 `farm_plot.gd`。
+
+## 新增检查
+
+1. 创建物品种子定义并填写唯一 `crop_id`。
+2. 复制一种作物定义，设置 `seed_item_id`、`growth_days` 和 `harvest`。
+3. 复制五阶段外观场景并重新选择每个阶段的图集区域。
+4. 将定义加入总数据库，运行 `resource_database_test.gd` 检查物品引用。
