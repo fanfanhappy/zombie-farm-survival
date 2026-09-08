@@ -65,6 +65,15 @@ func _init() -> void:
 	var fence_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/FenceLayer") as TileMapLayer
 	assert(fence_layer != null)
 	assert(fence_layer.get_used_cells().size() == 94)
+	var farming_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/FarmingTerrainLayer") as TileMapLayer
+	assert(farming_layer != null)
+	var farming_atlas := farming_layer.tile_set.get_source(0) as TileSetAtlasSource
+	assert(farming_atlas != null)
+	assert(farming_atlas.get_tiles_count() == 16)
+	for tile_index in farming_atlas.get_tiles_count():
+		var tile_id := farming_atlas.get_tile_id(tile_index)
+		assert(tile_id.x >= 0 and tile_id.x < 4)
+		assert(tile_id.y >= 0 and tile_id.y < 4)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WorldGridCursor") is WorldGridCursor)
 	assert(not game.has_node("GameWorld/LogicLayers/PondCollision"))
 	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries") is StaticBody2D)
@@ -88,6 +97,13 @@ func _init() -> void:
 	assert(game.get_node("UI/Menus/CraftingPanel") is PanelContainer)
 	assert(game.get_node("UI/Menus/PauseOverlay") is ColorRect)
 	assert(get_nodes_in_group("farm_plots").size() == 72)
+	var farm_cells := {}
+	for plot in get_nodes_in_group("farm_plots"):
+		var farm_cell := WorldGrid.world_to_cell(plot.position)
+		assert(plot.position == WorldGrid.cell_to_world(farm_cell))
+		assert(not farm_cells.has(farm_cell))
+		farm_cells[farm_cell] = true
+	assert(farm_cells.size() == 72)
 	assert(get_nodes_in_group("chickens").size() == 3)
 	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes")
 	assert(resource_layers.get_node("StaticDecorations") is TileMapLayer)
@@ -129,6 +145,14 @@ func _init() -> void:
 	game.objective_system.current_index = 2
 	var first_plot := get_nodes_in_group("farm_plots")[0] as FarmPlot
 	first_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED, "watered": true}, game.farming_system)
+	var second_plot := get_nodes_in_group("farm_plots")[1] as FarmPlot
+	second_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED}, game.farming_system)
+	await process_frame
+	assert(farming_layer.get_used_cells().size() == 2)
+	for farm_cell in farming_layer.get_used_cells():
+		var atlas_coordinates := farming_layer.get_cell_atlas_coords(farm_cell)
+		assert(atlas_coordinates.x >= 0 and atlas_coordinates.x < 4)
+		assert(atlas_coordinates.y >= 0 and atlas_coordinates.y < 4)
 	var fence := load("res://scenes/world/defenses/fence.tscn").instantiate() as DefenseStructure
 	game.building_layer.add_child(fence)
 	fence.setup("fence")

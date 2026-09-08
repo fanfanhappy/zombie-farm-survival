@@ -6,7 +6,7 @@
 
 ## 当前内容
 
-- `farm_tilled_terrain.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
+- `farm_tilled_terrain.tres`：开垦土地的自动拼接资源；当前只启用详细图集左上角的一套完整 `4×4` Terrain 模板，避免与同图中的其他模板混用。
 - `harvestable_resource_scenes.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `static_decoration_scenes.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `terrain_grass_tileset.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
