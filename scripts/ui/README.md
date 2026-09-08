@@ -9,7 +9,7 @@
 - `settings_ui.gd`：共用设置面板的打开、关闭及全屏切换逻辑。
 
 - `character_status_hud.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
-- `inventory_ui.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
+- `inventory_ui.gd`：背包搜索与分类、详情选择、拖拽快捷栏、滚轮切换及选中状态显示。
 - `main_menu.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `storage_ui.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 

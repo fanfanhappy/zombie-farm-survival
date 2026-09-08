@@ -119,6 +119,7 @@ func reset_for_new_game() -> void:
 	inventory.assign_hotbar_item(1, "stone_axe")
 	inventory.assign_hotbar_item(2, "stone_hoe")
 	inventory.assign_hotbar_item(3, "watering_can")
+	inventory_ui.reset_selection()
 	watering_can_water = WATERING_CAN_CAPACITY
 	objective_system.reset_for_new_game()
 	player.reset_for_new_game(PLAYER_HOME)
@@ -168,6 +169,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed("ui_cancel"):
 			storage_ui.close_storage(); get_viewport().set_input_as_handled()
 		return
+	if event is InputEventMouseButton and not inventory_ui.is_backpack_open() and not crafting_panel.visible and not placement_system.is_placing():
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN] and event.pressed:
+			var direction := -1 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1
+			if not inventory_ui.cycle_hotbar(direction): show_message("快捷栏中没有可用物品")
+			get_viewport().set_input_as_handled()
+			return
 	var hotbar_index := _get_pressed_hotbar_index(event)
 	if hotbar_index >= 0 and not inventory_ui.is_backpack_open() and not crafting_panel.visible:
 		if placement_system.is_placing(): placement_system.cancel_placement()
@@ -532,6 +539,7 @@ func load_game() -> void:
 		show_message("没有找到存档")
 		return
 	persistence.restore_save_data(self, data)
+	inventory_ui.reset_selection()
 	_update_hud()
 	show_message("存档已读取")
 
@@ -797,7 +805,7 @@ func _on_weather_changed(_weather_id: String, weather_data: Dictionary) -> void:
 
 
 func _get_pressed_hotbar_index(event: InputEvent) -> int:
-	for index in 7:
+	for index in inventory.hotbar_capacity:
 		if event.is_action_pressed("hotbar_slot_%d" % (index + 1)):
 			return index
 	return -1

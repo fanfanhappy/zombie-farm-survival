@@ -54,10 +54,31 @@ text = "×"
 [node name="Separator" type="HSeparator" parent="Margin/Content"]
 layout_mode = 2
 
-[node name="ItemGrid" type="GridContainer" parent="Margin/Content"]
-custom_minimum_size = Vector2(0, 248)
+[node name="FilterBar" type="HBoxContainer" parent="Margin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Search" type="LineEdit" parent="Margin/Content/FilterBar"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "搜索物品名称……"
+clear_button_enabled = true
+
+[node name="Category" type="OptionButton" parent="Margin/Content/FilterBar"]
+custom_minimum_size = Vector2(150, 38)
+layout_mode = 2
+tooltip_text = "按物品类型筛选"
+
+[node name="ItemScroll" type="ScrollContainer" parent="Margin/Content"]
+custom_minimum_size = Vector2(0, 205)
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemGrid" type="GridContainer" parent="Margin/Content/ItemScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 6

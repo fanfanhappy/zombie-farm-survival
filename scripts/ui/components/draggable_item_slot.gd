@@ -22,10 +22,11 @@ func set_visual(icon_texture: Texture2D, amount: int, hotkey: String, selected: 
 	var key_label := get_node("Hotkey") as Label
 	icon_rect.texture = icon_texture
 	icon_rect.visible = icon_texture != null
-	amount_label.visible = amount > 0
+	amount_label.visible = amount > 1
 	amount_label.text = "×%d" % amount
 	key_label.visible = not hotkey.is_empty()
 	key_label.text = hotkey
+	self_modulate = Color.WHITE if item_id.is_empty() or amount > 0 else Color(1, 1, 1, 0.42)
 
 
 func _get_drag_data(_at_position: Vector2) -> Variant:

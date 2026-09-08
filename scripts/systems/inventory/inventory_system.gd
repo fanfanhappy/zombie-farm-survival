@@ -7,7 +7,7 @@ const DEFAULT_ITEM_DATABASE := preload("res://resources/items/item_database.tres
 
 @export var item_database: ItemDatabase = DEFAULT_ITEM_DATABASE
 @export var slot_capacity := 24
-@export var hotbar_capacity := 7
+@export_range(1, 9, 1) var hotbar_capacity := 9
 var items: Dictionary = {}
 var item_catalog: Dictionary = {}
 var hotbar_slots: Array[String] = []
@@ -60,6 +60,7 @@ func remove_item(item_id: String, amount: int) -> bool:
 	items[item_id] = get_amount(item_id) - amount
 	if items[item_id] <= 0:
 		items.erase(item_id)
+		_clear_item_from_hotbar(item_id)
 	inventory_changed.emit()
 	return true
 
@@ -99,7 +100,7 @@ func get_sorted_item_ids() -> Array[String]:
 
 
 func assign_hotbar_item(slot_index: int, item_id: String) -> void:
-	if slot_index < 0 or slot_index >= hotbar_capacity or not item_catalog.has(item_id):
+	if slot_index < 0 or slot_index >= hotbar_capacity or not item_catalog.has(item_id) or not has_item(item_id):
 		return
 	# An item appears in only one shortcut slot. Moving it clears the old slot.
 	for index in hotbar_slots.size():
@@ -143,7 +144,9 @@ func restore_save_data(saved_items: Dictionary) -> void:
 		_reset_hotbar()
 		var saved_hotbar: Array = saved_items.get("hotbar", [])
 		for index in mini(saved_hotbar.size(), hotbar_capacity):
-			hotbar_slots[index] = str(saved_hotbar[index])
+			var item_id := str(saved_hotbar[index])
+			if has_item(item_id) and item_catalog.has(item_id):
+				hotbar_slots[index] = item_id
 		inventory_changed.emit()
 	else:
 		# Compatibility with inventory data saved before customizable hotbar slots.
@@ -166,6 +169,12 @@ func _reset_hotbar() -> void:
 	hotbar_slots.clear()
 	for index in hotbar_capacity:
 		hotbar_slots.append("")
+
+
+func _clear_item_from_hotbar(item_id: String) -> void:
+	for index in hotbar_slots.size():
+		if hotbar_slots[index] == item_id:
+			hotbar_slots[index] = ""
 
 
 func _load_item_catalog() -> void:

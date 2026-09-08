@@ -9,10 +9,13 @@ const SLOT_TEXTURE := preload("res://assets/art/ui/inventory/ui_inventory_slots.
 const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot.tscn")
 
 
-@onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Hotbar
+@onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Content/Hotbar
+@onready var selected_item_label: Label = $HotbarPanel/Margin/Content/SelectedItem
 @onready var backpack_panel: PanelContainer = $BackpackPanel
 @onready var capacity_label: Label = $BackpackPanel/Margin/Content/Header/Capacity
-@onready var item_grid: GridContainer = $BackpackPanel/Margin/Content/ItemGrid
+@onready var item_grid: GridContainer = $BackpackPanel/Margin/Content/ItemScroll/ItemGrid
+@onready var search_input: LineEdit = $BackpackPanel/Margin/Content/FilterBar/Search
+@onready var category_filter: OptionButton = $BackpackPanel/Margin/Content/FilterBar/Category
 @onready var detail_name: Label = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/ItemName
 @onready var detail_description: Label = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/Description
 @onready var use_button: Button = $BackpackPanel/Margin/Content/DetailPanel/Margin/Detail/UseButton
@@ -21,6 +24,7 @@ const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot
 var inventory: InventorySystem
 var selected_item_id := ""
 var selected_hotbar_index := -1
+var category_ids: Array[String] = ["", "weapon", "tool", "placeable", "material", "ingredient", "seed", "consumable"]
 
 
 func setup(inventory_system: InventorySystem) -> void:
@@ -30,6 +34,10 @@ func setup(inventory_system: InventorySystem) -> void:
 	$BackpackPanel/Margin/Content/Header/CloseButton.pressed.connect(close_backpack)
 	use_button.pressed.connect(_on_use_pressed)
 	drop_button.pressed.connect(_on_drop_pressed)
+	search_input.text_changed.connect(_on_filter_changed.unbind(1))
+	search_input.gui_input.connect(_on_search_gui_input)
+	category_filter.item_selected.connect(_on_filter_changed.unbind(1))
+	_setup_category_filter()
 	refresh()
 
 
@@ -41,6 +49,7 @@ func toggle_backpack() -> void:
 func open_backpack() -> void:
 	backpack_panel.visible = true
 	refresh()
+	search_input.grab_focus()
 
 
 func close_backpack() -> void:
@@ -55,7 +64,8 @@ func is_backpack_open() -> bool:
 func refresh() -> void:
 	if inventory == null: return
 	_refresh_hotbar()
-	_refresh_backpack()
+	if backpack_panel.visible:
+		_refresh_backpack()
 
 
 func handle_hotbar_drop(target_index: int, data: Dictionary) -> void:
@@ -77,7 +87,7 @@ func activate_hotbar_slot(slot_index: int) -> bool:
 	var item_id := inventory.get_hotbar_item(slot_index)
 	selected_hotbar_index = slot_index
 	refresh()
-	if item_id.is_empty():
+	if item_id.is_empty() or inventory.get_amount(item_id) <= 0:
 		return false
 	item_use_requested.emit(item_id)
 	return true
@@ -86,6 +96,27 @@ func activate_hotbar_slot(slot_index: int) -> bool:
 func get_selected_hotbar_item_id() -> String:
 	if selected_hotbar_index < 0: return ""
 	return inventory.get_hotbar_item(selected_hotbar_index)
+
+
+func cycle_hotbar(direction: int) -> bool:
+	if inventory == null or inventory.hotbar_capacity <= 0:
+		return false
+	var start_index := selected_hotbar_index
+	if start_index < 0:
+		start_index = -1 if direction > 0 else 0
+	for step in inventory.hotbar_capacity:
+		var candidate := posmod(start_index + direction * (step + 1), inventory.hotbar_capacity)
+		if not inventory.get_hotbar_item(candidate).is_empty():
+			return activate_hotbar_slot(candidate)
+	return false
+
+
+func reset_selection() -> void:
+	selected_item_id = ""
+	selected_hotbar_index = -1
+	search_input.text = ""
+	category_filter.select(0)
+	refresh()
 
 
 func _refresh_hotbar() -> void:
@@ -102,12 +133,13 @@ func _refresh_hotbar() -> void:
 			slot.tooltip_text = "%s\n右键清空快捷槽" % inventory.get_item_data(item_id).get("description", "")
 			slot.pressed.connect(_on_hotbar_slot_pressed.bind(item_id))
 		hotbar.add_child(slot)
+	_update_selected_item_label()
 
 
 func _refresh_backpack() -> void:
 	capacity_label.text = "%d / %d 格" % [inventory.get_used_slots(), inventory.slot_capacity]
 	_clear_container(item_grid)
-	var item_ids := inventory.get_sorted_item_ids()
+	var item_ids := _get_filtered_item_ids()
 	for item_id in item_ids:
 		var data := inventory.get_item_data(item_id)
 		var slot := ITEM_SLOT_SCENE.instantiate() as DraggableItemSlot
@@ -126,6 +158,46 @@ func _refresh_backpack() -> void:
 	if not selected_item_id.is_empty() and inventory.get_amount(selected_item_id) <= 0:
 		selected_item_id = ""
 	_update_detail()
+
+
+func _get_filtered_item_ids() -> Array[String]:
+	var result: Array[String] = []
+	var query := search_input.text.strip_edges().to_lower()
+	var category_id := category_ids[category_filter.selected] if category_filter.selected >= 0 else ""
+	for item_id in inventory.get_sorted_item_ids():
+		var data := inventory.get_item_data(item_id)
+		if not category_id.is_empty() and str(data.get("category", "")) != category_id:
+			continue
+		var searchable_text := "%s %s %s" % [data.get("name", item_id), item_id, data.get("description", "")]
+		if not query.is_empty() and not searchable_text.to_lower().contains(query):
+			continue
+		result.append(item_id)
+	return result
+
+
+func _setup_category_filter() -> void:
+	category_filter.clear()
+	for label in ["全部类型", "武器", "工具", "可放置", "材料", "食材", "种子", "消耗品"]:
+		category_filter.add_item(label)
+
+
+func _on_filter_changed() -> void:
+	if backpack_panel.visible:
+		_refresh_backpack()
+
+
+func _on_search_gui_input(event: InputEvent) -> void:
+	if event.is_action_pressed("toggle_inventory"):
+		close_backpack()
+		search_input.accept_event()
+
+
+func _update_selected_item_label() -> void:
+	var item_id := get_selected_hotbar_item_id()
+	if item_id.is_empty():
+		selected_item_label.text = "未选择快捷物品"
+		return
+	selected_item_label.text = "当前：%s　×%d" % [inventory.get_display_name(item_id), inventory.get_amount(item_id)]
 
 
 func _select_item(item_id: String) -> void:
