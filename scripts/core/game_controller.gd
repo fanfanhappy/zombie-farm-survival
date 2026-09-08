@@ -15,7 +15,6 @@ const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.
 @onready var status_hud: CharacterStatusHUD = $UI/HUD/StatusPanel
 @onready var prompt_label: Label = $UI/HUD/Prompt
 @onready var message_label: Label = $UI/HUD/Message
-@onready var help_label: Label = $UI/HUD/HelpPanel/Margin/Help
 @onready var crafting_system: CraftingSystem = $GameSession/CraftingSystem
 @onready var crafting_panel: PanelContainer = $UI/Menus/CraftingPanel
 @onready var crafting_title: Label = $UI/Menus/CraftingPanel/Margin/Content/Title
@@ -33,6 +32,8 @@ const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.
 @onready var weather_system: WeatherSystem = $GameSession/WeatherController
 @onready var weather_label: Label = $UI/HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $UI/Menus/PauseOverlay
+@onready var pause_panel: PanelContainer = $UI/Menus/PauseOverlay/PausePanel
+@onready var settings_ui: SettingsUI = $UI/Menus/SettingsUI
 @onready var world_tile_map: WorldTileMap = $GameWorld/TerrainLayers/WorldTileMap
 @onready var building_layer: Node2D = $GameWorld/DynamicYSortGroup/BuildingLayer
 @onready var farm_plots_root: Node2D = $GameWorld/DynamicYSortGroup/FarmPlots
@@ -89,7 +90,9 @@ func _ready() -> void:
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.pressed.connect(_set_paused.bind(false))
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Save.pressed.connect(save_game)
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Load.pressed.connect(load_game)
+	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Settings.pressed.connect(_open_settings)
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Quit.pressed.connect(get_tree().quit)
+	settings_ui.closed.connect(_on_settings_closed)
 	_update_hud()
 	var start_mode := SaveSystem.consume_start_mode()
 	if start_mode == "continue": load_game()
@@ -157,7 +160,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if pause_overlay.visible:
 		if event.is_action_pressed("ui_cancel"):
-			_set_paused(false)
+			if settings_ui.visible: settings_ui.close()
+			else: _set_paused(false)
 			get_viewport().set_input_as_handled()
 		return
 	if storage_ui.is_open():
@@ -444,7 +448,6 @@ func _update_lighting() -> void:
 func _update_hud() -> void:
 	if not is_instance_valid(player): return
 	status_hud.update_from_game(self)
-	help_label.text = "WASD 移动　Shift 冲刺　鼠标操作/攻击　Esc 暂停　F11 全屏\nE 使用设施　B 背包　数字键快捷栏　U 升级　X 拆除\n鼠标：点击或长按目标　放置：左键确认 R旋转 右键取消"
 	if horde_system.active:
 		horde_label.text = horde_system.get_status_text()
 	else:
@@ -660,9 +663,22 @@ func _set_player_control(enabled: bool) -> void:
 
 func _set_paused(paused: bool) -> void:
 	pause_overlay.visible = paused
+	pause_panel.visible = true
+	settings_ui.visible = false
 	Engine.time_scale = 0.0 if paused else 1.0
 	_set_player_control(not paused)
 	if paused: $UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.grab_focus()
+
+
+func _open_settings() -> void:
+	pause_panel.visible = false
+	settings_ui.open()
+
+
+func _on_settings_closed() -> void:
+	if pause_overlay.visible:
+		pause_panel.visible = true
+		$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Settings.grab_focus()
 
 
 func _exit_tree() -> void:

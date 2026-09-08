@@ -3,6 +3,7 @@ extends Control
 
 @onready var continue_button: Button = $Center/Menu/Margin/Content/ContinueButton
 @onready var save_hint: Label = $Center/Menu/Margin/Content/SaveHint
+@onready var settings_ui: SettingsUI = $SettingsUI
 var overwrite_confirmation: ConfirmationDialog
 
 
@@ -18,6 +19,8 @@ func _ready() -> void:
 	save_hint.text = "检测到存档，可以继续上次进度" if SaveSystem.has_save() else "尚无存档，请开始新游戏"
 	$Center/Menu/Margin/Content/NewGameButton.pressed.connect(_start_new_game)
 	continue_button.pressed.connect(_continue_game)
+	$Center/Menu/Margin/Content/SettingsButton.pressed.connect(settings_ui.open)
+	settings_ui.closed.connect($Center/Menu/Margin/Content/SettingsButton.grab_focus)
 	$Center/Menu/Margin/Content/QuitButton.pressed.connect(get_tree().quit)
 	$Center/Menu/Margin/Content/NewGameButton.grab_focus()
 

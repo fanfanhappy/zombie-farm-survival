@@ -91,12 +91,18 @@ func _init() -> void:
 	assert(game.get_node("ScreenEffects/DamageVignette") is ColorRect)
 	assert(game.get_node("ScreenEffects/FadeTransition") is ColorRect)
 	assert(game.get_node("UI/HUD") is Control)
+	assert(not game.has_node("UI/HUD/HelpPanel"))
+	var objective_status := game.get_node("UI/HUD/ObjectiveStatus") as Label
+	assert(objective_status != null)
+	assert(objective_status.get_theme_font_size("font_size") <= 14)
 	assert(game.get_node("UI/InventoryUI") is InventoryUI)
 	assert(game.get_node("UI/InventoryUI/HotbarPanel") is PanelContainer)
 	assert(game.get_node("UI/InventoryUI/BackpackPanel") is PanelContainer)
 	assert(game.get_node("UI/Menus/StorageUI") is StorageUI)
 	assert(game.get_node("UI/Menus/CraftingPanel") is PanelContainer)
 	assert(game.get_node("UI/Menus/PauseOverlay") is ColorRect)
+	assert(game.get_node("UI/Menus/SettingsUI") is SettingsUI)
+	assert(game.get_node("UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Settings") is Button)
 	assert(get_nodes_in_group("farm_plots").size() == 72)
 	var farm_cells := {}
 	for plot in get_nodes_in_group("farm_plots"):
@@ -204,6 +210,9 @@ func _init() -> void:
 	await process_frame
 	assert(main_menu.get_node("Center/Menu/Margin/Content/NewGameButton") is Button)
 	assert(main_menu.get_node("Center/Menu/Margin/Content/ContinueButton") is Button)
+	assert(main_menu.get_node("Center/Menu/Margin/Content/SettingsButton") is Button)
+	assert(main_menu.get_node("SettingsUI") is SettingsUI)
+	assert(not main_menu.has_node("Center/Menu/Margin/Content/FullscreenHint"))
 	print("ARCHITECTURE_AND_NEW_GAME_REGRESSION_OK")
 	quit()
 

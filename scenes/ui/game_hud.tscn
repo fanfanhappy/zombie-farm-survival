@@ -1,13 +1,6 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/ui/character_status_hud.tscn" id="1_status_hud"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.0745, 0.0941, 0.0863, 0.86)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [node name="HUD" type="Control"]
 layout_mode = 3
@@ -19,31 +12,6 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="StatusPanel" parent="." instance=ExtResource("1_status_hud")]
-
-[node name="HelpPanel" type="PanelContainer" parent="."]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -302.0
-offset_top = 23.0
-offset_right = -117.0
-offset_bottom = 93.0
-grow_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="Margin" type="MarginContainer" parent="HelpPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
-
-[node name="Help" type="Label" parent="HelpPanel/Margin"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.929, 0.918, 0.824, 1)
-theme_override_font_sizes/font_size = 14
-text = "操作说明"
-horizontal_alignment = 2
 
 [node name="Prompt" type="Label" parent="."]
 anchors_preset = 7
@@ -91,24 +59,24 @@ vertical_alignment = 1
 
 [node name="ObjectiveStatus" type="Label" parent="."]
 offset_left = 20.0
-offset_top = 330.0
-offset_right = 430.0
-offset_bottom = 366.0
+offset_top = 318.0
+offset_right = 310.0
+offset_bottom = 346.0
 theme_override_colors/font_color = Color(1, 0.91, 0.62, 1)
 theme_override_colors/font_outline_color = Color(0.08, 0.1, 0.09, 0.9)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 17
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
 text = "当前目标"
 vertical_alignment = 1
 
 [node name="WeatherStatus" type="Label" parent="."]
 offset_left = 20.0
-offset_top = 372.0
+offset_top = 352.0
 offset_right = 300.0
-offset_bottom = 404.0
+offset_bottom = 380.0
 theme_override_colors/font_color = Color(0.72, 0.88, 0.94, 1)
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 text = "天气：晴朗"
 
 [node name="PrototypeBadge" type="Label" parent="."]
