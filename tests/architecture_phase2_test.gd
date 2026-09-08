@@ -53,6 +53,8 @@ func _init() -> void:
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player") is Player)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player/PlayerAnimation") is PlayerAnimationController)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Player/AttackEffect") is PlayerAttackEffect)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/Player/InputComponent") is PlayerInputComponent)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/Player/SurvivalComponent") is PlayerSurvivalComponent)
 	assert(game.get_node("GameWorld/DynamicYSortGroup").y_sort_enabled)
 	assert(game.get_node("CameraRig") is CameraRig)
 	assert(game.get_node("CameraRig/MainCamera") is Camera2D)

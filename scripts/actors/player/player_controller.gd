@@ -6,6 +6,8 @@ func _enter_tree() -> void:
 
 @onready var character_sprite: PlayerAnimationController = $PlayerAnimation
 @onready var attack_effect: PlayerAttackEffect = $AttackEffect
+@onready var input_component: PlayerInputComponent = $InputComponent
+@onready var survival_component: PlayerSurvivalComponent = $SurvivalComponent
 
 signal interaction_requested
 signal attack_requested
@@ -26,13 +28,7 @@ signal action_failed(reason: String)
 @export var sprint_stamina_per_second := 18.0
 @export var attack_stamina_cost := 12.0
 @export var max_hunger := 100.0
-@export var hunger_loss_per_second := 0.45
-@export var sprint_hunger_multiplier := 1.6
-@export var starvation_damage_per_second := 5.0
 @export var max_thirst := 100.0
-@export var thirst_loss_per_second := 0.7
-@export var sprint_thirst_multiplier := 1.8
-@export var dehydration_damage_per_second := 7.0
 
 var health := 100.0
 var stamina := 100.0
@@ -72,12 +68,9 @@ func _physics_process(delta: float) -> void:
 	well_fed_time = maxf(well_fed_time - delta, 0.0)
 	attack_time_left = maxf(attack_time_left - delta, 0.0)
 	hurt_flash_left = maxf(hurt_flash_left - delta, 0.0)
-	var keyboard := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	var arrows := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var direction := Vector2.ZERO if tool_action_time_left > 0.0 else (keyboard + arrows).limit_length(1.0)
-	var sprinting := direction != Vector2.ZERO and Input.is_action_pressed("sprint") and stamina > 0.0
-	_update_hunger(delta, sprinting)
-	_update_thirst(delta, sprinting)
+	var direction := input_component.get_move_direction(tool_action_time_left > 0.0)
+	var sprinting := input_component.is_sprint_requested(direction) and stamina > 0.0
+	survival_component.update_survival(self, delta, sprinting)
 	var current_speed := move_speed * sprint_speed_multiplier if sprinting else move_speed
 	velocity = direction * current_speed
 	if sprinting:
@@ -95,7 +88,7 @@ func _physics_process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if tool_action_time_left > 0.0: return
-	if event.is_action_pressed("interact"):
+	if input_component.is_interact_pressed(event):
 		interaction_requested.emit()
 
 
@@ -189,20 +182,6 @@ func restore_thirst(amount: float) -> void:
 
 func spend_thirst(amount: float) -> void:
 	thirst = maxf(thirst - amount, 0.0)
-	thirst_changed.emit(thirst, max_thirst)
-
-
-func _update_hunger(delta: float, sprinting: bool) -> void:
-	var multiplier := sprint_hunger_multiplier if sprinting else 1.0
-	hunger = maxf(hunger - hunger_loss_per_second * multiplier * delta, 0.0)
-	if hunger <= 0.0: take_damage(starvation_damage_per_second * delta)
-	hunger_changed.emit(hunger, max_hunger)
-
-
-func _update_thirst(delta: float, sprinting: bool) -> void:
-	var multiplier := (sprint_thirst_multiplier if sprinting else 1.0) * environment_thirst_multiplier
-	thirst = maxf(thirst - thirst_loss_per_second * multiplier * delta, 0.0)
-	if thirst <= 0.0: take_damage(dehydration_damage_per_second * delta)
 	thirst_changed.emit(thirst, max_thirst)
 
 
