@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/enemy_definition.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = &"fast_infected"
+display_name = "迅捷感染者"
+move_speed = 105.0
+aggro_distance = 125.0
+aggro_duration = 4.0
+max_health = 32.0
+player_attack_damage = 9.0
+homestead_attack_damage = 10.0
+defense_attack_damage = 12.0
+attack_interval = 0.7
+experience_reward = 20
+visual_scale = Vector2(0.86, 0.86)
+body_tint = Color(0.568627, 0.658824, 0.396078, 1)
+drop_item_id = &"herb"
+drop_chance = 0.55
+drop_min_amount = 1
+drop_max_amount = 2

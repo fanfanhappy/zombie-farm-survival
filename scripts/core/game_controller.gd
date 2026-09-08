@@ -6,6 +6,9 @@ const DAY_START_PROGRESS := 7.0 / 24.0
 const WATERING_CAN_CAPACITY := 5
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
+const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.tres")
+
+@export var enemy_database: EnemyDatabase = DEFAULT_ENEMY_DATABASE
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $GameWorld/WorldLighting
@@ -381,17 +384,23 @@ func _spawn_night_threat() -> void:
 	var count := 3 + mini(day, 5)
 	show_message("天黑了，附近出现了感染者")
 	for index in count:
-		get_tree().create_timer(index * 0.4).timeout.connect(_spawn_zombie.bind(index % 5 == 4))
+		var enemy_id: StringName = &"fast_infected" if index % 5 == 4 else &"normal_infected"
+		get_tree().create_timer(index * 0.4).timeout.connect(_spawn_zombie.bind(enemy_id))
 
 
-func _spawn_zombie(fast: bool) -> void:
+func _spawn_zombie(enemy_kind: Variant = &"normal_infected") -> void:
+	var enemy_id := StringName("fast_infected" if enemy_kind is bool and enemy_kind else "normal_infected" if enemy_kind is bool else str(enemy_kind))
+	var enemy_definition := enemy_database.get_definition(enemy_id)
+	if enemy_definition == null:
+		push_error("找不到敌人配置：%s" % enemy_id)
+		return
 	var zombie := ZOMBIE_SCENE.instantiate() as Zombie
 	match randi() % 4:
 		0: zombie.position = Vector2(randf_range(40, 1240), 40)
 		1: zombie.position = Vector2(randf_range(40, 1240), 760)
 		2: zombie.position = Vector2(40, randf_range(40, 760))
 		_: zombie.position = Vector2(1240, randf_range(40, 760))
-	enemies_root.add_child(zombie); zombie.setup(player, homestead, fast)
+	enemies_root.add_child(zombie); zombie.setup(player, homestead, enemy_definition)
 	zombie.defeated.connect(_on_zombie_defeated)
 
 
@@ -399,12 +408,15 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 	kills += 1
 	horde_system.notify_zombie_defeated()
 	var experience_reward := _zombie.experience_reward
+	var drop_data: Dictionary = _zombie.definition.roll_drop() if _zombie.definition != null else {}
+	if not drop_data.is_empty():
+		_spawn_ground_item(str(drop_data.get("item_id", "")), int(drop_data.get("amount", 1)), _zombie.global_position)
 	var leveled_up := player.add_experience(experience_reward)
 	if leveled_up:
 		show_message("升级！达到%d级，生命、体力和伤害提升" % player.level)
 		return
-	if randf() < 0.45:
-		add_resource("herb", 1, false); show_message("击败感染者：经验+%d，获得1份草药" % experience_reward)
+	if not drop_data.is_empty():
+		show_message("击败感染者：经验+%d，战利品已掉落" % experience_reward)
 	else: show_message("击败感染者：经验+%d" % experience_reward)
 
 

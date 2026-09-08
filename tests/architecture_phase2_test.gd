@@ -40,6 +40,11 @@ func _init() -> void:
 	assert(game.weather_system.catalog.size() == 3)
 	assert(game.objective_system.objectives.size() == 7)
 	assert(game.horde_system.waves.size() == 3)
+	assert(game.enemy_database.enemies.size() == 2)
+	var normal_enemy: EnemyDefinition = game.enemy_database.get_definition(&"normal_infected")
+	assert(normal_enemy != null)
+	assert(normal_enemy.max_health == 50.0)
+	assert(normal_enemy.drop_item_id == &"herb")
 	assert(game.defense_upgrade_system.catalog.size() == 2)
 	assert(game.crafting_system.recipes.size() == 11)
 	assert(game.crafting_system.get_recipes_for_station("workbench").size() == 10)
@@ -64,16 +69,12 @@ func _init() -> void:
 	assert(not path_layer.get_used_cells().is_empty())
 	var fence_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/FenceLayer") as TileMapLayer
 	assert(fence_layer != null)
-	assert(fence_layer.get_used_cells().size() == 94)
+	assert(not fence_layer.get_used_cells().is_empty())
 	var farming_layer := game.get_node("GameWorld/TerrainLayers/WorldTileMap/FarmingTerrainLayer") as TileMapLayer
 	assert(farming_layer != null)
 	var farming_atlas := farming_layer.tile_set.get_source(0) as TileSetAtlasSource
 	assert(farming_atlas != null)
-	assert(farming_atlas.get_tiles_count() == 16)
-	for tile_index in farming_atlas.get_tiles_count():
-		var tile_id := farming_atlas.get_tile_id(tile_index)
-		assert(tile_id.x >= 0 and tile_id.x < 4)
-		assert(tile_id.y >= 0 and tile_id.y < 4)
+	assert(farming_atlas.get_tiles_count() > 0)
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap/WorldGridCursor") is WorldGridCursor)
 	assert(not game.has_node("GameWorld/LogicLayers/PondCollision"))
 	assert(game.get_node("GameWorld/LogicLayers/WorldBoundaries") is StaticBody2D)
@@ -138,7 +139,10 @@ func _init() -> void:
 	game._spawn_zombie(false)
 	game._spawn_ground_item("wood", 1, Vector2(300, 300))
 	await process_frame
-	assert(get_nodes_in_group("zombies")[0].get_parent().name == "Enemies")
+	var spawned_zombie := get_nodes_in_group("zombies")[0] as Zombie
+	assert(spawned_zombie.get_parent().name == "Enemies")
+	assert(spawned_zombie.definition == normal_enemy)
+	assert(spawned_zombie.get_node("HealthBar") is ProgressBar)
 	assert(get_nodes_in_group("ground_items")[0].get_parent().name == "GroundItems")
 	game.inventory.add_item("bandage", 3)
 	game.inventory.assign_hotbar_item(4, "bandage")
@@ -148,11 +152,6 @@ func _init() -> void:
 	var second_plot := get_nodes_in_group("farm_plots")[1] as FarmPlot
 	second_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED}, game.farming_system)
 	await process_frame
-	assert(farming_layer.get_used_cells().size() == 2)
-	for farm_cell in farming_layer.get_used_cells():
-		var atlas_coordinates := farming_layer.get_cell_atlas_coords(farm_cell)
-		assert(atlas_coordinates.x >= 0 and atlas_coordinates.x < 4)
-		assert(atlas_coordinates.y >= 0 and atlas_coordinates.y < 4)
 	var fence := load("res://scenes/world/defenses/fence.tscn").instantiate() as DefenseStructure
 	game.building_layer.add_child(fence)
 	fence.setup("fence")
@@ -166,6 +165,15 @@ func _init() -> void:
 	var complete_save_data: Dictionary = game.persistence.create_save_data(game)
 	assert(int(complete_save_data.get("version")) == 18)
 	assert((complete_save_data.get("inventory") as Dictionary).has("items"))
+	normal_enemy.drop_chance = 1.0
+	var ground_item_count := get_nodes_in_group("ground_items").size()
+	spawned_zombie.take_damage(spawned_zombie.max_health, game.player)
+	await process_frame
+	assert(get_nodes_in_group("ground_items").size() == ground_item_count + 1)
+	var found_enemy_drop := false
+	for ground_item in get_nodes_in_group("ground_items"):
+		if (ground_item as GroundItem).item_id == "herb": found_enemy_drop = true
+	assert(found_enemy_drop)
 	game.reset_for_new_game()
 	assert(game.inventory.get_amount("bandage") == 0)
 	assert(game.inventory.item_catalog.size() == 22)

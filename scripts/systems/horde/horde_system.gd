@@ -1,7 +1,7 @@
 class_name HordeSystem
 extends Node
 
-signal zombie_spawn_requested(fast: bool)
+signal zombie_spawn_requested(enemy_id: StringName)
 signal horde_started(total_waves: int)
 signal wave_started(wave_number: int, total_waves: int)
 signal horde_completed
@@ -75,11 +75,11 @@ func get_status_text() -> String:
 func _start_next_wave() -> void:
 	current_wave_index += 1
 	var wave: Dictionary = waves[current_wave_index]
-	var normal_count := int(wave.get("normal", 0))
-	var fast_count := int(wave.get("fast", 0))
-	var spawn_order: Array[bool] = []
-	for index in normal_count: spawn_order.append(false)
-	for index in fast_count: spawn_order.append(true)
+	var enemies: Dictionary = wave.get("enemies", {})
+	var spawn_order: Array[StringName] = []
+	for enemy_id in enemies:
+		for index in int(enemies[enemy_id]):
+			spawn_order.append(StringName(enemy_id))
 	spawn_order.shuffle()
 	pending_spawns = spawn_order.size()
 	alive_zombies += spawn_order.size()
@@ -90,10 +90,10 @@ func _start_next_wave() -> void:
 	state_changed.emit()
 
 
-func _emit_spawn(fast: bool) -> void:
+func _emit_spawn(enemy_id: StringName) -> void:
 	if not active: return
 	pending_spawns = maxi(pending_spawns - 1, 0)
-	zombie_spawn_requested.emit(fast)
+	zombie_spawn_requested.emit(enemy_id)
 	if pending_spawns == 0:
 		var wave: Dictionary = waves[current_wave_index]
 		time_until_next_wave = float(wave.get("next_wave_delay", 6.0))

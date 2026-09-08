@@ -12,6 +12,7 @@
 - `defense_upgrade_definition.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `horde_definition.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `item_database.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
+- `enemy_definition.gd` / `enemy_database.gd`：敌人属性定义与敌人总表查询，运行时控制器只读取这些资源。
 - `item_definition.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `objective_database.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `objective_definition.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
@@ -28,4 +29,3 @@
 - 场景节点使用 PascalCase，文件使用英文蛇形命名，脚本与场景尽量同领域对应。
 - 修改公共节点路径、组名、信号或资源 ID 后，必须运行两套回归测试。
 - 删除文件前检查动态加载、TileSet 场景集合和存档恢复逻辑。
-

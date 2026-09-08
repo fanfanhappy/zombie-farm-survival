@@ -7,5 +7,5 @@ script = ExtResource("1_script")
 horde_id = &"first_horde"
 display_name = "第一次尸潮"
 trigger_interval_days = 7
-waves = [{"normal": 5, "fast": 0, "spawn_interval": 0.55, "next_wave_delay": 5.0}, {"normal": 7, "fast": 1, "spawn_interval": 0.45, "next_wave_delay": 6.0}, {"normal": 9, "fast": 2, "spawn_interval": 0.35, "next_wave_delay": 0.0}]
+waves = [{"enemies": {"normal_infected": 5}, "spawn_interval": 0.55, "next_wave_delay": 5.0}, {"enemies": {"normal_infected": 7, "fast_infected": 1}, "spawn_interval": 0.45, "next_wave_delay": 6.0}, {"enemies": {"normal_infected": 9, "fast_infected": 2}, "spawn_interval": 0.35, "next_wave_delay": 0.0}]
 reward = {"scrap": 3, "potato_seed": 2}
