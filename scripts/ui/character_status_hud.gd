@@ -29,7 +29,7 @@ func update_from_game(game: Node) -> void:
 	if player.well_fed_time > 0.0:
 		context_parts.append("饱餐 %d秒" % int(ceil(player.well_fed_time)))
 	if game.get_active_tool_type() == "watering_can":
-		context_parts.append("水壶 %d/%d" % [game.watering_can_water, game.WATERING_CAN_CAPACITY])
+		context_parts.append("水壶 %d/%d" % [game.watering_can_water, game.watering_can_capacity])
 	context_label.visible = not context_parts.is_empty()
 	context_label.text = "　".join(context_parts)
 

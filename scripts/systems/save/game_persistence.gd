@@ -27,12 +27,12 @@ func create_save_data(game: Node) -> Dictionary:
 
 func restore_save_data(game: Node, data: Dictionary) -> void:
 	game.day = int(data.get("day", 1))
-	game.day_progress = float(data.get("day_progress", game.DAY_START_PROGRESS))
+	game.day_progress = float(data.get("day_progress", game.day_start_progress))
 	game.weather_system.set_weather(str(data.get("weather", "clear")))
-	var saved_inventory: Dictionary = data.get("inventory", data.get("resources", game.STARTING_ITEMS))
+	var saved_inventory: Dictionary = data.get("inventory", data.get("resources", game.starting_items))
 	game.inventory.restore_save_data(saved_inventory)
 	var position_data: Dictionary = data.get("player_position", {})
-	game.player.position = Vector2(float(position_data.get("x", game.PLAYER_HOME.x)), float(position_data.get("y", game.PLAYER_HOME.y)))
+	game.player.position = Vector2(float(position_data.get("x", game.player_home.x)), float(position_data.get("y", game.player_home.y)))
 	game.player.max_health = float(data.get("max_health", game.player.max_health))
 	game.player.max_stamina = float(data.get("max_stamina", game.player.max_stamina))
 	game.player.health = clampf(float(data.get("health", game.player.max_health)), 0.0, game.player.max_health)
@@ -42,7 +42,7 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 	game.player.level = int(data.get("level", 1))
 	game.player.experience = int(data.get("experience", 0))
 	game.player.well_fed_time = float(data.get("well_fed_time", 0.0))
-	game.watering_can_water = clampi(int(data.get("watering_can_water", game.WATERING_CAN_CAPACITY)), 0, game.WATERING_CAN_CAPACITY)
+	game.watering_can_water = clampi(int(data.get("watering_can_water", game.watering_can_capacity)), 0, game.watering_can_capacity)
 	var weapon_id := str(data.get("equipped_weapon_id", "wooden_club"))
 	if not game.inventory.has_item(weapon_id):
 		weapon_id = String(game.player.definition.starting_weapon_id)

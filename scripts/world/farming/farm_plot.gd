@@ -89,7 +89,7 @@ func interact(game: Node) -> void:
 				game.player.play_tool_action("water")
 				game.use_watering_can()
 				watered = true
-				game.show_message("给%s浇水完成，水壶剩余%d/%d" % [get_crop_name(), game.watering_can_water, game.WATERING_CAN_CAPACITY])
+				game.show_message("给%s浇水完成，水壶剩余%d/%d" % [get_crop_name(), game.watering_can_water, game.watering_can_capacity])
 		PlotState.READY:
 			_harvest(game)
 	_refresh_crop_visual()

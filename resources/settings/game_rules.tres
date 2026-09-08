@@ -1,0 +1,63 @@
+[gd_resource type="Resource" script_class="GameRulesDefinition" load_steps=18 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/game_rules_definition.gd" id="1_rules"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="2_item"]
+
+[sub_resource type="Resource" id="Item_club"]
+script = ExtResource("2_item")
+item_id = &"wooden_club"
+[sub_resource type="Resource" id="Item_axe"]
+script = ExtResource("2_item")
+item_id = &"stone_axe"
+[sub_resource type="Resource" id="Item_hoe"]
+script = ExtResource("2_item")
+item_id = &"stone_hoe"
+[sub_resource type="Resource" id="Item_water"]
+script = ExtResource("2_item")
+item_id = &"watering_can"
+[sub_resource type="Resource" id="Item_fence"]
+script = ExtResource("2_item")
+item_id = &"wood_fence"
+amount = 3
+[sub_resource type="Resource" id="Item_spike"]
+script = ExtResource("2_item")
+item_id = &"wood_spike"
+amount = 2
+[sub_resource type="Resource" id="Item_chest"]
+script = ExtResource("2_item")
+item_id = &"storage_chest"
+[sub_resource type="Resource" id="Item_trap"]
+script = ExtResource("2_item")
+item_id = &"snare_trap"
+[sub_resource type="Resource" id="Item_wood"]
+script = ExtResource("2_item")
+item_id = &"wood"
+amount = 8
+[sub_resource type="Resource" id="Item_stone"]
+script = ExtResource("2_item")
+item_id = &"stone"
+amount = 4
+[sub_resource type="Resource" id="Item_herb"]
+script = ExtResource("2_item")
+item_id = &"herb"
+amount = 2
+[sub_resource type="Resource" id="Item_potato"]
+script = ExtResource("2_item")
+item_id = &"potato"
+amount = 2
+[sub_resource type="Resource" id="Item_potato_seed"]
+script = ExtResource("2_item")
+item_id = &"potato_seed"
+amount = 4
+[sub_resource type="Resource" id="Item_carrot_seed"]
+script = ExtResource("2_item")
+item_id = &"carrot_seed"
+amount = 3
+[sub_resource type="Resource" id="Item_herb_seed"]
+script = ExtResource("2_item")
+item_id = &"herb_seed"
+amount = 2
+
+[resource]
+script = ExtResource("1_rules")
+starting_items = Array[ExtResource("2_item")]([SubResource("Item_club"), SubResource("Item_axe"), SubResource("Item_hoe"), SubResource("Item_water"), SubResource("Item_fence"), SubResource("Item_spike"), SubResource("Item_chest"), SubResource("Item_trap"), SubResource("Item_wood"), SubResource("Item_stone"), SubResource("Item_herb"), SubResource("Item_potato"), SubResource("Item_potato_seed"), SubResource("Item_carrot_seed"), SubResource("Item_herb_seed")])

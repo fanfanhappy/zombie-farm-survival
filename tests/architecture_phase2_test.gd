@@ -244,7 +244,7 @@ func _init() -> void:
 	assert(game.inventory_ui.selected_hotbar_index == -1)
 	assert(game.objective_system.current_index == 0)
 	assert(first_plot.state == FarmPlot.PlotState.EMPTY)
-	assert(game.player.position == game.PLAYER_HOME)
+	assert(game.player.position == game.player_home)
 	await process_frame
 	assert(get_nodes_in_group("zombies").is_empty())
 	assert(get_nodes_in_group("ground_items").is_empty())

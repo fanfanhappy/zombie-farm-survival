@@ -1,15 +1,13 @@
 extends Node2D
 
-const PLAYER_HOME := Vector2(640, 460)
-const DAY_LENGTH_SECONDS := 90.0
-const DAY_START_PROGRESS := 7.0 / 24.0
-const WATERING_CAN_CAPACITY := 5
+const DEFAULT_GAME_RULES := preload("res://resources/settings/game_rules.tres")
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.tres")
 const CRAFTING_RECIPE_ENTRY_SCENE := preload("res://scenes/ui/components/crafting_recipe_entry.tscn")
 
 @export var enemy_database: EnemyDatabase = DEFAULT_ENEMY_DATABASE
+@export var game_rules: Resource = DEFAULT_GAME_RULES
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $GameWorld/WorldLighting
@@ -31,6 +29,7 @@ const CRAFTING_RECIPE_ENTRY_SCENE := preload("res://scenes/ui/components/craftin
 @onready var objective_system: ObjectiveSystem = $GameSession/ObjectiveSystem
 @onready var objective_label: Label = $UI/HUD/ObjectiveStatus
 @onready var weather_system: WeatherSystem = $GameSession/WeatherController
+@onready var day_cycle_system: DayCycleSystem = $GameSession/DayCycleSystem
 @onready var weather_label: Label = $UI/HUD/WeatherStatus
 @onready var pause_overlay: ColorRect = $UI/Menus/PauseOverlay
 @onready var pause_panel: PanelContainer = $UI/Menus/PauseOverlay/PausePanel
@@ -43,9 +42,13 @@ const CRAFTING_RECIPE_ENTRY_SCENE := preload("res://scenes/ui/components/craftin
 @onready var enemies_root: Node2D = $GameWorld/DynamicYSortGroup/Enemies
 @onready var ground_items_root: Node2D = $GameWorld/DynamicYSortGroup/GroundItems
 
-const STARTING_ITEMS := {"wooden_club": 1, "stone_axe": 1, "stone_hoe": 1, "watering_can": 1, "wood_fence": 3, "wood_spike": 2, "storage_chest": 1, "snare_trap": 1, "wood": 8, "stone": 4, "herb": 2, "potato": 2, "potato_seed": 4, "carrot_seed": 3, "herb_seed": 2}
+var starting_items: Dictionary = {}
+var player_home := Vector2.ZERO
+var day_length_seconds := 90.0
+var day_start_progress := 7.0 / 24.0
+var watering_can_capacity := 5
 var day := 1
-var day_progress := DAY_START_PROGRESS
+var day_progress := 7.0 / 24.0
 var last_hour := -1
 var night_spawned := false
 var message_time := 0.0
@@ -54,14 +57,15 @@ var homestead: HomesteadCore
 var hordes_survived := 0
 var mouse_action_held := false
 var mouse_action_cooldown := 0.0
-var watering_can_water := WATERING_CAN_CAPACITY
+var watering_can_water := 5
 var persistence := GamePersistence.new()
 var targeting := WorldTargetingService.new()
 var item_use_system := ItemUseSystem.new()
 
 
 func _ready() -> void:
-	inventory.initialize(STARTING_ITEMS)
+	_apply_game_rules()
+	inventory.initialize(starting_items)
 	inventory_ui.setup(inventory)
 	storage_ui.setup(inventory)
 	storage_ui.storage_closed.connect(_on_storage_closed)
@@ -103,7 +107,7 @@ func _ready() -> void:
 
 func reset_for_new_game() -> void:
 	day = 1
-	day_progress = DAY_START_PROGRESS
+	day_progress = day_start_progress
 	last_hour = -1
 	night_spawned = false
 	kills = 0
@@ -116,15 +120,15 @@ func reset_for_new_game() -> void:
 	for ground_item in get_tree().get_nodes_in_group("ground_items"): ground_item.queue_free()
 	for plot in get_tree().get_nodes_in_group("farm_plots"): (plot as FarmPlot).reset_for_new_game()
 	for chicken in get_tree().get_nodes_in_group("chickens"): (chicken as Chicken).reset_for_new_game()
-	inventory.reset_for_new_game(STARTING_ITEMS)
+	inventory.reset_for_new_game(starting_items)
 	inventory.assign_hotbar_item(0, "wooden_club")
 	inventory.assign_hotbar_item(1, "stone_axe")
 	inventory.assign_hotbar_item(2, "stone_hoe")
 	inventory.assign_hotbar_item(3, "watering_can")
 	inventory_ui.reset_selection()
-	watering_can_water = WATERING_CAN_CAPACITY
+	watering_can_water = watering_can_capacity
 	objective_system.reset_for_new_game()
-	player.reset_for_new_game(PLAYER_HOME)
+	player.reset_for_new_game(player_home)
 	if is_instance_valid(homestead): homestead.restore_full()
 	weather_system.choose_weather_for_day(day)
 	inventory_ui.close_backpack()
@@ -138,16 +142,7 @@ func reset_for_new_game() -> void:
 
 func _process(delta: float) -> void:
 	_update_held_mouse_action(delta)
-	if not (horde_system.active and day_progress >= 0.98):
-		day_progress += delta / DAY_LENGTH_SECONDS
-	if day_progress >= 1.0:
-		_advance_to_next_day()
-	var hour := int(day_progress * 24.0)
-	if hour != last_hour:
-		last_hour = hour
-		if hour >= 18 and not night_spawned:
-			night_spawned = true
-			_spawn_night_threat()
+	day_cycle_system.update(self, delta)
 	_update_lighting()
 	_update_prompt()
 	_update_hud()
@@ -330,8 +325,8 @@ func _on_player_died() -> void:
 	show_message("你倒下了。清晨醒来时，部分物资遗失了。")
 	if inventory.has_item("potato"): inventory.remove_item("potato", 1)
 	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
-	player.revive(PLAYER_HOME)
-	day_progress = DAY_START_PROGRESS
+	player.revive(player_home)
+	day_progress = day_start_progress
 
 
 func _nearest_interactable() -> Node:
@@ -671,7 +666,7 @@ func _on_homestead_destroyed() -> void:
 	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
 	homestead.restore_full()
 	day += 1
-	day_progress = DAY_START_PROGRESS
+	day_progress = day_start_progress
 	night_spawned = false
 
 
@@ -692,57 +687,19 @@ func _on_horde_completed() -> void:
 
 
 func try_sleep() -> void:
-	var hour := day_progress * 24.0
-	if horde_system.active:
-		show_message("尸潮还没有结束，现在不能睡觉")
-		return
-	if not get_tree().get_nodes_in_group("zombies").is_empty():
-		show_message("附近还有感染者，无法安心休息")
-		return
-	if hour < 18.0:
-		show_message("现在还太早，18:00以后可以休息")
-		return
-	if player.hunger < 18.0:
-		show_message("太饿了，至少需要18点饥饿才能休息")
-		return
-	if player.thirst < 15.0:
-		show_message("太渴了，至少需要15点口渴值才能休息")
-		return
-	player.spend_hunger(18.0)
-	player.spend_thirst(15.0)
-	_advance_to_next_day()
-	player.restore_stamina(player.max_stamina)
-	player.heal(15.0)
-	show_message("休息了一夜，生命和体力得到恢复")
+	day_cycle_system.try_sleep(self)
 
 
 func drink_from_water_pump() -> void:
-	if player.thirst >= player.max_thirst:
-		show_message("现在不渴")
-		return
-	player.restore_thirst(player.max_thirst)
-	show_message("饮用了干净的井水，口渴完全恢复")
+	day_cycle_system.drink_from_water_pump(self)
 
 
 func refill_watering_can() -> void:
-	if not inventory.has_item("watering_can"):
-		show_message("背包里没有浇水壶")
-		return
-	if watering_can_water >= WATERING_CAN_CAPACITY:
-		show_message("浇水壶已经装满")
-		return
-	watering_can_water = WATERING_CAN_CAPACITY
-	show_message("浇水壶已经装满：%d/%d" % [watering_can_water, WATERING_CAN_CAPACITY])
+	day_cycle_system.refill_watering_can(self)
 
 
 func can_water_crop() -> bool:
-	if get_active_tool_type() != "watering_can":
-		show_message("需要先把浇水壶放入快捷栏并选中")
-		return false
-	if watering_can_water <= 0:
-		show_message("浇水壶空了，去取水泵旁按E装水")
-		return false
-	return true
+	return day_cycle_system.can_water_crop(self)
 
 
 func use_watering_can() -> void:
@@ -750,17 +707,20 @@ func use_watering_can() -> void:
 
 
 func _advance_to_next_day() -> void:
-	day_progress = DAY_START_PROGRESS
-	day += 1
-	night_spawned = false
-	for remaining_zombie in get_tree().get_nodes_in_group("zombies"): remaining_zombie.queue_free()
-	for plot in get_tree().get_nodes_in_group("farm_plots"): plot.advance_day()
-	for chicken in get_tree().get_nodes_in_group("chickens"): chicken.advance_day()
-	weather_system.choose_weather_for_day(day)
-	if bool(weather_system.get_current_data().get("waters_crops", false)):
-		for plot in get_tree().get_nodes_in_group("farm_plots"): plot.water_from_rain()
-	if is_instance_valid(homestead): homestead.repair(10.0)
-	show_message("第%d天开始了，作物已经生长" % day)
+	day_cycle_system.advance_to_next_day(self)
+
+
+func _apply_game_rules() -> void:
+	if game_rules == null:
+		push_error("Main 未配置 GameRulesDefinition")
+		return
+	starting_items = game_rules.get_starting_items()
+	player_home = game_rules.player_home
+	day_length_seconds = game_rules.day_length_seconds
+	day_start_progress = game_rules.get_day_start_progress()
+	watering_can_capacity = game_rules.watering_can_capacity
+	day_progress = day_start_progress
+	watering_can_water = watering_can_capacity
 
 
 func _on_objective_text_changed(text: String) -> void:

@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/environment/world_grid_cursor.tscn" id="33_grid_cursor_script"]
 [ext_resource type="TileSet" uid="uid://cghyqb0r221rk" path="res://resources/tilesets/static_decoration_scenes.tres" id="34_static_resources"]
 [ext_resource type="TileSet" uid="uid://ceo1rwaab0a4l" path="res://resources/tilesets/harvestable_resource_scenes.tres" id="35_harvestable_resources"]
+[ext_resource type="Script" path="res://scripts/systems/time/day_cycle_system.gd" id="36_day_cycle"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_world_horizontal"]
 size = Vector2(1280, 10)
@@ -63,6 +64,9 @@ script = ExtResource("9_objectives")
 
 [node name="WeatherController" type="Node" parent="GameSession" unique_id=508456209]
 script = ExtResource("11_weather")
+
+[node name="DayCycleSystem" type="Node" parent="GameSession"]
+script = ExtResource("36_day_cycle")
 
 [node name="GameWorld" type="Node2D" parent="." unique_id=385723723]
 
