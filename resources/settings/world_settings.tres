@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="WorldSettings" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/world_settings.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+world_bounds = Rect2(0, 0, 1280, 800)
+player_margin = 24.0
+placement_margin = 32.0
+farming_reach = 64.0
+placement_reach = 240.0

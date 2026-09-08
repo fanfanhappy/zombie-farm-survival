@@ -5,10 +5,11 @@ signal placement_started(item_id: String)
 signal placement_ended
 
 const GRID_SIZE := WorldGrid.CELL_SIZE
-const MAP_BOUNDS := Rect2(32, 32, 1216, 736)
 const DEFAULT_PLACEABLE_DATABASE := preload("res://resources/placements/placeable_database.tres")
+const DEFAULT_WORLD_SETTINGS := preload("res://resources/settings/world_settings.tres")
 
 @export var placeable_database: PlaceableDatabase = DEFAULT_PLACEABLE_DATABASE
+@export var world_settings: Resource = DEFAULT_WORLD_SETTINGS
 var game_controller: Node2D
 var placement_parent: Node2D
 var inventory: InventorySystem
@@ -94,12 +95,13 @@ func is_placing() -> bool:
 
 
 func _check_placement_valid() -> bool:
-	if global_position.distance_to(game_controller.player.global_position) > 240.0: return false
+	if world_settings == null: return false
+	if global_position.distance_to(game_controller.player.global_position) > world_settings.placement_reach: return false
 	var definition: Dictionary = placeable_catalog.get(placement_type, {})
 	var footprint: Vector2 = definition.get("footprint", Vector2(32, 32))
 	var corners := [Vector2(-footprint.x, -footprint.y) * 0.5, Vector2(footprint.x, footprint.y) * 0.5]
 	for corner in corners:
-		if not MAP_BOUNDS.has_point(global_position + corner.rotated(rotation)): return false
+		if not world_settings.get_placement_bounds().has_point(global_position + corner.rotated(rotation)): return false
 	var shape := RectangleShape2D.new()
 	shape.size = footprint - Vector2(3, 3)
 	var query := PhysicsShapeQueryParameters2D.new()

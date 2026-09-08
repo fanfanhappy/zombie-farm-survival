@@ -2,6 +2,9 @@ class_name WorldTileMap
 extends Node2D
 
 const FARM_CELL_SIZE := WorldGrid.CELL_SIZE
+const DEFAULT_WORLD_SETTINGS := preload("res://resources/settings/world_settings.tres")
+
+@export var world_settings: Resource = DEFAULT_WORLD_SETTINGS
 
 @onready var farming_layer: TileMapLayer = $FarmingTerrainLayer
 @onready var grid_cursor: WorldGridCursor = $WorldGridCursor
@@ -39,14 +42,14 @@ func _update_grid_cursor() -> void:
 	if not is_instance_valid(grid_cursor):
 		return
 	var mouse_position := get_global_mouse_position()
-	if not Rect2(0, 0, 1280, 800).has_point(mouse_position):
+	if world_settings == null or not world_settings.world_bounds.has_point(mouse_position):
 		grid_cursor.set_cursor(Vector2.ZERO, WorldGridCursor.CursorState.HIDDEN)
 		cursor_hint = ""
 		return
 	var hovered_plot := _find_hovered_farm_plot(mouse_position)
 	var player := get_tree().get_first_node_in_group("player") as Player
 	if is_instance_valid(hovered_plot):
-		var reachable := is_instance_valid(player) and player.global_position.distance_to(hovered_plot.global_position) <= 64.0
+		var reachable: bool = is_instance_valid(player) and player.global_position.distance_to(hovered_plot.global_position) <= float(world_settings.farming_reach)
 		grid_cursor.set_cursor(hovered_plot.global_position, WorldGridCursor.CursorState.INTERACTABLE if reachable else WorldGridCursor.CursorState.OUT_OF_REACH, FARM_CELL_SIZE)
 		cursor_hint = "" if reachable else "目标太远，靠近后才能操作"
 		return

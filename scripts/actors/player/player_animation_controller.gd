@@ -3,8 +3,10 @@ extends AnimatedSprite2D
 
 
 func play_tool_action(action_type: String, facing_direction: Vector2) -> float:
-	var safe_action := action_type if action_type in ["hoe", "axe", "water"] else "hoe"
-	var animation_name := "%s_%s" % [safe_action, get_direction_name(facing_direction)]
+	var animation_name := "%s_%s" % [action_type, get_direction_name(facing_direction)]
+	if sprite_frames == null or not sprite_frames.has_animation(animation_name):
+		push_warning("未配置工具动画：%s" % animation_name)
+		return 0.0
 	var duration := float(sprite_frames.get_frame_count(animation_name)) / maxf(sprite_frames.get_animation_speed(animation_name), 0.01)
 	play(animation_name)
 	return duration
