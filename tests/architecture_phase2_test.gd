@@ -96,7 +96,10 @@ func _init() -> void:
 	assert(objective_status != null)
 	assert(objective_status.get_theme_font_size("font_size") <= 12)
 	var status_panel := game.get_node("UI/HUD/StatusPanel") as Control
-	assert(status_panel.size.x <= 240.0 and status_panel.size.y <= 212.0, "状态面板实际尺寸：%s" % status_panel.size)
+	assert(status_panel.size.x <= 240.0 and status_panel.size.y <= 130.0, "状态面板实际尺寸：%s" % status_panel.size)
+	assert(game.get_node("UI/HUD/StatusPanel/Margin/Content/Vitals") is GridContainer)
+	assert(game.get_node("UI/HUD/StatusPanel/Margin/Content/Header/Context") is Label)
+	assert(not game.has_node("UI/HUD/StatusPanel/Margin/Content/Equipment"))
 	assert(status_panel.get_global_rect().end.y + 2.0 <= objective_status.get_global_rect().position.y)
 	assert(game.get_node("UI/InventoryUI") is InventoryUI)
 	assert(game.get_node("UI/InventoryUI/HotbarPanel") is PanelContainer)

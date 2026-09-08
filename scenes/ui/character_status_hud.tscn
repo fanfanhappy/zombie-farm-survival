@@ -58,8 +58,8 @@ corner_radius_bottom_left = 2
 [node name="StatusPanel" type="PanelContainer" unique_id=292946947]
 offset_left = 16.0
 offset_top = 16.0
-offset_right = 242.0
-offset_bottom = 209.0
+offset_right = 248.0
+offset_bottom = 136.0
 theme = ExtResource("2_theme")
 theme_override_font_sizes/font_size = 12
 script = ExtResource("1_script")
@@ -100,19 +100,22 @@ text = "等级 1"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Bars" type="VBoxContainer" parent="Margin/Content" unique_id=1803847853]
+[node name="Vitals" type="GridContainer" parent="Margin/Content" unique_id=1803847853]
 layout_mode = 2
-theme_override_constants/separation = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 3
+columns = 2
 
-[node name="Health" type="HBoxContainer" parent="Margin/Content/Bars" unique_id=537091516]
+[node name="Health" type="HBoxContainer" parent="Margin/Content/Vitals" unique_id=537091516]
+custom_minimum_size = Vector2(102, 0)
 layout_mode = 2
 
-[node name="Name" type="Label" parent="Margin/Content/Bars/Health" unique_id=1288137192]
-custom_minimum_size = Vector2(34, 0)
+[node name="Name" type="Label" parent="Margin/Content/Vitals/Health" unique_id=1288137192]
+custom_minimum_size = Vector2(28, 0)
 layout_mode = 2
 text = "生命"
 
-[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Health" unique_id=386934289]
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Vitals/Health" unique_id=386934289]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -120,21 +123,16 @@ theme_override_styles/background = SubResource("StyleBox_bar_bg")
 theme_override_styles/fill = SubResource("StyleBox_health")
 show_percentage = false
 
-[node name="Value" type="Label" parent="Margin/Content/Bars/Health" unique_id=285997568]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "100/100"
-horizontal_alignment = 2
-
-[node name="Stamina" type="HBoxContainer" parent="Margin/Content/Bars" unique_id=211288611]
+[node name="Stamina" type="HBoxContainer" parent="Margin/Content/Vitals" unique_id=211288611]
+custom_minimum_size = Vector2(102, 0)
 layout_mode = 2
 
-[node name="Name" type="Label" parent="Margin/Content/Bars/Stamina" unique_id=628491630]
-custom_minimum_size = Vector2(34, 0)
+[node name="Name" type="Label" parent="Margin/Content/Vitals/Stamina" unique_id=628491630]
+custom_minimum_size = Vector2(28, 0)
 layout_mode = 2
 text = "体力"
 
-[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Stamina" unique_id=42476406]
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Vitals/Stamina" unique_id=42476406]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -142,21 +140,16 @@ theme_override_styles/background = SubResource("StyleBox_bar_bg")
 theme_override_styles/fill = SubResource("StyleBox_stamina")
 show_percentage = false
 
-[node name="Value" type="Label" parent="Margin/Content/Bars/Stamina" unique_id=1971498746]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "100/100"
-horizontal_alignment = 2
-
-[node name="Hunger" type="HBoxContainer" parent="Margin/Content/Bars" unique_id=4039336]
+[node name="Hunger" type="HBoxContainer" parent="Margin/Content/Vitals" unique_id=4039336]
+custom_minimum_size = Vector2(102, 0)
 layout_mode = 2
 
-[node name="Name" type="Label" parent="Margin/Content/Bars/Hunger" unique_id=1802349439]
-custom_minimum_size = Vector2(34, 0)
+[node name="Name" type="Label" parent="Margin/Content/Vitals/Hunger" unique_id=1802349439]
+custom_minimum_size = Vector2(28, 0)
 layout_mode = 2
 text = "饥饿"
 
-[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Hunger" unique_id=64678331]
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Vitals/Hunger" unique_id=64678331]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -164,21 +157,16 @@ theme_override_styles/background = SubResource("StyleBox_bar_bg")
 theme_override_styles/fill = SubResource("StyleBox_hunger")
 show_percentage = false
 
-[node name="Value" type="Label" parent="Margin/Content/Bars/Hunger" unique_id=2038865756]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "100/100"
-horizontal_alignment = 2
-
-[node name="Thirst" type="HBoxContainer" parent="Margin/Content/Bars" unique_id=2131772635]
+[node name="Thirst" type="HBoxContainer" parent="Margin/Content/Vitals" unique_id=2131772635]
+custom_minimum_size = Vector2(102, 0)
 layout_mode = 2
 
-[node name="Name" type="Label" parent="Margin/Content/Bars/Thirst" unique_id=1561238687]
-custom_minimum_size = Vector2(34, 0)
+[node name="Name" type="Label" parent="Margin/Content/Vitals/Thirst" unique_id=1561238687]
+custom_minimum_size = Vector2(28, 0)
 layout_mode = 2
 text = "口渴"
 
-[node name="Bar" type="ProgressBar" parent="Margin/Content/Bars/Thirst" unique_id=17536092]
+[node name="Bar" type="ProgressBar" parent="Margin/Content/Vitals/Thirst" unique_id=17536092]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -186,17 +174,11 @@ theme_override_styles/background = SubResource("StyleBox_bar_bg")
 theme_override_styles/fill = SubResource("StyleBox_thirst")
 show_percentage = false
 
-[node name="Value" type="Label" parent="Margin/Content/Bars/Thirst" unique_id=1905807441]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "100/100"
-horizontal_alignment = 2
-
 [node name="Experience" type="HBoxContainer" parent="Margin/Content" unique_id=1616432518]
 layout_mode = 2
 
 [node name="Name" type="Label" parent="Margin/Content/Experience" unique_id=687554246]
-custom_minimum_size = Vector2(34, 0)
+custom_minimum_size = Vector2(28, 0)
 layout_mode = 2
 text = "经验"
 
@@ -208,27 +190,9 @@ theme_override_styles/background = SubResource("StyleBox_bar_bg")
 theme_override_styles/fill = SubResource("StyleBox_experience")
 show_percentage = false
 
-[node name="Value" type="Label" parent="Margin/Content/Experience" unique_id=1575241317]
-custom_minimum_size = Vector2(48, 0)
-layout_mode = 2
-text = "0/40"
-horizontal_alignment = 2
-
-[node name="Equipment" type="Label" parent="Margin/Content" unique_id=1117543340]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.82, 0.77, 0.66, 1)
-theme_override_font_sizes/font_size = 11
-text = "武器：木棒　农舍：300/300
-背包：0/24格　击杀：0"
-
-[node name="Warning" type="Label" parent="Margin/Content" unique_id=1182675202]
+[node name="Context" type="Label" parent="Margin/Content/Header" unique_id=1182675202]
 visible = false
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.39, 0.3, 1)
-text = "警告"
-
-[node name="Buff" type="Label" parent="Margin/Content" unique_id=1686105565]
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(0.56, 0.87, 0.55, 1)
-text = "增益"
+theme_override_colors/font_color = Color(1, 0.64, 0.38, 1)
+theme_override_font_sizes/font_size = 10
+text = "状态"
