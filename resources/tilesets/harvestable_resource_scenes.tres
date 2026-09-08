@@ -1,6 +1,6 @@
 [gd_resource type="TileSet" format=3 uid="uid://ceo1rwaab0a4l"]
 
-[ext_resource type="PackedScene" path="res://scenes/world/resources/tree_resource.tscn" id="1_tree"]
+[ext_resource type="PackedScene" uid="uid://ciq6b10choneu" path="res://scenes/world/resources/tree_resource.tscn" id="1_tree"]
 [ext_resource type="PackedScene" uid="uid://djas44utdqlpl" path="res://scenes/world/resources/stone_resource.tscn" id="2_stone"]
 [ext_resource type="PackedScene" path="res://scenes/world/resources/herb_resource.tscn" id="3_herb"]
 

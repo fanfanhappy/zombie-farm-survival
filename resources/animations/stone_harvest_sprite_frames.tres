@@ -1,6 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=7 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dkelfjmtdpwww"]
 
-[ext_resource type="Texture2D" path="res://assets/art/environment/resources/resource_stone_herb_tiles.png" id="1_texture"]
+[ext_resource type="Texture2D" uid="uid://c2a3lvm3psx5c" path="res://assets/art/environment/resources/resource_stone_herb_tiles.png" id="1_texture"]
 
 [sub_resource type="AtlasTexture" id="frame_00"]
 atlas = ExtResource("1_texture")
@@ -27,28 +27,6 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("frame_00")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 3
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("frame_00")
-}, {
-"duration": 1.0,
-"texture": SubResource("frame_01")
-}, {
-"duration": 1.0,
-"texture": SubResource("frame_00")
-}],
-"loop": false,
-"name": &"hit",
-"speed": 10
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("frame_00")
 }, {
 "duration": 1.0,
 "texture": SubResource("frame_01")
@@ -62,16 +40,37 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("frame_04")
 }],
-"loop": false,
+"loop": 0,
 "name": &"break",
-"speed": 8
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("frame_04")
 }],
-"loop": true,
+"loop": 1,
 "name": &"depleted",
-"speed": 3
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
 }]
-

@@ -1,6 +1,6 @@
-[gd_resource type="SpriteFrames" load_steps=15 format=3]
+[gd_resource type="SpriteFrames" format=3 uid="uid://dnonae0f0cw18"]
 
-[ext_resource type="Texture2D" path="res://assets/art/environment/resources/resource_tree_fall_animation.png" id="1_texture"]
+[ext_resource type="Texture2D" uid="uid://b2pqghvi4oxxj" path="res://assets/art/environment/resources/resource_tree_fall_animation.png" id="1_texture"]
 
 [sub_resource type="AtlasTexture" id="frame_00"]
 atlas = ExtResource("1_texture")
@@ -59,28 +59,6 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("frame_00")
-}],
-"loop": true,
-"name": &"idle",
-"speed": 3
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("frame_00")
-}, {
-"duration": 1.0,
-"texture": SubResource("frame_01")
-}, {
-"duration": 1.0,
-"texture": SubResource("frame_00")
-}],
-"loop": false,
-"name": &"hit",
-"speed": 10
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("frame_00")
 }, {
 "duration": 1.0,
 "texture": SubResource("frame_01")
@@ -118,16 +96,37 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("frame_12")
 }],
-"loop": false,
+"loop": 0,
 "name": &"break",
-"speed": 8
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("frame_12")
 }],
-"loop": true,
+"loop": 1,
 "name": &"depleted",
-"speed": 3
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}],
+"loop": 0,
+"name": &"hit",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("frame_00")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 3.0
 }]
-

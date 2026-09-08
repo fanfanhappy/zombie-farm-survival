@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemDefinition" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://i53a6n1phj0v"]
 
-[ext_resource type="Script" path="res://scripts/data/item_definition.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/art/ui/icons/item_general_icons.png" id="2_atlas"]
+[ext_resource type="Script" uid="uid://rwmy0edlk2yl" path="res://scripts/data/item_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://bw51huis7ikkc" path="res://assets/art/ui/icons/item_general_icons.png" id="2_atlas"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
 atlas = ExtResource("2_atlas")
@@ -17,4 +17,3 @@ icon = SubResource("AtlasTexture_icon")
 stack_limit = 20
 usable = true
 sort_order = 50
-
