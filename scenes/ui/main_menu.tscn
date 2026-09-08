@@ -52,25 +52,25 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Menu" type="PanelContainer" parent="Center"]
-custom_minimum_size = Vector2(510, 390)
+custom_minimum_size = Vector2(420, 330)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_menu")
 
 [node name="Margin" type="MarginContainer" parent="Center/Menu"]
 layout_mode = 2
-theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 36
-theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 36
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 20
 
 [node name="Content" type="VBoxContainer" parent="Center/Menu/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 15
+theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Center/Menu/Margin/Content"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.94, 0.84, 0.55, 1)
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 28
 text = "僵尸来了也要种田"
 horizontal_alignment = 1
 
@@ -82,26 +82,26 @@ text = "末日农场生存 RPG"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="Center/Menu/Margin/Content"]
-custom_minimum_size = Vector2(0, 12)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="NewGameButton" type="Button" parent="Center/Menu/Margin/Content"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 text = "开始新游戏"
 
 [node name="ContinueButton" type="Button" parent="Center/Menu/Margin/Content"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 text = "继续游戏"
 
 [node name="SettingsButton" type="Button" parent="Center/Menu/Margin/Content"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 text = "设置"
 
 [node name="QuitButton" type="Button" parent="Center/Menu/Margin/Content"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 text = "退出游戏"
 

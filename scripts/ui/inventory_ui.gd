@@ -9,8 +9,7 @@ const SLOT_TEXTURE := preload("res://assets/art/ui/inventory/ui_inventory_slots.
 const ITEM_SLOT_SCENE := preload("res://scenes/ui/components/draggable_item_slot.tscn")
 
 
-@onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Content/Hotbar
-@onready var selected_item_label: Label = $HotbarPanel/Margin/Content/SelectedItem
+@onready var hotbar: HBoxContainer = $HotbarPanel/Margin/Hotbar
 @onready var backpack_panel: PanelContainer = $BackpackPanel
 @onready var capacity_label: Label = $BackpackPanel/Margin/Content/Header/Capacity
 @onready var item_grid: GridContainer = $BackpackPanel/Margin/Content/Body/LeftColumn/ItemScroll/ItemGrid
@@ -133,7 +132,6 @@ func _refresh_hotbar() -> void:
 			slot.tooltip_text = "%s\n右键清空快捷槽" % inventory.get_item_data(item_id).get("description", "")
 			slot.pressed.connect(_on_hotbar_slot_pressed.bind(item_id))
 		hotbar.add_child(slot)
-	_update_selected_item_label()
 
 
 func _refresh_backpack() -> void:
@@ -190,14 +188,6 @@ func _on_search_gui_input(event: InputEvent) -> void:
 	if event.is_action_pressed("toggle_inventory"):
 		close_backpack()
 		search_input.accept_event()
-
-
-func _update_selected_item_label() -> void:
-	var item_id := get_selected_hotbar_item_id()
-	if item_id.is_empty():
-		selected_item_label.text = "未选择快捷物品"
-		return
-	selected_item_label.text = "当前：%s　×%d" % [inventory.get_display_name(item_id), inventory.get_amount(item_id)]
 
 
 func _select_item(item_id: String) -> void:

@@ -94,11 +94,13 @@ func _init() -> void:
 	assert(not game.has_node("UI/HUD/HelpPanel"))
 	var objective_status := game.get_node("UI/HUD/ObjectiveStatus") as Label
 	assert(objective_status != null)
-	assert(objective_status.get_theme_font_size("font_size") <= 14)
+	assert(objective_status.get_theme_font_size("font_size") <= 12)
+	var status_panel := game.get_node("UI/HUD/StatusPanel") as Control
+	assert(status_panel.size.x <= 240.0 and status_panel.size.y <= 212.0, "状态面板实际尺寸：%s" % status_panel.size)
+	assert(status_panel.get_global_rect().end.y + 2.0 <= objective_status.get_global_rect().position.y)
 	assert(game.get_node("UI/InventoryUI") is InventoryUI)
 	assert(game.get_node("UI/InventoryUI/HotbarPanel") is PanelContainer)
-	assert(game.get_node("UI/InventoryUI/HotbarPanel/Margin/Content/SelectedItem") is Label)
-	assert(game.get_node("UI/InventoryUI/HotbarPanel/Margin/Content/Hotbar") is HBoxContainer)
+	assert(game.get_node("UI/InventoryUI/HotbarPanel/Margin/Hotbar") is HBoxContainer)
 	assert(game.get_node("UI/InventoryUI/BackpackPanel") is PanelContainer)
 	assert(game.get_node("UI/InventoryUI/BackpackPanel/Margin/Content/Body") is HBoxContainer)
 	assert(game.get_node("UI/InventoryUI/BackpackPanel/Margin/Content/Body/LeftColumn/ItemScroll") is ScrollContainer)
@@ -106,10 +108,13 @@ func _init() -> void:
 	assert(game.get_node("UI/InventoryUI/BackpackPanel/Margin/Content/Body/LeftColumn/FilterBar/Category") is OptionButton)
 	assert(game.inventory.hotbar_capacity == 9)
 	assert(game.inventory_ui.hotbar.get_child_count() == 9)
+	assert((game.inventory_ui.hotbar.get_child(0) as Control).size.x <= 52.0)
 	game.inventory_ui.open_backpack()
 	await process_frame
 	var backpack_rect: Rect2 = game.inventory_ui.backpack_panel.get_global_rect()
 	var hotbar_rect: Rect2 = game.get_node("UI/InventoryUI/HotbarPanel").get_global_rect()
+	assert(backpack_rect.size.x <= 700.0 and backpack_rect.size.y <= 390.0, "背包实际尺寸：%s" % backpack_rect.size)
+	assert(hotbar_rect.size.x <= 560.0 and hotbar_rect.size.y <= 66.0, "快捷栏实际尺寸：%s" % hotbar_rect.size)
 	assert(backpack_rect.position.x >= 8.0)
 	assert(backpack_rect.position.y >= 8.0)
 	assert(backpack_rect.end.x <= game.get_viewport_rect().size.x - 8.0)
@@ -247,6 +252,10 @@ func _init() -> void:
 	assert(main_menu.get_node("Center/Menu/Margin/Content/SettingsButton") is Button)
 	assert(main_menu.get_node("SettingsUI") is SettingsUI)
 	assert(not main_menu.has_node("Center/Menu/Margin/Content/FullscreenHint"))
+	var main_menu_panel := main_menu.get_node("Center/Menu") as Control
+	assert(main_menu_panel.size.x <= 430.0 and main_menu_panel.size.y <= 350.0, "主菜单实际尺寸：%s" % main_menu_panel.size)
+	var settings_panel := main_menu.get_node("SettingsUI/Dimmer/Center/Panel") as Control
+	assert(settings_panel.custom_minimum_size.x <= 560.0 and settings_panel.custom_minimum_size.y <= 440.0)
 	print("ARCHITECTURE_AND_NEW_GAME_REGRESSION_OK")
 	quit()
 

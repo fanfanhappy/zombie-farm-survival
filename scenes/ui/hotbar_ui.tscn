@@ -8,10 +8,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -338.0
-offset_top = -98.0
-offset_right = 338.0
-offset_bottom = -6.0
+offset_left = -270.0
+offset_top = -65.0
+offset_right = 270.0
+offset_bottom = -5.0
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("1_theme")
@@ -23,20 +23,7 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 4
 
-[node name="Content" type="VBoxContainer" parent="Margin"]
+[node name="Hotbar" type="HBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 3
-
-[node name="SelectedItem" type="Label" parent="Margin/Content"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.9, 0.65, 1)
-theme_override_colors/font_outline_color = Color(0.08, 0.07, 0.06, 0.9)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 14
-text = "未选择快捷物品"
-horizontal_alignment = 1
-
-[node name="Hotbar" type="HBoxContainer" parent="Margin/Content"]
-layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 4
 alignment = 1

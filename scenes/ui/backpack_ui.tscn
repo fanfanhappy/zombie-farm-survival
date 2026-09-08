@@ -9,24 +9,24 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -380.0
-offset_top = -252.0
-offset_right = 380.0
-offset_bottom = 158.0
+offset_left = -340.0
+offset_top = -238.0
+offset_right = 340.0
+offset_bottom = 132.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_theme")
 
 [node name="Margin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
 
 [node name="Content" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="Header" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 2
@@ -35,7 +35,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(1, 0.92, 0.67, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 22
 text = "背包"
 
 [node name="Capacity" type="Label" parent="Margin/Content/Header"]
@@ -47,7 +47,7 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Margin/Content/Header"]
-custom_minimum_size = Vector2(44, 36)
+custom_minimum_size = Vector2(38, 32)
 layout_mode = 2
 text = "×"
 
@@ -57,27 +57,27 @@ layout_mode = 2
 [node name="Body" type="HBoxContainer" parent="Margin/Content"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="LeftColumn" type="VBoxContainer" parent="Margin/Content/Body"]
-custom_minimum_size = Vector2(454, 0)
+custom_minimum_size = Vector2(390, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="FilterBar" type="HBoxContainer" parent="Margin/Content/Body/LeftColumn"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="Search" type="LineEdit" parent="Margin/Content/Body/LeftColumn/FilterBar"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "搜索物品名称……"
 clear_button_enabled = true
 
 [node name="Category" type="OptionButton" parent="Margin/Content/Body/LeftColumn/FilterBar"]
-custom_minimum_size = Vector2(150, 38)
+custom_minimum_size = Vector2(125, 34)
 layout_mode = 2
 tooltip_text = "按物品类型筛选"
 
@@ -89,29 +89,29 @@ horizontal_scroll_mode = 0
 [node name="ItemGrid" type="GridContainer" parent="Margin/Content/Body/LeftColumn/ItemScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 columns = 6
 
 [node name="DetailPanel" type="PanelContainer" parent="Margin/Content/Body"]
-custom_minimum_size = Vector2(230, 0)
+custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 
 [node name="Margin" type="MarginContainer" parent="Margin/Content/Body/DetailPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
 
 [node name="Detail" type="VBoxContainer" parent="Margin/Content/Body/DetailPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 7
+theme_override_constants/separation = 6
 
 [node name="ItemName" type="Label" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.67, 1)
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 16
 text = "选择一个物品"
 
 [node name="Description" type="Label" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
@@ -120,15 +120,16 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "点击物品查看说明，按住并拖动可放入快捷栏。"
 autowrap_mode = 2
+theme_override_font_sizes/font_size = 13
 
 [node name="UseButton" type="Button" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 visible = false
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 text = "使用"
 
 [node name="DropButton" type="Button" parent="Margin/Content/Body/DetailPanel/Margin/Detail"]
 visible = false
-custom_minimum_size = Vector2(0, 36)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 text = "丢弃 1 个"
