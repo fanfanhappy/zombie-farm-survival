@@ -9,13 +9,13 @@ func find_mouse_target(game: Node, mouse_world_position: Vector2) -> Node2D:
 		var target := node as Node2D
 		var cursor_distance := mouse_world_position.distance_to(target.global_position)
 		var selection_radius := FarmPlot.CELL_SIZE * 0.5 if target is FarmPlot else nearest_cursor_distance
-		if cursor_distance <= selection_radius and cursor_distance < nearest_cursor_distance and game.player.global_position.distance_to(target.global_position) <= 64.0:
+		if cursor_distance <= selection_radius and cursor_distance < nearest_cursor_distance:
 			nearest = target
 			nearest_cursor_distance = cursor_distance
 	for node in game.get_tree().get_nodes_in_group("zombies"):
 		var zombie := node as Zombie
 		var cursor_distance := mouse_world_position.distance_to(zombie.global_position)
-		if cursor_distance < nearest_cursor_distance and game.player.global_position.distance_to(zombie.global_position) <= 70.0:
+		if cursor_distance < nearest_cursor_distance:
 			nearest = zombie
 			nearest_cursor_distance = cursor_distance
 	return nearest

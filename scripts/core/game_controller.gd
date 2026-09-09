@@ -294,6 +294,13 @@ func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
 		return
 	var target := _nearest_mouse_target(mouse_world_position)
 	if target:
+		var target_reach := 70.0 if target is Zombie else 64.0
+		if target is FarmPlot and player.world_settings != null:
+			target_reach = float(player.world_settings.farming_reach)
+		if player.global_position.distance_to(target.global_position) > target_reach:
+			show_message("目标太远，靠近后再操作")
+			mouse_action_cooldown = 0.35
+			return
 		if target is Zombie:
 			if player.try_mouse_attack(target.global_position): mouse_action_cooldown = player.attack_cooldown
 			else: mouse_action_cooldown = 0.1

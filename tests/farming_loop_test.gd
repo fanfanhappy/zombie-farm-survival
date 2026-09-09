@@ -13,8 +13,16 @@ func _init() -> void:
 	var initial_potato_amount: int = game.inventory.get_amount("potato")
 	var initial_experience: int = game.player.experience
 
-	# 开垦。
+	# 指向超出交互距离的农田只显示提示，不会误触发空挥攻击和体力消耗。
 	assert(game.inventory_ui.activate_hotbar_slot(2))
+	game.player.global_position = plot.global_position + Vector2(70.0, 0.0)
+	var stamina_before_out_of_range: float = game.player.stamina
+	game._try_mouse_world_action(plot.global_position)
+	assert(plot.state == FarmPlot.PlotState.EMPTY)
+	assert(game.player.stamina == stamina_before_out_of_range)
+	game.player.global_position = plot.global_position + Vector2(32.0, 0.0)
+
+	# 开垦。
 	assert(plot.can_interact(game))
 	plot.interact(game)
 	assert(plot.state == FarmPlot.PlotState.TILLED)
