@@ -9,6 +9,7 @@ func _enter_tree() -> void:
 
 @onready var character_sprite: PlayerAnimationController = $PlayerAnimation
 @onready var attack_effect: PlayerAttackEffect = $AttackEffect
+@onready var tool_action_points: Node2D = $ToolActionPoints
 @onready var input_component: PlayerInputComponent = $InputComponent
 @onready var survival_component: PlayerSurvivalComponent = $SurvivalComponent
 @onready var world_tile_map: WorldTileMap = get_tree().get_first_node_in_group("world_tilemap") as WorldTileMap
@@ -268,6 +269,19 @@ func play_tool_action(action_type: String) -> void:
 
 func get_tool_action_duration() -> float:
 	return tool_action_time_left
+
+
+## 返回当前朝向的工具落点。四个 Marker2D 可直接在 player.tscn 中拖动调整。
+func get_tool_action_position(direction := facing_direction) -> Vector2:
+	if not is_instance_valid(tool_action_points):
+		return global_position
+	var marker_name := "Down"
+	match character_sprite.get_direction_name(direction):
+		"up": marker_name = "Up"
+		"left": marker_name = "Left"
+		"right": marker_name = "Right"
+	var marker := tool_action_points.get_node_or_null(marker_name) as Marker2D
+	return marker.global_position if is_instance_valid(marker) else global_position
 
 
 func _update_character_animation(direction: Vector2) -> void:

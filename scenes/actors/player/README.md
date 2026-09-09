@@ -9,6 +9,7 @@
 - `player_attack_effect.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `player_visual.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `player.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
+- `player.tscn/ToolActionPoints`：四方向工具作用点；在 2D 编辑器中拖动 `Up`、`Down`、`Left`、`Right` 即可微调锄地、砍伐和浇水的参考位置。
 
 ## 关联与维护
 

@@ -20,7 +20,21 @@ script = ExtResource("1_controller")
 
 [node name="AttackEffect" parent="." unique_id=1079701349 instance=ExtResource("3_attack_effect")]
 
-[node name="InputComponent" type="Node" parent="."]
+[node name="ToolActionPoints" type="Node2D" parent="."]
+
+[node name="Up" type="Marker2D" parent="ToolActionPoints"]
+position = Vector2(0, -32)
+
+[node name="Down" type="Marker2D" parent="ToolActionPoints"]
+position = Vector2(0, 32)
+
+[node name="Left" type="Marker2D" parent="ToolActionPoints"]
+position = Vector2(-32, 0)
+
+[node name="Right" type="Marker2D" parent="ToolActionPoints"]
+position = Vector2(32, 0)
+
+[node name="InputComponent" type="Node" parent="." unique_id=1230996388]
 script = ExtResource("4_input")
 
 [node name="SurvivalComponent" type="Node" parent="."]
