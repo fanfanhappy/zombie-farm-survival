@@ -20,6 +20,4 @@ display_name = "土豆"
 seed_item_id = &"potato_seed"
 visual_scene = ExtResource("2_visual")
 growth_days = 2
-dry_tolerance_days = 2
-harvest_experience = 8
 harvest = Array[ExtResource("3_item")]([SubResource("Harvest_0"), SubResource("Harvest_1")])
