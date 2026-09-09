@@ -6,6 +6,7 @@
 
 ## 当前文件
 
+- `initial_world_resources.tscn`：正式地图资源布置入口；`StaticDecorations` 放不可采集装饰，`HarvestableResources` 放可砍伐树木、可破坏石头和可采集草药。两个图层都可在 Godot 中直接绘制、擦除和移动。
 - `herb_resource.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `stone_resource.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `tree_resource.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
@@ -16,4 +17,3 @@
 - 场景节点使用 PascalCase，文件使用英文蛇形命名，脚本与场景尽量同领域对应。
 - 修改公共节点路径、组名、信号或资源 ID 后，必须运行两套回归测试。
 - 删除文件前检查动态加载、TileSet 场景集合和存档恢复逻辑。
-

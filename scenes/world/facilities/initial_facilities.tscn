@@ -8,12 +8,12 @@
 
 [node name="Facilities" type="Node2D"]
 [node name="Workbench" parent="." instance=ExtResource("1_workbench")]
-position = Vector2(625, 330)
+position = Vector2(608, 352)
 [node name="Kitchen" parent="." instance=ExtResource("2_kitchen")]
-position = Vector2(1040, 325)
+position = Vector2(672, 352)
 [node name="SleepPoint" parent="." instance=ExtResource("3_sleep")]
-position = Vector2(930, 425)
+position = Vector2(736, 352)
 [node name="WaterPump" parent="." instance=ExtResource("4_water")]
-position = Vector2(755, 435)
+position = Vector2(800, 352)
 [node name="HomesteadRepairPoint" parent="." instance=ExtResource("5_repair")]
-position = Vector2(840, 420)
+position = Vector2(560, 352)

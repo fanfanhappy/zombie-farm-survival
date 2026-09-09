@@ -4,4 +4,4 @@
 
 [node name="BuildingLayer" type="Node2D"]
 [node name="Homestead" parent="." instance=ExtResource("1_homestead")]
-position = Vector2(840, 280)
+position = Vector2(400, 240)

@@ -74,4 +74,5 @@ amount = 2
 
 [resource]
 script = ExtResource("1_rules")
+player_home = Vector2(864, 352)
 starting_items = Array[ExtResource("2_item")]([SubResource("Item_club"), SubResource("Item_axe"), SubResource("Item_hoe"), SubResource("Item_water"), SubResource("Item_fence"), SubResource("Item_spike"), SubResource("Item_chest"), SubResource("Item_trap"), SubResource("Item_wood"), SubResource("Item_stone"), SubResource("Item_herb"), SubResource("Item_potato"), SubResource("Item_potato_seed"), SubResource("Item_carrot_seed"), SubResource("Item_herb_seed")])

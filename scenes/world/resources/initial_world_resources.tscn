@@ -1,0 +1,16 @@
+[gd_scene format=4]
+
+[ext_resource type="TileSet" path="res://resources/tilesets/static_decoration_scenes.tres" id="1_static"]
+[ext_resource type="TileSet" path="res://resources/tilesets/harvestable_resource_scenes.tres" id="2_harvestable"]
+
+[node name="ResourceNodes" type="Node2D"]
+
+[node name="StaticDecorations" type="TileMapLayer" parent="."]
+position = Vector2(-16, -16)
+tile_map_data = PackedByteArray("AAApAAYAAAAAAAAAAAAwABQAAAAAAAAAAAAKABgAAAAAAAAAAAD7/w8AAAAAAAAAAAAbABYAAAAAAAAAAAAlAAgAAAAAAAAAAQAtABIAAAAAAAAAAQAIABkAAAAAAAAAAQA0AAwAAAAAAAAAAQAnAAkAAAAAAAAAAgAyABUAAAAAAAAAAgAMABkAAAAAAAAAAgD9/w4AAAAAAAAAAgA=")
+tile_set = ExtResource("1_static")
+
+[node name="HarvestableResources" type="TileMapLayer" parent="."]
+position = Vector2(-16, -16)
+tile_map_data = PackedByteArray("AAAGAAIAAAAAAAAAAAAJAAIAAAAAAAAAAAAaAA0AAAAAAAAAAAAIAA0AAAAAAAAAAQASAA0AAAAAAAAAAQAbAAwAAAAAAAAAAQAKAAIAAAAAAAAAAgAVAAsAAAAAAAAAAgAZAAwAAAAAAAAAAgA=")
+tile_set = ExtResource("2_harvestable")

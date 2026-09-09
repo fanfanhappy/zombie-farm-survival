@@ -5,16 +5,16 @@
 [node name="Animals" type="Node2D"]
 
 [node name="Chicken01" parent="." instance=ExtResource("1_chicken")]
-position = Vector2(1010, 555)
+position = Vector2(928, 320)
 chicken_index = 0
 persistence_id = &"farm_chicken_01"
 
 [node name="Chicken02" parent="." instance=ExtResource("1_chicken")]
-position = Vector2(1080, 590)
+position = Vector2(992, 320)
 chicken_index = 1
 persistence_id = &"farm_chicken_02"
 
 [node name="Chicken03" parent="." instance=ExtResource("1_chicken")]
-position = Vector2(1125, 535)
+position = Vector2(960, 384)
 chicken_index = 0
 persistence_id = &"farm_chicken_03"
