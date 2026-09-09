@@ -10,6 +10,7 @@
 - `harvestable_resource_scenes.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `static_decoration_scenes.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `terrain_grass_tileset.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
+- `terrain_hills_tileset.tres`：山丘与高地可视化切片资源，在 `HillLayer` 中绘制；不再保留无内容的同名 `.tscn`。
 - `terrain_path_tileset.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `terrain_water_tileset.tres`：水体动画瓦片及其碰撞；绘制或擦除水瓦片时，物理碰撞会同步生成或移除。
 
