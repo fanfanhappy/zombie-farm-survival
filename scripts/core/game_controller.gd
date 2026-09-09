@@ -68,6 +68,7 @@ func _ready() -> void:
 	inventory.initialize(starting_items)
 	inventory_ui.setup(inventory)
 	storage_ui.setup(inventory)
+	farming_system.setup(world_tile_map, farm_plots_root)
 	storage_ui.storage_closed.connect(_on_storage_closed)
 	inventory_ui.item_use_requested.connect(_on_inventory_item_use_requested)
 	inventory_ui.item_drop_requested.connect(_on_inventory_item_drop_requested)
@@ -118,7 +119,7 @@ func reset_for_new_game() -> void:
 	for chest in get_tree().get_nodes_in_group("storage_chests"): chest.queue_free()
 	for trap in get_tree().get_nodes_in_group("snare_traps"): trap.queue_free()
 	for ground_item in get_tree().get_nodes_in_group("ground_items"): ground_item.queue_free()
-	for plot in get_tree().get_nodes_in_group("farm_plots"): (plot as FarmPlot).reset_for_new_game()
+	farming_system.reset_for_new_game()
 	for chicken in get_tree().get_nodes_in_group("chickens"): (chicken as Chicken).reset_for_new_game()
 	inventory.reset_for_new_game(starting_items)
 	inventory.assign_hotbar_item(0, "wooden_club")
@@ -288,10 +289,6 @@ func _update_held_mouse_action(delta: float) -> void:
 
 
 func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
-	if player.global_position.distance_to(mouse_world_position) > 78.0:
-		show_message("目标太远")
-		mouse_action_cooldown = 0.35
-		return
 	var target := _nearest_mouse_target(mouse_world_position)
 	if target:
 		var target_reach := 70.0 if target is Zombie else 64.0
@@ -319,6 +316,37 @@ func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
 		player.facing_direction = player.global_position.direction_to(target.global_position)
 		target.interact(self)
 		mouse_action_cooldown = player.get_tool_action_duration()
+		return
+	if get_active_tool_type() == "hoe":
+		var cell := WorldGrid.world_to_cell(mouse_world_position)
+		var cell_position := WorldGrid.cell_to_world(cell)
+		var block_reason := world_tile_map.get_till_block_reason(cell)
+		if not block_reason.is_empty():
+			show_message(block_reason)
+			mouse_action_cooldown = 0.35
+			return
+		if player.global_position.distance_to(cell_position) > float(player.world_settings.farming_reach):
+			show_message("目标太远，靠近后再开垦")
+			mouse_action_cooldown = 0.35
+			return
+		var new_plot := farming_system.create_plot_at_cell(cell)
+		if new_plot == null:
+			show_message("这里暂时不能开垦")
+			mouse_action_cooldown = 0.35
+			return
+		var stamina_cost := new_plot.get_stamina_cost()
+		if stamina_cost > 0.0 and not player.try_spend_stamina(stamina_cost):
+			farming_system.discard_new_plot(new_plot)
+			show_message("体力不足，无法开垦")
+			mouse_action_cooldown = 0.55
+			return
+		player.facing_direction = player.global_position.direction_to(cell_position)
+		new_plot.interact(self)
+		mouse_action_cooldown = player.get_tool_action_duration()
+		return
+	if player.global_position.distance_to(mouse_world_position) > 78.0:
+		show_message("目标太远")
+		mouse_action_cooldown = 0.35
 		return
 	if player.try_mouse_attack(mouse_world_position): mouse_action_cooldown = player.attack_cooldown
 	else: mouse_action_cooldown = 0.1

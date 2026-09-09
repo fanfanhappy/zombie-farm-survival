@@ -4,7 +4,7 @@ extends RefCounted
 
 func create_save_data(game: Node) -> Dictionary:
 	return {
-		"version": 21, "day": game.day, "day_progress": game.day_progress,
+		"version": 22, "day": game.day, "day_progress": game.day_progress,
 		"weather": game.weather_system.current_weather_id,
 		"inventory": game.inventory.create_save_data(),
 		"player_position": {"x": game.player.position.x, "y": game.player.position.y},
@@ -136,20 +136,15 @@ func serialize_farm_plots(game: Node) -> Array[Dictionary]:
 
 
 func restore_farm_plots(game: Node, entries: Array, save_version := 19) -> void:
-	var plots := game.get_tree().get_nodes_in_group("farm_plots")
-	if save_version >= 19:
-		var plots_by_cell: Dictionary = {}
-		for plot_node in plots:
-			var plot := plot_node as FarmPlot
-			plots_by_cell[WorldGrid.world_to_cell(plot.global_position)] = plot
-		for entry in entries:
-			if not entry is Dictionary: continue
-			var cell := Vector2i(int(entry.get("cell_x", 0)), int(entry.get("cell_y", 0)))
-			var target := plots_by_cell.get(cell) as FarmPlot
-			if target != null: target.restore_save_data(entry, game.farming_system)
-		return
-	for index in mini(entries.size(), plots.size()):
-		if entries[index] is Dictionary: (plots[index] as FarmPlot).restore_save_data(entries[index], game.farming_system)
+	game.farming_system.reset_for_new_game()
+	for index in entries.size():
+		var entry := entries[index] as Dictionary
+		if entry == null or int(entry.get("state", FarmPlot.PlotState.EMPTY)) == FarmPlot.PlotState.EMPTY:
+			continue
+		var cell: Vector2i = Vector2i(int(entry.get("cell_x", 0)), int(entry.get("cell_y", 0))) if save_version >= 19 else game.farming_system.get_legacy_plot_cell(index)
+		var plot: FarmPlot = game.farming_system.create_plot_at_cell(cell, false)
+		if plot != null:
+			plot.restore_save_data(entry, game.farming_system)
 
 
 func serialize_ground_items(game: Node) -> Array[Dictionary]:

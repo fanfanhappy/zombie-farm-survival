@@ -109,7 +109,17 @@ func _check_placement_valid() -> bool:
 	query.transform = Transform2D(rotation, global_position)
 	query.collide_with_areas = false
 	query.collide_with_bodies = true
-	return get_world_2d().direct_space_state.intersect_shape(query, 8).is_empty()
+	if not get_world_2d().direct_space_state.intersect_shape(query, 8).is_empty():
+		return false
+	var local_transform := Transform2D(rotation, global_position).affine_inverse()
+	for node in get_tree().get_nodes_in_group("farm_plots"):
+		var plot := node as FarmPlot
+		if plot.state == FarmPlot.PlotState.EMPTY:
+			continue
+		var local_plot_position := local_transform * plot.global_position
+		if absf(local_plot_position.x) <= footprint.x * 0.5 and absf(local_plot_position.y) <= footprint.y * 0.5:
+			return false
+	return true
 
 
 func _create_preview() -> void:

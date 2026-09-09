@@ -134,14 +134,8 @@ func _init() -> void:
 	assert(game.get_node("UI/Menus/PauseOverlay") is ColorRect)
 	assert(game.get_node("UI/Menus/SettingsUI") is SettingsUI)
 	assert(game.get_node("UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Settings") is Button)
-	assert(get_nodes_in_group("farm_plots").size() == 72)
-	var farm_cells := {}
-	for plot in get_nodes_in_group("farm_plots"):
-		var farm_cell := WorldGrid.world_to_cell(plot.position)
-		assert(plot.position == WorldGrid.cell_to_world(farm_cell))
-		assert(not farm_cells.has(farm_cell))
-		farm_cells[farm_cell] = true
-	assert(farm_cells.size() == 72)
+	assert(get_nodes_in_group("farm_plots").is_empty())
+	assert(farming_layer.get_used_cells().is_empty())
 	assert(get_nodes_in_group("chickens").size() == 3)
 	var resource_layers := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes")
 	assert(resource_layers.get_node("StaticDecorations") is TileMapLayer)
@@ -195,9 +189,9 @@ func _init() -> void:
 	for item_id in filtered_tools: assert(game.inventory.get_item_data(item_id).get("category") == "tool")
 	game.inventory_ui.category_filter.select(0)
 	game.objective_system.current_index = 2
-	var first_plot := get_nodes_in_group("farm_plots")[0] as FarmPlot
+	var first_plot: FarmPlot = game.farming_system.create_plot_at_cell(Vector2i(7, 14), false)
 	first_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED, "watered": true}, game.farming_system)
-	var second_plot := get_nodes_in_group("farm_plots")[1] as FarmPlot
+	var second_plot: FarmPlot = game.farming_system.create_plot_at_cell(Vector2i(8, 14), false)
 	second_plot.restore_save_data({"state": FarmPlot.PlotState.TILLED}, game.farming_system)
 	await process_frame
 	var fence := load("res://scenes/world/defenses/fence.tscn").instantiate() as DefenseStructure
@@ -209,9 +203,9 @@ func _init() -> void:
 	assert(game.persistence.serialize_defenses(game).size() == 1)
 	assert(game.persistence.serialize_storage_chests(game).size() == 1)
 	assert(game.persistence.serialize_ground_items(game).size() == 1)
-	assert(game.persistence.serialize_farm_plots(game).size() == 72)
+	assert(game.persistence.serialize_farm_plots(game).size() == 2)
 	var complete_save_data: Dictionary = game.persistence.create_save_data(game)
-	assert(int(complete_save_data.get("version")) == 21)
+	assert(int(complete_save_data.get("version")) == 22)
 	assert(complete_save_data.get("enemies") is Array)
 	var saved_plot := (complete_save_data.get("farm_plots") as Array)[0] as Dictionary
 	assert(saved_plot.has("cell_x") and saved_plot.has("cell_y"))
@@ -244,7 +238,8 @@ func _init() -> void:
 	assert(game.inventory.get_hotbar_item(8).is_empty())
 	assert(game.inventory_ui.selected_hotbar_index == -1)
 	assert(game.objective_system.current_index == 0)
-	assert(first_plot.state == FarmPlot.PlotState.EMPTY)
+	assert(get_nodes_in_group("farm_plots").is_empty())
+	assert(farming_layer.get_used_cells().is_empty())
 	assert(game.player.position == game.player_home)
 	await process_frame
 	assert(get_nodes_in_group("zombies").is_empty())
