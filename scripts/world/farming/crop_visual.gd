@@ -8,3 +8,9 @@ func show_stage(stage_index: int) -> void:
 		var stage_node := get_node_or_null("Stage%d" % index) as CanvasItem
 		if stage_node:
 			stage_node.visible = index == clamped_stage
+	modulate = Color.WHITE
+
+
+func show_withered() -> void:
+	show_stage(4)
+	modulate = Color(0.48, 0.43, 0.34, 0.82)

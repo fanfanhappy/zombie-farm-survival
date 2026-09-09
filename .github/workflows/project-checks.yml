@@ -23,3 +23,5 @@ jobs:
         run: godot --headless --path . --script res://tests/resource_database_test.gd
       - name: 检查架构和新游戏重置
         run: godot --headless --path . --script res://tests/architecture_phase2_test.gd
+      - name: 检查完整种植循环
+        run: godot --headless --path . --script res://tests/farming_loop_test.gd

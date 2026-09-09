@@ -4,7 +4,7 @@ extends RefCounted
 
 func create_save_data(game: Node) -> Dictionary:
 	return {
-		"version": 20, "day": game.day, "day_progress": game.day_progress,
+		"version": 21, "day": game.day, "day_progress": game.day_progress,
 		"weather": game.weather_system.current_weather_id,
 		"inventory": game.inventory.create_save_data(),
 		"player_position": {"x": game.player.position.x, "y": game.player.position.y},

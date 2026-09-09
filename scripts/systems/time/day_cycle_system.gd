@@ -63,10 +63,34 @@ func advance_to_next_day(game: Node) -> void:
 	game.day += 1
 	game.night_spawned = false
 	for zombie in game.get_tree().get_nodes_in_group("zombies"): zombie.queue_free()
-	for plot in game.get_tree().get_nodes_in_group("farm_plots"): plot.advance_day()
+	var farm_results := {
+		FarmPlot.DayResult.GREW: 0,
+		FarmPlot.DayResult.READY_TO_HARVEST: 0,
+		FarmPlot.DayResult.MISSED_WATER: 0,
+		FarmPlot.DayResult.WITHERED: 0,
+	}
+	for plot_node in game.get_tree().get_nodes_in_group("farm_plots"):
+		var result: FarmPlot.DayResult = (plot_node as FarmPlot).advance_day()
+		if farm_results.has(result): farm_results[result] += 1
 	for chicken in game.get_tree().get_nodes_in_group("chickens"): chicken.advance_day()
 	game.weather_system.choose_weather_for_day(game.day)
+	var rain_watered_count := 0
 	if bool(game.weather_system.get_current_data().get("waters_crops", false)):
-		for plot in game.get_tree().get_nodes_in_group("farm_plots"): plot.water_from_rain()
+		for plot_node in game.get_tree().get_nodes_in_group("farm_plots"):
+			if (plot_node as FarmPlot).water_from_rain(): rain_watered_count += 1
 	if is_instance_valid(game.homestead): game.homestead.repair(10.0)
-	game.show_message("第%d天开始了，作物已经生长" % game.day)
+	game.show_message(_format_new_day_message(game.day, farm_results, rain_watered_count))
+
+
+func _format_new_day_message(day: int, results: Dictionary, rain_watered_count: int) -> String:
+	var details: Array[String] = []
+	var grew := int(results.get(FarmPlot.DayResult.GREW, 0))
+	var ready := int(results.get(FarmPlot.DayResult.READY_TO_HARVEST, 0))
+	var missed := int(results.get(FarmPlot.DayResult.MISSED_WATER, 0))
+	var withered := int(results.get(FarmPlot.DayResult.WITHERED, 0))
+	if grew > 0: details.append("%d块生长" % grew)
+	if ready > 0: details.append("%d块成熟" % ready)
+	if missed > 0: details.append("%d块缺水停长" % missed)
+	if withered > 0: details.append("%d块枯萎" % withered)
+	if rain_watered_count > 0: details.append("降雨浇灌%d块" % rain_watered_count)
+	return "第%d天开始了%s" % [day, "：" + "，".join(details) if not details.is_empty() else ""]

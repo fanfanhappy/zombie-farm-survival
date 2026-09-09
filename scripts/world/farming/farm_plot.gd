@@ -5,12 +5,14 @@ signal plot_state_changed
 
 const DEFAULT_ACTION_SETTINGS := preload("res://resources/settings/farming_action_settings.tres")
 
-enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY }
+enum PlotState { EMPTY, TILLED, PLANTED, GROWING, READY, WITHERED }
+enum DayResult { NONE, GREW, READY_TO_HARVEST, MISSED_WATER, WITHERED }
 
 const CELL_SIZE := WorldGrid.CELL_SIZE
 var state := PlotState.EMPTY
 var watered := false
 var growth_days := 0
+var dry_days := 0
 var crop_id := ""
 var crop_data: Dictionary = {}
 var highlight_state := 0
@@ -22,7 +24,7 @@ var crop_visual: CropVisual
 @export var blocked_fill_color := Color(0.95, 0.28, 0.25, 0.24)
 @export var blocked_border_color := Color("#ee6158")
 @export_group("玩法设置")
-@export var action_settings: Resource = DEFAULT_ACTION_SETTINGS
+@export var action_settings: FarmingActionSettings = DEFAULT_ACTION_SETTINGS
 
 
 func _ready() -> void:
@@ -45,8 +47,12 @@ func get_interaction_prompt() -> String:
 	match state:
 		PlotState.EMPTY: return "左键/长按使用石锄开垦"
 		PlotState.TILLED: return "左键播种（先选择种子）"
-		PlotState.PLANTED, PlotState.GROWING: return "左键浇水" if not watered else "%s今天已浇水" % get_crop_name()
-		PlotState.READY: return "左键收获%s" % get_crop_name()
+		PlotState.PLANTED, PlotState.GROWING:
+			var progress := "%s · 生长 %d/%d天" % [get_crop_name(), growth_days, get_required_growth_days()]
+			if watered: return "%s · 今日已浇水，明日生长" % progress
+			return "%s · 缺水%d/%d天 · 左键浇水" % [progress, dry_days, get_dry_tolerance_days()]
+		PlotState.READY: return "%s已成熟 · 左键收获" % get_crop_name()
+		PlotState.WITHERED: return "%s已枯萎 · 选择石锄清理" % get_crop_name()
 	return ""
 
 
@@ -56,12 +62,16 @@ func get_stamina_cost() -> float:
 		PlotState.TILLED: return action_settings.plant_cost
 		PlotState.PLANTED, PlotState.GROWING: return action_settings.water_cost if not watered else 0.0
 		PlotState.READY: return action_settings.harvest_cost
+		PlotState.WITHERED: return action_settings.clear_withered_cost
 	return 0.0
 
 
 func can_interact(game: Node) -> bool:
 	if state == PlotState.EMPTY and game.get_active_tool_type() != "hoe":
 		game.show_message("需要先把石锄放入快捷栏并选中")
+		return false
+	if state == PlotState.WITHERED and game.get_active_tool_type() != "hoe":
+		game.show_message("作物已经枯萎，需要选择石锄清理")
 		return false
 	if state == PlotState.TILLED:
 		var selected_item_id: String = game.get_selected_hotbar_item_id()
@@ -81,7 +91,7 @@ func interact(game: Node) -> void:
 		PlotState.EMPTY:
 			game.player.play_tool_action("hoe")
 			state = PlotState.TILLED
-			game.show_message("土地已经开垦")
+			game.show_message("土地已经开垦%s" % _grant_experience(game, action_settings.till_experience))
 		PlotState.TILLED:
 			_try_plant_selected_seed(game)
 		PlotState.PLANTED, PlotState.GROWING:
@@ -89,42 +99,69 @@ func interact(game: Node) -> void:
 				game.player.play_tool_action("water")
 				game.use_watering_can()
 				watered = true
-				game.show_message("给%s浇水完成，水壶剩余%d/%d" % [get_crop_name(), game.watering_can_water, game.watering_can_capacity])
+				dry_days = 0
+				game.show_message("给%s浇水完成，水壶剩余%d/%d%s" % [get_crop_name(), game.watering_can_water, game.watering_can_capacity, _grant_experience(game, action_settings.water_experience)])
 		PlotState.READY:
 			_harvest(game)
+		PlotState.WITHERED:
+			game.player.play_tool_action("hoe")
+			var withered_name := get_crop_name()
+			_clear_crop(PlotState.TILLED)
+			game.show_message("已清理枯萎的%s，可以重新播种" % withered_name)
 	_refresh_crop_visual()
 	_refresh_state_visuals()
 	plot_state_changed.emit()
 
 
-func advance_day() -> void:
-	if state in [PlotState.PLANTED, PlotState.GROWING] and watered:
+func advance_day() -> DayResult:
+	if state not in [PlotState.PLANTED, PlotState.GROWING]:
+		return DayResult.NONE
+	var result := DayResult.NONE
+	if watered:
 		growth_days += 1
+		dry_days = 0
 		watered = false
-		state = PlotState.READY if growth_days >= int(crop_data.get("growth_days", 2)) else PlotState.GROWING
-		_refresh_crop_visual()
-		_refresh_state_visuals()
-		plot_state_changed.emit()
+		state = PlotState.READY if growth_days >= get_required_growth_days() else PlotState.GROWING
+		result = DayResult.READY_TO_HARVEST if state == PlotState.READY else DayResult.GREW
+	else:
+		dry_days += 1
+		if dry_days >= get_dry_tolerance_days():
+			state = PlotState.WITHERED
+			result = DayResult.WITHERED
+		else:
+			result = DayResult.MISSED_WATER
+	_refresh_crop_visual()
+	_refresh_state_visuals()
+	plot_state_changed.emit()
+	return result
 
 
-func water_from_rain() -> void:
-	if state in [PlotState.PLANTED, PlotState.GROWING]:
-		watered = true
-		_refresh_state_visuals()
-		plot_state_changed.emit()
+func water_from_rain() -> bool:
+	if state not in [PlotState.PLANTED, PlotState.GROWING]:
+		return false
+	watered = true
+	dry_days = 0
+	_refresh_state_visuals()
+	plot_state_changed.emit()
+	return true
 
 
 func create_save_data() -> Dictionary:
 	var cell := WorldGrid.world_to_cell(global_position)
-	return {"cell_x": cell.x, "cell_y": cell.y, "state": state, "watered": watered, "growth_days": growth_days, "crop_id": crop_id}
+	return {"cell_x": cell.x, "cell_y": cell.y, "state": state, "watered": watered, "growth_days": growth_days, "dry_days": dry_days, "crop_id": crop_id}
 
 
 func restore_save_data(data: Dictionary, farming_system: FarmingSystem) -> void:
-	state = int(data.get("state", PlotState.EMPTY))
+	state = clampi(int(data.get("state", PlotState.EMPTY)), PlotState.EMPTY, PlotState.WITHERED)
 	watered = bool(data.get("watered", false))
-	growth_days = int(data.get("growth_days", 0))
+	growth_days = maxi(int(data.get("growth_days", 0)), 0)
+	dry_days = maxi(int(data.get("dry_days", 0)), 0)
 	crop_id = str(data.get("crop_id", ""))
 	crop_data = farming_system.get_crop_data(crop_id).duplicate(true) if not crop_id.is_empty() else {}
+	if state in [PlotState.PLANTED, PlotState.GROWING, PlotState.READY, PlotState.WITHERED] and crop_data.is_empty():
+		_clear_crop(PlotState.TILLED)
+	elif state in [PlotState.EMPTY, PlotState.TILLED]:
+		_clear_crop(state)
 	_refresh_crop_visual()
 	_refresh_state_visuals()
 	plot_state_changed.emit()
@@ -134,6 +171,7 @@ func reset_for_new_game() -> void:
 	state = PlotState.EMPTY
 	watered = false
 	growth_days = 0
+	dry_days = 0
 	crop_id = ""
 	crop_data = {}
 	_refresh_crop_visual()
@@ -143,6 +181,14 @@ func reset_for_new_game() -> void:
 
 func get_crop_name() -> String:
 	return crop_data.get("name", "作物")
+
+
+func get_required_growth_days() -> int:
+	return maxi(int(crop_data.get("growth_days", 1)), 1)
+
+
+func get_dry_tolerance_days() -> int:
+	return maxi(int(crop_data.get("dry_tolerance_days", 2)), 1)
 
 
 func _try_plant_selected_seed(game: Node) -> void:
@@ -163,21 +209,39 @@ func _try_plant_selected_seed(game: Node) -> void:
 	state = PlotState.PLANTED
 	watered = false
 	growth_days = 0
+	dry_days = 0
 	_refresh_crop_visual()
-	game.show_message("种下了%s" % get_crop_name())
+	game.show_message("种下了%s，记得今天浇水%s" % [get_crop_name(), _grant_experience(game, action_settings.plant_experience)])
 
 
 func _harvest(game: Node) -> void:
 	var harvest: Dictionary = crop_data.get("harvest", {})
+	var overflow := 0
 	for item_id in harvest:
-		game.add_resource(item_id, int(harvest[item_id]), false)
-	game.show_message("收获%s：%s" % [get_crop_name(), game.format_cost(harvest)])
-	state = PlotState.TILLED
+		var amount := int(harvest[item_id])
+		overflow += amount - int(game.add_resource(item_id, amount, false))
+	var crop_name := get_crop_name()
+	var experience := int(crop_data.get("harvest_experience", 0))
+	_clear_crop(PlotState.TILLED)
+	var overflow_text := "，背包溢出的收获已掉在脚边" if overflow > 0 else ""
+	game.show_message("收获%s：%s%s%s" % [crop_name, game.format_cost(harvest), _grant_experience(game, experience), overflow_text])
+
+
+func _clear_crop(next_state: PlotState) -> void:
+	state = next_state
 	watered = false
 	growth_days = 0
+	dry_days = 0
 	crop_id = ""
 	crop_data = {}
 	_refresh_crop_visual()
+
+
+func _grant_experience(game: Node, amount: int) -> String:
+	if amount <= 0 or not is_instance_valid(game.player):
+		return ""
+	var leveled_up: bool = game.player.add_experience(amount)
+	return "，经验+%d%s" % [amount, "，升级至%d级" % game.player.level if leveled_up else ""]
 
 
 func _refresh_crop_visual() -> void:
@@ -191,12 +255,14 @@ func _refresh_crop_visual() -> void:
 		return
 	crop_visual = visual_scene.instantiate() as CropVisual
 	add_child(crop_visual)
+	if state == PlotState.WITHERED:
+		crop_visual.show_withered()
+		return
 	var stage := 0
 	if state == PlotState.READY:
 		stage = 4
 	elif state == PlotState.GROWING:
-		var required_days := maxi(int(crop_data.get("growth_days", 2)), 1)
-		stage = clampi(ceili(float(growth_days) / float(required_days) * 3.0), 1, 3)
+		stage = clampi(ceili(float(growth_days) / float(get_required_growth_days()) * 3.0), 1, 3)
 	crop_visual.show_stage(stage)
 
 

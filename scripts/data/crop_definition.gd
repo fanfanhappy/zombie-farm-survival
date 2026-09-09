@@ -9,6 +9,8 @@ extends Resource
 
 @export_group("生长与收获")
 @export_range(1, 30, 1) var growth_days := 1
+@export_range(1, 30, 1) var dry_tolerance_days := 2
+@export_range(0, 1000, 1) var harvest_experience := 8
 @export var harvest: Array[ItemAmount] = []
 
 
@@ -19,5 +21,7 @@ func to_dictionary() -> Dictionary:
 		"seed_item": String(seed_item_id),
 		"visual_scene": visual_scene,
 		"growth_days": growth_days,
+		"dry_tolerance_days": dry_tolerance_days,
+		"harvest_experience": harvest_experience,
 		"harvest": ItemAmount.list_to_dictionary(harvest),
 	}

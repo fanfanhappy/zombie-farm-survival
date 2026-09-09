@@ -21,6 +21,9 @@ func _init() -> void:
 		var data := crop as Dictionary
 		assert(item_catalog.has(data.get("seed_item")))
 		assert(data.get("visual_scene") is PackedScene)
+		assert(int(data.get("growth_days", 0)) > 0)
+		assert(int(data.get("dry_tolerance_days", 0)) > 0)
+		assert(int(data.get("harvest_experience", -1)) >= 0)
 		for item_id in data.get("harvest", {}): assert(item_catalog.has(item_id))
 
 	var placement_catalog := (load("res://resources/placements/placeable_database.tres") as PlaceableDatabase).build_catalog()
