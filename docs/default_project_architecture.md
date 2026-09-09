@@ -33,7 +33,7 @@ Main
 ## 当前可视化编辑入口
 
 - 玩家整体：`scenes/actors/player/player.tscn`
-- 初始农田：`scenes/world/farming/initial_farm_plots.tscn`
+- 动态农田容器：`scenes/world/farming/initial_farm_plots.tscn`（保持为空，玩家开垦时生成）
 - 初始动物：`scenes/world/animals/initial_animals.tscn`
 - 初始建筑：`scenes/world/buildings/initial_buildings.tscn`
 - 初始设施：`scenes/world/facilities/initial_facilities.tscn`
@@ -45,7 +45,7 @@ Main
 - 弹窗菜单：`scenes/ui/game_menus.tscn`
 - 背包与快捷栏：`scenes/ui/inventory_ui.tscn`
 
-运行时只动态创建确实会变化的对象，例如敌人、掉落物和玩家放置物。重复列表使用可复用条目场景实例化，例如 `crafting_recipe_entry.tscn`；初始地图、碰撞、建筑、设施、农田、动物、动画和 UI 均应优先在编辑器中调整。
+运行时只动态创建确实会变化的对象，例如敌人、掉落物、玩家放置物和已开垦农田。重复列表使用可复用条目场景实例化，例如 `crafting_recipe_entry.tscn`；初始地图、碰撞、建筑、设施、动物、动画和 UI 均应优先在编辑器中调整。可耕范围通过地形图层可视化配置，农田结果则由运行时状态和 Terrain Set 生成。
 
 资源物件必须分为两套：`StaticDecorations` 只显示并可选带固定碰撞，不注册交互和掉落；`HarvestableResources` 才包含耐久、工具判定、进度、掉落和重生。两类物件分别使用 `static_decorations` 与 `harvestable_resources` 分组，不能混用场景。
 

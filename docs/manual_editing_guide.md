@@ -22,8 +22,9 @@
 
 - 地面、水、道路、农田自动拼接：`resources/tilesets/`。
 - 静态装饰和可采集资源必须分别放入 `static_decoration_scenes.tres` 与 `harvestable_resource_scenes.tres`。
-- 初始建筑、设施、动物和农田分别在 `scenes/world/` 对应的 `initial_*.tscn` 中摆放。
-- 农田存档按32像素世界网格坐标识别；动物存档按场景中的 `persistence_id` 识别。不要让两个对象使用同一ID或同一农田坐标。
+- 初始建筑、设施和动物在 `scenes/world/` 对应的 `initial_*.tscn` 中摆放；`initial_farm_plots.tscn` 只是空容器，农田由玩家开垦时动态创建。
+- 想调整可耕范围时，在 `game_world.tscn` 的 `GroundLayer`、`WaterLayer`、`PathLayer` 和 `FenceLayer` 中直接绘制；不需要修改代码。农田外观在 `farm_tilled_terrain.tres` 的 Terrain Set 中调整。
+- 农田存档按32像素世界网格坐标识别；动物存档按场景中的 `persistence_id` 识别。不要让两个对象使用同一ID；也不要手工叠放两个农田格。
 - 每份作物收获建议至少返还1颗对应种子，确保玩家能够持续种植；背包溢出的收获会生成地面物品。
 - 扩大地图时先修改 `world_settings.tres`，再同步调整主相机限制与主场景边界碰撞。
 
