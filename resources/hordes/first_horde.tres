@@ -1,9 +1,19 @@
-[gd_resource type="Resource" script_class="HordeDefinition" load_steps=15 format=3]
+[gd_resource type="Resource" script_class="HordeDefinition" format=3 uid="uid://buem7cum2ndec"]
 
-[ext_resource type="Script" path="res://scripts/data/horde_definition.gd" id="1_script"]
-[ext_resource type="Script" path="res://scripts/data/horde_wave_definition.gd" id="2_wave"]
-[ext_resource type="Script" path="res://scripts/data/enemy_spawn_entry.gd" id="3_enemy"]
-[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="4_item"]
+[ext_resource type="Script" uid="uid://08xsmj3m0ofw" path="res://scripts/data/horde_definition.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bhblmw1bcvwfr" path="res://scripts/data/horde_wave_definition.gd" id="2_wave"]
+[ext_resource type="Script" uid="uid://c8wwtkq5m5pga" path="res://scripts/data/enemy_spawn_entry.gd" id="3_enemy"]
+[ext_resource type="Script" uid="uid://dnyxxojkyuyp0" path="res://scripts/data/item_amount.gd" id="4_item"]
+
+[sub_resource type="Resource" id="Reward_scrap"]
+script = ExtResource("4_item")
+item_id = &"scrap"
+amount = 3
+
+[sub_resource type="Resource" id="Reward_seed"]
+script = ExtResource("4_item")
+item_id = &"potato_seed"
+amount = 2
 
 [sub_resource type="Resource" id="Enemy_1_normal"]
 script = ExtResource("3_enemy")
@@ -24,13 +34,11 @@ amount = 7
 [sub_resource type="Resource" id="Enemy_2_fast"]
 script = ExtResource("3_enemy")
 enemy_id = &"fast_infected"
-amount = 1
 
 [sub_resource type="Resource" id="Wave_2"]
 script = ExtResource("2_wave")
 enemies = Array[ExtResource("3_enemy")]([SubResource("Enemy_2_normal"), SubResource("Enemy_2_fast")])
 spawn_interval = 0.45
-next_wave_delay = 6.0
 
 [sub_resource type="Resource" id="Enemy_3_normal"]
 script = ExtResource("3_enemy")
@@ -45,23 +53,11 @@ amount = 2
 [sub_resource type="Resource" id="Wave_3"]
 script = ExtResource("2_wave")
 enemies = Array[ExtResource("3_enemy")]([SubResource("Enemy_3_normal"), SubResource("Enemy_3_fast")])
-spawn_interval = 0.35
 next_wave_delay = 0.0
-
-[sub_resource type="Resource" id="Reward_scrap"]
-script = ExtResource("4_item")
-item_id = &"scrap"
-amount = 3
-
-[sub_resource type="Resource" id="Reward_seed"]
-script = ExtResource("4_item")
-item_id = &"potato_seed"
-amount = 2
 
 [resource]
 script = ExtResource("1_script")
 horde_id = &"first_horde"
 display_name = "第一次尸潮"
-trigger_interval_days = 7
 waves = Array[ExtResource("2_wave")]([SubResource("Wave_1"), SubResource("Wave_2"), SubResource("Wave_3")])
 reward = Array[ExtResource("4_item")]([SubResource("Reward_scrap"), SubResource("Reward_seed")])

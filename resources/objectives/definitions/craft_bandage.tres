@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ObjectiveDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="ObjectiveDefinition" format=3 uid="uid://dexavbxr06nxu"]
 
-[ext_resource type="Script" path="res://scripts/data/objective_definition.gd" id="1_script"]
-[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="2_item"]
+[ext_resource type="Script" uid="uid://pm5pdnx1wtx" path="res://scripts/data/objective_definition.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://dnyxxojkyuyp0" path="res://scripts/data/item_amount.gd" id="2_item"]
 
 [sub_resource type="Resource" id="Reward_0"]
 script = ExtResource("2_item")
@@ -12,7 +12,5 @@ amount = 2
 script = ExtResource("1_script")
 objective_id = &"craft_bandage"
 title = "制作一份简易绷带"
-condition_type = "inventory"
 condition_target = &"bandage"
-condition_amount = 1
 reward = Array[ExtResource("2_item")]([SubResource("Reward_0")])

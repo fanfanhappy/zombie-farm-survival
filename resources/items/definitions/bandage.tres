@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" uid="uid://rwmy0edlk2yl" path="res://scripts/data/item_definition.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://bw51huis7ikkc" path="res://assets/art/ui/icons/item_general_icons.png" id="2_atlas"]
-[ext_resource type="Script" path="res://scripts/data/consumable_effect_definition.gd" id="3_effect"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_atlas")
-region = Rect2(48, 32, 16, 16)
+[ext_resource type="Script" uid="uid://bkxhv6f6td2qb" path="res://scripts/data/consumable_effect_definition.gd" id="3_effect"]
 
 [sub_resource type="Resource" id="ConsumableEffect"]
 script = ExtResource("3_effect")
 health_restore = 35.0
 use_message = "使用绷带，恢复35点生命"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(48, 32, 16, 16)
 
 [resource]
 script = ExtResource("1_script")

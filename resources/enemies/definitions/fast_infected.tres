@@ -1,14 +1,13 @@
-[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="EnemyDefinition" format=3 uid="uid://gwkul1qq2l6c"]
 
-[ext_resource type="Script" path="res://scripts/data/enemy_definition.gd" id="1_script"]
-[ext_resource type="Script" path="res://scripts/data/loot_entry.gd" id="2_loot"]
+[ext_resource type="Script" uid="uid://la6ymtfyrddc" path="res://scripts/data/enemy_definition.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bkv440r7r8n0p" path="res://scripts/data/loot_entry.gd" id="2_loot"]
 [ext_resource type="PackedScene" path="res://scenes/actors/zombies/infected_visual.tscn" id="3_visual"]
 
 [sub_resource type="Resource" id="Loot_herb"]
 script = ExtResource("2_loot")
 item_id = &"herb"
 chance = 0.55
-min_amount = 1
 max_amount = 2
 
 [resource]
@@ -19,9 +18,6 @@ move_speed = 105.0
 aggro_distance = 125.0
 aggro_duration = 4.0
 max_health = 32.0
-player_attack_damage = 9.0
-homestead_attack_damage = 10.0
-defense_attack_damage = 12.0
 attack_interval = 0.7
 experience_reward = 20
 visual_scene = ExtResource("3_visual")

@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="CropDefinition" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="CropDefinition" format=3 uid="uid://bust0nxn8ghyc"]
 
-[ext_resource type="Script" path="res://scripts/data/crop_definition.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://wwr2we6y2gmc" path="res://scripts/data/crop_definition.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/world/farming/crops/medicinal_herb_crop_visual.tscn" id="2_visual"]
-[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="3_item"]
+[ext_resource type="Script" uid="uid://dnyxxojkyuyp0" path="res://scripts/data/item_amount.gd" id="3_item"]
 
 [sub_resource type="Resource" id="Harvest_0"]
 script = ExtResource("3_item")
@@ -12,7 +12,6 @@ amount = 3
 [sub_resource type="Resource" id="Harvest_1"]
 script = ExtResource("3_item")
 item_id = &"herb_seed"
-amount = 1
 
 [resource]
 script = ExtResource("1_script")

@@ -157,16 +157,16 @@ toggle_fullscreen={
 ]
 }
 
-[physics]
-
-3d/physics_engine="Jolt Physics"
-
 [layer_names]
 
 2d_physics/layer_1="角色与实体"
 2d_physics/layer_2="世界障碍与交互设施"
 2d_physics/layer_3="交互检测区"
 2d_physics/layer_4="攻击与受击区"
+
+[physics]
+
+3d/physics_engine="Jolt Physics"
 
 [rendering]
 

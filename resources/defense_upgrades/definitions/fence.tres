@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" load_steps=10 format=3]
+[gd_resource type="Resource" script_class="DefenseUpgradeDefinition" format=3 uid="uid://beb6k1tlogitl"]
 
-[ext_resource type="Script" path="res://scripts/data/defense_upgrade_definition.gd" id="1_script"]
-[ext_resource type="Script" path="res://scripts/data/defense_upgrade_level.gd" id="2_level"]
-[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="3_item"]
+[ext_resource type="Script" uid="uid://di3gpoqdojlac" path="res://scripts/data/defense_upgrade_definition.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://0n2lu8eufyro" path="res://scripts/data/defense_upgrade_level.gd" id="2_level"]
+[ext_resource type="Script" uid="uid://dnyxxojkyuyp0" path="res://scripts/data/item_amount.gd" id="3_item"]
 
 [sub_resource type="Resource" id="L2_wood"]
 script = ExtResource("3_item")
@@ -16,7 +16,6 @@ amount = 2
 
 [sub_resource type="Resource" id="Level_2"]
 script = ExtResource("2_level")
-level = 2
 cost = Array[ExtResource("3_item")]([SubResource("L2_wood"), SubResource("L2_stone")])
 max_health = 160.0
 
@@ -33,7 +32,6 @@ amount = 5
 [sub_resource type="Resource" id="L3_scrap"]
 script = ExtResource("3_item")
 item_id = &"scrap"
-amount = 1
 
 [sub_resource type="Resource" id="Level_3"]
 script = ExtResource("2_level")

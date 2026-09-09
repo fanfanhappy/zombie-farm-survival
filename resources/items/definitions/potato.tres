@@ -2,16 +2,16 @@
 
 [ext_resource type="Script" uid="uid://rwmy0edlk2yl" path="res://scripts/data/item_definition.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://sn3rpsmtu58l" path="res://assets/art/ui/icons/item_farming_icons.png" id="2_atlas"]
-[ext_resource type="Script" path="res://scripts/data/consumable_effect_definition.gd" id="3_effect"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
-atlas = ExtResource("2_atlas")
-region = Rect2(16, 48, 16, 16)
+[ext_resource type="Script" uid="uid://bkxhv6f6td2qb" path="res://scripts/data/consumable_effect_definition.gd" id="3_effect"]
 
 [sub_resource type="Resource" id="ConsumableEffect"]
 script = ExtResource("3_effect")
 hunger_restore = 18.0
 use_message = "吃下土豆，恢复18点饥饿"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_icon"]
+atlas = ExtResource("2_atlas")
+region = Rect2(16, 48, 16, 16)
 
 [resource]
 script = ExtResource("1_script")

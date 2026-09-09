@@ -18,4 +18,3 @@ stack_limit = 1
 usable = true
 sort_order = 2
 tool_type = &"axe"
-attack_damage = 40

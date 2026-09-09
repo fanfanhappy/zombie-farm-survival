@@ -17,4 +17,3 @@ icon = SubResource("AtlasTexture_icon")
 stack_limit = 1
 usable = true
 sort_order = 1
-attack_damage = 25

@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://k08gqo726xg3"]
 
-[ext_resource type="Script" path="res://scripts/actors/zombies/zombie_controller.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://gbb0cnwposqr" path="res://scripts/actors/zombies/zombie_controller.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/actors/zombies/infected_visual.tscn" id="2_visual"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_zombie"]
@@ -21,18 +21,16 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
-[node name="Zombie" type="CharacterBody2D"]
-collision_layer = 1
-collision_mask = 1
+[node name="Zombie" type="CharacterBody2D" unique_id=433466930]
 script = ExtResource("1_script")
 
-[node name="Visual" parent="." instance=ExtResource("2_visual")]
+[node name="Visual" parent="." unique_id=623906188 instance=ExtResource("2_visual")]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1743557847]
 position = Vector2(0, 1)
 shape = SubResource("CapsuleShape2D_zombie")
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1182049352]
 visible = false
 z_index = 5
 offset_left = -14.0
