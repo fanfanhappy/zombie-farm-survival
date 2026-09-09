@@ -10,6 +10,7 @@ var egg_ready := false
 @export var chicken_index := 0
 @export var persistence_id: StringName
 @onready var sprite: AnimatedSprite2D = $ChickenAnimation
+@onready var world_tile_map: WorldTileMap = get_tree().get_first_node_in_group("world_tilemap") as WorldTileMap
 
 
 func setup(at_position: Vector2, index: int) -> void:
@@ -36,7 +37,12 @@ func _physics_process(delta: float) -> void:
 		_choose_next_target()
 	var direction := global_position.direction_to(roam_target)
 	velocity = direction * 18.0
+	var previous_position := global_position
 	move_and_slide()
+	if is_instance_valid(world_tile_map) and not world_tile_map.is_walkable_world_position(global_position, 5.0):
+		global_position = previous_position
+		velocity = Vector2.ZERO
+		_choose_next_target()
 	if absf(direction.x) > 0.05:
 		sprite.flip_h = direction.x < 0.0
 
@@ -92,4 +98,9 @@ func restore_save_data(data: Dictionary) -> void:
 
 func _choose_next_target() -> void:
 	decision_time = randf_range(1.5, 3.5)
-	roam_target = home_position + Vector2(randf_range(-ROAM_RADIUS, ROAM_RADIUS), randf_range(-ROAM_RADIUS, ROAM_RADIUS))
+	for _attempt in 8:
+		var candidate := home_position + Vector2(randf_range(-ROAM_RADIUS, ROAM_RADIUS), randf_range(-ROAM_RADIUS, ROAM_RADIUS))
+		if not is_instance_valid(world_tile_map) or world_tile_map.is_walkable_world_position(candidate, 5.0):
+			roam_target = candidate
+			return
+	roam_target = home_position

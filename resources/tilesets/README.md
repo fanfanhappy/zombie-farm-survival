@@ -12,7 +12,8 @@
 - `terrain_grass_tileset.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
 - `terrain_hills_tileset.tres`：山丘与高地可视化切片资源，在 `HillLayer` 中绘制；不再保留无内容的同名 `.tscn`。
 - `terrain_path_tileset.tres`：Godot 可视化资源；双击后在检查器维护具体字段和引用。
-- `terrain_water_tileset.tres`：水体动画瓦片及其碰撞；绘制或擦除水瓦片时，物理碰撞会同步生成或移除。
+- `terrain_water_tileset.tres`：四帧水面视觉底图；主场景关闭其整层物理碰撞，玩家可行走范围由 `GroundLayer` 与 `BridgeLayer` 决定，避免铺底水面阻塞陆地。
+- `terrain_wooden_bridge_tileset.tres`：木桥的 `16×16` 可视化切片资源，在 `BridgeLayer` 中绘制；桥面会被移动系统识别为可通行区域。
 
 ## 维护规则
 

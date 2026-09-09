@@ -32,12 +32,25 @@ func _init() -> void:
 	assert(plot.state == FarmPlot.PlotState.TILLED)
 	assert(not game.world_tile_map.is_cell_tillable(tillable_cell))
 
-	# 水体和道路由可视化 TileMapLayer 决定，不能被锄头覆盖。
-	for blocked_layer_name in ["WaterLayer", "PathLayer"]:
-		var blocked_layer := game.world_tile_map.get_node(blocked_layer_name) as TileMapLayer
-		var blocked_map_cell := blocked_layer.get_used_cells()[0]
-		var blocked_position := blocked_layer.to_global(blocked_layer.map_to_local(blocked_map_cell))
-		assert(not game.world_tile_map.is_world_position_tillable(blocked_position))
+	# 水面现在是整张地图的视觉底图；只有上方存在草地的格子才是可开垦陆地。
+	var water_layer := game.world_tile_map.get_node("WaterLayer") as TileMapLayer
+	var ground_layer := game.world_tile_map.get_node("GroundLayer") as TileMapLayer
+	var water_only_cell := Vector2i(-999, -999)
+	for map_cell in water_layer.get_used_cells():
+		var world_position := water_layer.to_global(water_layer.map_to_local(map_cell))
+		var ground_cell := ground_layer.local_to_map(ground_layer.to_local(world_position))
+		if ground_layer.get_cell_source_id(ground_cell) < 0:
+			water_only_cell = map_cell
+			break
+	assert(water_only_cell != Vector2i(-999, -999))
+	var water_only_position := water_layer.to_global(water_layer.map_to_local(water_only_cell))
+	assert(not game.world_tile_map.is_world_position_tillable(water_only_position))
+	# 道路允许暂时为空；一旦绘制，任意道路格都必须阻止开垦。
+	var path_layer := game.world_tile_map.get_node("PathLayer") as TileMapLayer
+	if not path_layer.get_used_cells().is_empty():
+		var path_cell := path_layer.get_used_cells()[0]
+		var path_position := path_layer.to_global(path_layer.map_to_local(path_cell))
+		assert(not game.world_tile_map.is_world_position_tillable(path_position))
 	var resource_layer := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes/HarvestableResources") as TileMapLayer
 	var resource_position := resource_layer.to_global(resource_layer.map_to_local(resource_layer.get_used_cells()[0]))
 	assert(not game.world_tile_map.is_world_position_tillable(resource_position))

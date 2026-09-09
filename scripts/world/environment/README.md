@@ -8,6 +8,7 @@ TileMap 世界生成、光标高亮和网格提示。
 
 - `world_grid_cursor.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `world_tilemap.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
+- `world_bounds_controller.gd`：以 `WaterLayer` 的实际绘制范围为准，同步相机限制、四周物理边界和共享世界范围；重画水面后可在 `WorldBoundaries` 检查器点击“根据水面同步边界”。
 
 ## 关联与维护
 
@@ -15,4 +16,3 @@ TileMap 世界生成、光标高亮和网格提示。
 - 场景节点使用 PascalCase，文件使用英文蛇形命名，脚本与场景尽量同领域对应。
 - 修改公共节点路径、组名、信号或资源 ID 后，必须运行两套回归测试。
 - 删除文件前检查动态加载、TileSet 场景集合和存档恢复逻辑。
-

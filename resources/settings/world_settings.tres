@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1_script")
-world_bounds = Rect2(0, 0, 1280, 800)
+world_bounds = Rect2(-240, -16, 2016, 896)
 player_margin = 24.0
 placement_margin = 32.0
 farming_reach = 64.0

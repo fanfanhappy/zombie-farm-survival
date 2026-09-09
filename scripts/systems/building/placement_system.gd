@@ -102,6 +102,8 @@ func _check_placement_valid() -> bool:
 	var corners := [Vector2(-footprint.x, -footprint.y) * 0.5, Vector2(footprint.x, footprint.y) * 0.5]
 	for corner in corners:
 		if not world_settings.get_placement_bounds().has_point(global_position + corner.rotated(rotation)): return false
+		if is_instance_valid(game_controller.world_tile_map) and not game_controller.world_tile_map.is_buildable_world_position(global_position + corner.rotated(rotation)): return false
+	if is_instance_valid(game_controller.world_tile_map) and not game_controller.world_tile_map.is_buildable_world_position(global_position): return false
 	var shape := RectangleShape2D.new()
 	shape.size = footprint - Vector2(3, 3)
 	var query := PhysicsShapeQueryParameters2D.new()

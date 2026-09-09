@@ -9,13 +9,19 @@ const DEFAULT_WORLD_SETTINGS := preload("res://resources/settings/world_settings
 @onready var farming_layer: TileMapLayer = $FarmingTerrainLayer
 @onready var ground_layer: TileMapLayer = $GroundLayer
 @onready var water_layer: TileMapLayer = $WaterLayer
+@onready var hill_layer: TileMapLayer = $HillLayer
 @onready var path_layer: TileMapLayer = $PathLayer
+@onready var bridge_layer: TileMapLayer = $BridgeLayer
 @onready var fence_layer: TileMapLayer = $FenceLayer
 @onready var grid_cursor: WorldGridCursor = $WorldGridCursor
 var cursor_hint := ""
 var connected_farm_cells: Array[Vector2i] = []
 var farm_plots_by_cell: Dictionary = {}
 var terrain_refresh_queued := false
+
+
+func _enter_tree() -> void:
+	add_to_group("world_tilemap")
 
 
 func _ready() -> void:
@@ -102,10 +108,12 @@ func get_till_block_reason(cell: Vector2i) -> String:
 		return "超出可操作的地图范围"
 	if not _layer_has_world_cell(ground_layer, world_position):
 		return "这里不是可开垦的草地"
-	if _layer_has_world_cell(water_layer, world_position):
-		return "水面不能开垦"
+	if _layer_has_world_cell(hill_layer, world_position):
+		return "高地不能开垦"
 	if _layer_has_world_cell(path_layer, world_position):
 		return "道路不能开垦"
+	if _layer_has_world_cell(bridge_layer, world_position):
+		return "桥面不能开垦"
 	if _layer_has_world_cell(fence_layer, world_position):
 		return "围栏占用了这个格子"
 	if get_farm_plot_at_cell(cell) != null:
@@ -120,6 +128,22 @@ func get_till_block_reason(cell: Vector2i) -> String:
 	if _has_blocking_world_object(world_position):
 		return "这里被建筑、设施或资源占用"
 	return ""
+
+
+func is_walkable_world_position(world_position: Vector2, clearance := 7.0) -> bool:
+	var offsets: Array[Vector2] = [Vector2.ZERO, Vector2(clearance, 0.0), Vector2(-clearance, 0.0), Vector2(0.0, clearance), Vector2(0.0, -clearance)]
+	for offset in offsets:
+		var sample: Vector2 = world_position + offset
+		if not _layer_has_world_cell(ground_layer, sample) and not _layer_has_world_cell(bridge_layer, sample):
+			return false
+	return true
+
+
+func is_buildable_world_position(world_position: Vector2) -> bool:
+	return _layer_has_world_cell(ground_layer, world_position) \
+		and not _layer_has_world_cell(hill_layer, world_position) \
+		and not _layer_has_world_cell(path_layer, world_position) \
+		and not _layer_has_world_cell(bridge_layer, world_position)
 
 
 func _layer_has_world_cell(layer: TileMapLayer, world_position: Vector2) -> bool:

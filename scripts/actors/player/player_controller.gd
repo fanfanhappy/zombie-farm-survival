@@ -11,6 +11,7 @@ func _enter_tree() -> void:
 @onready var attack_effect: PlayerAttackEffect = $AttackEffect
 @onready var input_component: PlayerInputComponent = $InputComponent
 @onready var survival_component: PlayerSurvivalComponent = $SurvivalComponent
+@onready var world_tile_map: WorldTileMap = get_tree().get_first_node_in_group("world_tilemap") as WorldTileMap
 
 signal interaction_requested
 signal attack_requested
@@ -85,7 +86,11 @@ func _physics_process(delta: float) -> void:
 		facing_direction = direction.normalized()
 	_update_character_animation(direction)
 	_update_attack_effect()
+	var previous_position := global_position
 	move_and_slide()
+	if is_instance_valid(world_tile_map) and not world_tile_map.is_walkable_world_position(global_position):
+		global_position = previous_position
+		velocity = Vector2.ZERO
 	if world_settings != null:
 		var allowed_bounds: Rect2 = world_settings.get_player_bounds()
 		global_position = global_position.clamp(allowed_bounds.position, allowed_bounds.end)
