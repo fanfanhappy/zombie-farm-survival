@@ -12,7 +12,7 @@
 ![阶段](https://img.shields.io/badge/阶段-Prototype%200.1-E8A94B)
 ![语言](https://img.shields.io/badge/界面-简体中文-69A84F)
 
-[玩法概览](#玩法概览) · [运行项目](#运行项目) · [操作方式](#操作方式) · [手动修改](#手动修改) · [项目结构](#项目结构)
+[玩法概览](#玩法概览) · [下载体验版](#下载体验版) · [运行项目](#运行项目) · [操作方式](#操作方式) · [手动修改](#手动修改) · [项目结构](#项目结构)
 </div>
 
 ---
@@ -34,7 +34,7 @@
 | 🌙 生存 | 昼夜、天气、饥饿、口渴、体力、睡眠与夜间威胁 |
 | 🏠 防守 | 农舍耐久、设施维修、三级强化、七日尸潮与波次奖励 |
 | 🎒 物品 | 24 格背包、9 格快捷栏、拖放、堆叠、消耗品与储物箱 |
-| 💾 流程 | 中文主菜单、新游戏完整重置、继续游戏、暂停与 v21 存档 |
+| 💾 流程 | 中文主菜单、新游戏完整重置、继续游戏、暂停与 v22 存档 |
 
 <details>
 <summary><strong>展开查看完整功能列表</strong></summary>
@@ -54,6 +54,12 @@
 - 收获返还种子并获得经验；背包装不下的产物自动掉落在角色脚边，不会消失。
 
 </details>
+
+## 下载体验版
+
+Windows 10/11 64 位用户可以从 [GitHub Releases](https://github.com/fanfanhappy/zombie-farm-survival/releases/tag/v0.1.0) 下载 `zombie-farm-survival-v0.1.0-windows-x86_64.zip`。完整解压后双击 `zombie-farm-survival.exe` 即可游玩，无需安装 Godot。
+
+首次体验建议先阅读 [Prototype 0.1 试玩说明](docs/playtest_guide_v0.1.0.md)。当前为未签名的原型程序，Windows SmartScreen 可能显示安全提醒。
 
 ## 运行项目
 
