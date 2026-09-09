@@ -16,8 +16,13 @@ func _init() -> void:
 	assert(not water.get_used_cells().is_empty())
 	assert(not ground.get_used_cells().is_empty())
 	assert(not water.collision_enabled)
-	assert(hill.position == Vector2(-16, -16))
-	assert(hill.scale == Vector2(2, 2))
+	# HillLayer 保留用户在编辑器中绘制时的原始显示参数，不由代码强制缩放或偏移。
+	assert(hill.position == Vector2.ZERO)
+	assert(hill.scale == Vector2.ONE)
+	var sample_ground_cell: Vector2i = ground.get_used_cells()[0]
+	var sample_ground_world := world_map.farm_cell_to_world(sample_ground_cell)
+	assert(world_map.world_to_farm_cell(sample_ground_world) == sample_ground_cell)
+	assert(is_equal_approx(world_map.get_farm_cell_size(), 32.0))
 	assert(bridge.tile_set != null)
 	var used := water.get_used_rect()
 	var tile_size := water.tile_set.tile_size

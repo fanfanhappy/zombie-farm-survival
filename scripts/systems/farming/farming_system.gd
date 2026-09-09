@@ -39,13 +39,15 @@ func create_plot_at_cell(cell: Vector2i, validate := true) -> FarmPlot:
 		return null
 	var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot
 	farm_plots_parent.add_child(plot)
-	plot.global_position = WorldGrid.cell_to_world(cell)
+	plot.global_position = world_tile_map.farm_cell_to_world(cell)
 	world_tile_map.register_farm_plot(plot)
 	return plot
 
 
 func create_plot_at_world_position(world_position: Vector2, validate := true) -> FarmPlot:
-	return create_plot_at_cell(WorldGrid.world_to_cell(world_position), validate)
+	if not is_instance_valid(world_tile_map):
+		return null
+	return create_plot_at_cell(world_tile_map.world_to_farm_cell(world_position), validate)
 
 
 func reset_for_new_game() -> void:

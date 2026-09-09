@@ -318,8 +318,8 @@ func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
 		mouse_action_cooldown = player.get_tool_action_duration()
 		return
 	if get_active_tool_type() == "hoe":
-		var cell := WorldGrid.world_to_cell(mouse_world_position)
-		var cell_position := WorldGrid.cell_to_world(cell)
+		var cell := world_tile_map.world_to_farm_cell(mouse_world_position)
+		var cell_position := world_tile_map.farm_cell_to_world(cell)
 		var block_reason := world_tile_map.get_till_block_reason(cell)
 		if not block_reason.is_empty():
 			show_message(block_reason)

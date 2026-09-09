@@ -35,7 +35,10 @@ func setup(controller: Node2D, world_parent: Node2D, inventory_system: Inventory
 
 func _process(_delta: float) -> void:
 	if not is_placing(): return
-	global_position = WorldGrid.snap_world_position(get_global_mouse_position())
+	if is_instance_valid(game_controller) and is_instance_valid(game_controller.world_tile_map):
+		global_position = game_controller.world_tile_map.snap_to_farm_cell(get_global_mouse_position())
+	else:
+		global_position = WorldGrid.snap_world_position(get_global_mouse_position())
 	rotation = rotation_quarters * PI * 0.5
 	placement_valid = _check_placement_valid()
 	if is_instance_valid(preview_instance):
