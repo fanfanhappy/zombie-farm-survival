@@ -89,4 +89,6 @@ func _load_crop_catalog() -> void:
 	if crop_database == null:
 		push_error("FarmingSystem 未配置作物数据库")
 		return
+	for issue in crop_database.get_configuration_issues():
+		push_warning("种植配置：%s" % issue)
 	crop_catalog = crop_database.build_catalog()
