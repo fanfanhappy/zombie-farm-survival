@@ -33,16 +33,28 @@ func _init() -> void:
 	game._spawn_night_threat()
 	game._spawn_zombie(&"normal_infected")
 	assert(get_nodes_in_group("zombies").is_empty())
-	assert(game.is_target_allowed_in_current_mode(game.get_node("GameWorld/DynamicYSortGroup/Facilities/WaterPump")))
-	assert(game.is_target_allowed_in_current_mode(game.get_node("GameWorld/DynamicYSortGroup/Facilities/SleepPoint")))
+	var water_pump := game.get_node("GameWorld/DynamicYSortGroup/Facilities/WaterPump") as WaterPump
+	var sleep_point := game.get_node("GameWorld/DynamicYSortGroup/Facilities/SleepPoint") as SleepPoint
+	assert(game.is_target_allowed_in_current_mode(water_pump))
+	assert(game.is_target_allowed_in_current_mode(sleep_point))
+	assert(water_pump.is_in_group("mouse_action_targets"))
+	assert(sleep_point.is_in_group("mouse_action_targets"))
 	assert(not game.is_target_allowed_in_current_mode(game.homestead))
+
+	# 选中水壶后可直接点击取水泵补水。
+	assert(game.inventory_ui.activate_hotbar_slot(3))
+	game.watering_can_water = 0
+	game.player.global_position = water_pump.global_position + Vector2(48.0, 0.0)
+	game._try_mouse_world_action(water_pump.global_position)
+	assert(game.watering_can_water == game.watering_can_capacity)
 
 	# 专注模式暂停了生存需求，睡觉推进农田时不应再扣饥饿或口渴。
 	game.day_progress = float(game.game_rules.earliest_sleep_hour) / 24.0
 	game.player.hunger = 1.0
 	game.player.thirst = 1.0
 	var day_before_sleep: int = game.day
-	game.try_sleep()
+	game.player.global_position = sleep_point.global_position + Vector2(48.0, 0.0)
+	game._try_mouse_world_action(sleep_point.global_position)
 	assert(game.day == day_before_sleep + 1)
 	assert(game.player.hunger == 1.0)
 	assert(game.player.thirst == 1.0)

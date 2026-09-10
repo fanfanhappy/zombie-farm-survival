@@ -4,10 +4,11 @@ extends StaticBody2D
 
 func _ready() -> void:
 	add_to_group("interactables")
+	add_to_group("mouse_action_targets")
 
 
 func get_interaction_prompt() -> String:
-	return "E 在床铺休息到第二天"
+	return "左键或E在床铺休息到第二天"
 
 
 func get_stamina_cost() -> float:
