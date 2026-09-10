@@ -15,31 +15,16 @@ var growth_days := 0
 var dry_days := 0
 var crop_id := ""
 var crop_data: Dictionary = {}
-var highlight_state := 0
 var crop_visual: CropVisual
 
-@export_group("格子高亮")
-@export var reachable_fill_color := Color(1.0, 0.88, 0.3, 0.28)
-@export var reachable_border_color := Color("#ffe36b")
-@export var blocked_fill_color := Color(0.95, 0.28, 0.25, 0.24)
-@export var blocked_border_color := Color("#ee6158")
 @export_group("玩法设置")
 @export var action_settings: FarmingActionSettings = DEFAULT_ACTION_SETTINGS
 
 
 func _ready() -> void:
-	# 农田与地面同层，玩家使用更高显示层避免被耕地遮挡。
-	z_index = 0
 	add_to_group("mouse_action_targets")
 	add_to_group("farm_plots")
 	_refresh_crop_visual()
-	_refresh_state_visuals()
-
-
-func set_mouse_highlight(hovered: bool, reachable: bool) -> void:
-	var next_state := (1 if reachable else 2) if hovered else 0
-	if next_state == highlight_state: return
-	highlight_state = next_state
 	_refresh_state_visuals()
 
 
@@ -271,12 +256,3 @@ func _refresh_state_visuals() -> void:
 	var water_marker := get_node_or_null("StatusVisuals/WateredIndicator") as CanvasItem
 	if water_marker:
 		water_marker.visible = watered
-	var highlight := get_node_or_null("Highlight") as CanvasItem
-	if not highlight:
-		return
-	highlight.visible = highlight_state > 0
-	var reachable := highlight_state == 1
-	var fill := highlight.get_node("Fill") as Polygon2D
-	var border := highlight.get_node("Border") as Line2D
-	fill.color = reachable_fill_color if reachable else blocked_fill_color
-	border.default_color = reachable_border_color if reachable else blocked_border_color

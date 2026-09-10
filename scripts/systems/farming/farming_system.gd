@@ -2,8 +2,11 @@ class_name FarmingSystem
 extends Node
 
 const DEFAULT_CROP_DATABASE := preload("res://resources/crops/crop_database.tres")
-const FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
+const DEFAULT_FARM_PLOT_SCENE := preload("res://scenes/world/farming/farm_plot.tscn")
 
+@export_group("可视化资源")
+@export var farm_plot_scene: PackedScene = DEFAULT_FARM_PLOT_SCENE
+@export_group("作物数据")
 @export var crop_database: CropDatabase = DEFAULT_CROP_DATABASE
 var crop_catalog: Dictionary = {}
 var world_tile_map: WorldTileMap
@@ -37,7 +40,15 @@ func create_plot_at_cell(cell: Vector2i, validate := true) -> FarmPlot:
 		return existing
 	if validate and not world_tile_map.is_cell_tillable(cell):
 		return null
-	var plot := FARM_PLOT_SCENE.instantiate() as FarmPlot
+	if farm_plot_scene == null:
+		push_error("FarmingSystem 未配置农田格场景")
+		return null
+	var instance := farm_plot_scene.instantiate()
+	var plot := instance as FarmPlot
+	if plot == null:
+		instance.free()
+		push_error("FarmingSystem 的农田格场景根节点必须使用 FarmPlot 脚本")
+		return null
 	farm_plots_parent.add_child(plot)
 	plot.global_position = world_tile_map.farm_cell_to_world(cell)
 	world_tile_map.register_farm_plot(plot)

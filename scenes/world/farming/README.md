@@ -6,7 +6,7 @@
 
 ## 当前文件
 
-- `farm_plot.tscn`：单个动态农田逻辑格，记录开垦、作物、浇水和生长状态。
+- `farm_plot.tscn`：单个动态农田逻辑格，记录开垦、作物、浇水和生长状态；只保留浇水状态标记，鼠标格子高亮统一由 `WorldGridCursor` 显示，避免两套高亮重叠。
 - `initial_farm_plots.tscn`：空的运行时农田容器。不要在这里预放固定农田；玩家用锄头点击有效草地后，`FarmingSystem` 会按32像素世界网格创建 `farm_plot.tscn`。
 - `game_world.tscn/GameWorld/LogicLayers/FarmingGrid`：可选的可耕区域标记层，编辑器中以半透明红色预览，运行时自动隐藏。
 
@@ -18,6 +18,12 @@
 - 建筑、设施、静态装饰、可采集资源和已放置物会通过图层占用或碰撞自动阻止开垦。
 - `FarmingTerrainLayer` 只显示已经开垦的格子，并读取 `farm_tilled_terrain.tres` 的 Terrain Set 自动拼接；不要手工绘制农田结果。
 - 每个动态农田都写入存档的网格坐标；新游戏会删除全部动态农田并清空农田图层。
+
+## 检查器中可直接替换
+
+- 选择 `Main/GameSession/FarmingSystem`，可在“可视化资源”中替换 `Farm Plot Scene`，无需修改脚本。
+- `farm_plot.tscn` 根节点的 `Z Index`、浇水图标位置和颜色都由场景保存；脚本不会在运行时强行覆盖显示层级。
+- 全地图唯一的格子高亮样式在 `world_grid_cursor.tscn` 调整，包括格子大小、边框和有效/无效颜色。
 
 ## 关联与维护
 
