@@ -37,6 +37,16 @@ func _init() -> void:
 	assert(game.is_target_allowed_in_current_mode(game.get_node("GameWorld/DynamicYSortGroup/Facilities/SleepPoint")))
 	assert(not game.is_target_allowed_in_current_mode(game.homestead))
 
+	# 专注模式暂停了生存需求，睡觉推进农田时不应再扣饥饿或口渴。
+	game.day_progress = float(game.game_rules.earliest_sleep_hour) / 24.0
+	game.player.hunger = 1.0
+	game.player.thirst = 1.0
+	var day_before_sleep: int = game.day
+	game.try_sleep()
+	assert(game.day == day_before_sleep + 1)
+	assert(game.player.hunger == 1.0)
+	assert(game.player.thirst == 1.0)
+
 	print("FARMING_FOCUS_MODE_OK")
 	game.queue_free()
 	quit()

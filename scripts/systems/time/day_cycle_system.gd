@@ -22,16 +22,18 @@ func try_sleep(game: Node) -> void:
 		game.show_message("附近还有感染者，无法安心休息"); return
 	if hour < game.game_rules.earliest_sleep_hour:
 		game.show_message("现在还太早，%02d:00以后可以休息" % game.game_rules.earliest_sleep_hour); return
-	if game.player.hunger < game.game_rules.sleep_hunger_cost:
-		game.show_message("太饿了，至少需要%d点饥饿才能休息" % game.game_rules.sleep_hunger_cost); return
-	if game.player.thirst < game.game_rules.sleep_thirst_cost:
-		game.show_message("太渴了，至少需要%d点口渴值才能休息" % game.game_rules.sleep_thirst_cost); return
-	game.player.spend_hunger(game.game_rules.sleep_hunger_cost)
-	game.player.spend_thirst(game.game_rules.sleep_thirst_cost)
+	var farming_focus: bool = game.has_method("is_farming_focus_mode") and bool(game.is_farming_focus_mode())
+	if not farming_focus:
+		if game.player.hunger < game.game_rules.sleep_hunger_cost:
+			game.show_message("太饿了，至少需要%d点饥饿才能休息" % game.game_rules.sleep_hunger_cost); return
+		if game.player.thirst < game.game_rules.sleep_thirst_cost:
+			game.show_message("太渴了，至少需要%d点口渴值才能休息" % game.game_rules.sleep_thirst_cost); return
+		game.player.spend_hunger(game.game_rules.sleep_hunger_cost)
+		game.player.spend_thirst(game.game_rules.sleep_thirst_cost)
 	advance_to_next_day(game)
 	game.player.restore_stamina(game.player.max_stamina)
 	game.player.heal(game.game_rules.sleep_heal)
-	game.show_message("休息了一夜，生命和体力得到恢复")
+	game.show_message("进入下一天，农田已完成每日结算" if farming_focus else "休息了一夜，生命和体力得到恢复")
 
 
 func drink_from_water_pump(game: Node) -> void:
