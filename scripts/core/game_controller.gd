@@ -488,11 +488,14 @@ func _on_zombie_defeated(_zombie: Zombie) -> void:
 
 
 func _create_world_collisions() -> void:
-	homestead = building_layer.get_node("Homestead") as HomesteadCore
+	homestead = building_layer.get_node_or_null("Homestead") as HomesteadCore
+	if not is_instance_valid(homestead):
+		return
 	homestead.setup(Vector2(300, 220))
 	homestead.destroyed.connect(_on_homestead_destroyed)
-	var repair_point := facilities_root.get_node("HomesteadRepairPoint") as HomesteadRepairPoint
-	repair_point.setup(homestead)
+	var repair_point := facilities_root.get_node_or_null("HomesteadRepairPoint") as HomesteadRepairPoint
+	if is_instance_valid(repair_point):
+		repair_point.setup(homestead)
 
 func _update_lighting() -> void:
 	var hour := day_progress * 24.0
@@ -689,6 +692,8 @@ func _exit_tree() -> void:
 
 
 func _on_homestead_destroyed() -> void:
+	if not is_instance_valid(homestead):
+		return
 	show_message("农舍被攻破了。清晨，你修复了最基本的结构。")
 	horde_system.cancel_horde()
 	for zombie in get_tree().get_nodes_in_group("zombies"): zombie.queue_free()

@@ -6,6 +6,7 @@
 
 ## 当前文件
 
+- `initial_world_resources.tscn`：当前地图的资源摆放容器。种植专注阶段保持为空；以后需要树木、石头和装饰时，在这里重新绘制或放置，不必修改 `game_world.tscn`。
 - `initial_world_resources.tscn`：正式地图资源布置入口；`StaticDecorations` 放不可采集装饰，`HarvestableResources` 放可砍伐树木、可破坏石头和可采集草药。两个图层都可在 Godot 中直接绘制、擦除和移动。
 - `herb_resource.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `stone_resource.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。

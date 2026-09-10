@@ -61,9 +61,15 @@ func _init() -> void:
 		var path_cell := path_layer.get_used_cells()[0]
 		var path_position := path_layer.to_global(path_layer.map_to_local(path_cell))
 		assert(not game.world_tile_map.is_world_position_tillable(path_position))
-	var resource_layer := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes/HarvestableResources") as TileMapLayer
-	var resource_position := resource_layer.to_global(resource_layer.map_to_local(resource_layer.get_used_cells()[0]))
-	assert(not game.world_tile_map.is_world_position_tillable(resource_position))
+	# 初始资源层保持为空；以后重新放置的可采集资源仍必须阻止开垦。
+	var blocked_cell := _find_tillable_cell(game.world_tile_map, tillable_cell)
+	assert(blocked_cell != Vector2i(-999, -999))
+	var temporary_resource := Node2D.new()
+	temporary_resource.add_to_group("harvestable_resources")
+	game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes").add_child(temporary_resource)
+	temporary_resource.global_position = game.world_tile_map.farm_cell_to_world(blocked_cell)
+	assert(not game.world_tile_map.is_cell_tillable(blocked_cell))
+	temporary_resource.queue_free()
 
 	# 已开垦农田没有物理碰撞，也必须阻止建筑放置覆盖。
 	game.placement_system.placement_type = "fence"

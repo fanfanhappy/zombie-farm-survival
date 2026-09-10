@@ -31,6 +31,12 @@ func _init() -> void:
 	root.add_child(game)
 	await process_frame
 	await process_frame
+	if game.is_farming_focus_mode():
+		_validate_farming_focus_architecture(game)
+		print("FARMING_FOCUS_ARCHITECTURE_OK")
+		game.queue_free()
+		quit()
+		return
 	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap") is WorldTileMap)
 	assert(game.get_node("GameSession/PlacementSystem") is PlacementSystem)
 	assert(game.placement_system.placeable_catalog.size() == 4)
@@ -280,3 +286,17 @@ func _validate_sprite_frames(resource_path: String, required_animations: Array[S
 				var atlas_size := atlas_texture.atlas.get_size()
 				assert(atlas_texture.region.position.x >= 0.0 and atlas_texture.region.position.y >= 0.0)
 				assert(atlas_texture.region.end.x <= atlas_size.x and atlas_texture.region.end.y <= atlas_size.y)
+
+
+func _validate_farming_focus_architecture(game: Node) -> void:
+	assert(game.get_node("GameWorld/TerrainLayers/WorldTileMap") is WorldTileMap)
+	assert(game.get_node("GameSession/FarmingSystem") is FarmingSystem)
+	assert(game.get_node("GameWorld/LogicLayers/FarmingGrid") is FarmingGridLayer)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/FarmPlots") is Node2D)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes").get_child_count() == 0)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/BuildingLayer").get_child_count() == 0)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/Animals").get_child_count() == 0)
+	var facilities := game.get_node("GameWorld/DynamicYSortGroup/Facilities")
+	assert(facilities.get_child_count() == 2)
+	assert(facilities.get_node("SleepPoint") is SleepPoint)
+	assert(facilities.get_node("WaterPump") is WaterPump)

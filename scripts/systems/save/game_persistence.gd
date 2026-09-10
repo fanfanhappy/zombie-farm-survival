@@ -13,7 +13,7 @@ func create_save_data(game: Node) -> Dictionary:
 		"hunger": game.player.hunger, "thirst": game.player.thirst,
 		"level": game.player.level, "experience": game.player.experience,
 		"well_fed_time": game.player.well_fed_time,
-		"homestead_health": game.homestead.health,
+		"homestead_health": game.homestead.health if is_instance_valid(game.homestead) else 0.0,
 		"equipped_weapon_id": game.player.equipped_weapon_id,
 		"weapon": game.player.equipped_weapon, "attack_damage": game.player.attack_damage,
 		"kills": game.kills, "hordes_survived": game.hordes_survived,
@@ -49,8 +49,9 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 		weapon_id = String(game.player.definition.starting_weapon_id)
 	var weapon_data: Dictionary = game.inventory.get_item_data(weapon_id)
 	game.player.equip_weapon(weapon_id, weapon_data.get("name", data.get("weapon", "木棒")), float(weapon_data.get("attack_damage", data.get("attack_damage", 25.0))))
-	game.homestead.health = clampf(float(data.get("homestead_health", game.homestead.max_health)), 1.0, game.homestead.max_health)
-	game.homestead.repair(0.0)
+	if is_instance_valid(game.homestead):
+		game.homestead.health = clampf(float(data.get("homestead_health", game.homestead.max_health)), 1.0, game.homestead.max_health)
+		game.homestead.repair(0.0)
 	if game.has_method("is_farming_focus_mode") and game.is_farming_focus_mode():
 		_clear_group_immediately(game, "defenses")
 		_clear_group_immediately(game, "storage_chests")

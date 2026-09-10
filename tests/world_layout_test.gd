@@ -40,15 +40,9 @@ func _init() -> void:
 	assert(game.get_node("GameWorld/DynamicYSortGroup/BuildingLayer").visible)
 	assert(game.get_node("GameWorld/DynamicYSortGroup/Facilities").visible)
 	var resource_root := game.get_node("GameWorld/DynamicYSortGroup/ResourceNodes")
-	for layer_name in ["StaticDecorations", "HarvestableResources"]:
-		var layer := resource_root.get_node(layer_name) as TileMapLayer
-		assert(not layer.get_used_cells().is_empty())
-		for resource_cell in layer.get_used_cells():
-			var position := layer.to_global(layer.map_to_local(resource_cell))
-			var ground_cell := ground.local_to_map(ground.to_local(position))
-			assert(ground.get_cell_source_id(ground_cell) >= 0)
-	for chicken in get_nodes_in_group("chickens"):
-		assert((chicken as Chicken).visible)
-		assert(world_map.is_walkable_world_position((chicken as Chicken).global_position, 5.0))
+	assert(resource_root.get_child_count() == 0)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/BuildingLayer").get_child_count() == 0)
+	assert(game.get_node("GameWorld/DynamicYSortGroup/Animals").get_child_count() == 0)
+	assert(get_nodes_in_group("chickens").is_empty())
 	print("WORLD_LAYOUT_OK bounds=%s" % expected_bounds)
 	quit()

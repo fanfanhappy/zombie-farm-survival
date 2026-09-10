@@ -12,6 +12,10 @@ func _init() -> void:
 	assert(game.is_farming_focus_mode())
 	assert(not game.horde_label.visible)
 	assert(not game.objective_label.visible)
+	assert(game.homestead == null)
+	assert(get_nodes_in_group("harvestable_resources").is_empty())
+	assert(get_nodes_in_group("static_decorations").is_empty())
+	assert(get_nodes_in_group("chickens").is_empty())
 	assert(not game.animals_root.visible)
 	assert(not game.enemies_root.visible)
 	assert(not game.player.survival_needs_enabled)
@@ -39,6 +43,7 @@ func _init() -> void:
 	assert(game.is_target_allowed_in_current_mode(sleep_point))
 	assert(water_pump.is_in_group("mouse_action_targets"))
 	assert(sleep_point.is_in_group("mouse_action_targets"))
+	assert(game.facilities_root.get_child_count() == 2)
 	assert(not game.is_target_allowed_in_current_mode(game.homestead))
 
 	# 选中水壶后可直接点击取水泵补水。

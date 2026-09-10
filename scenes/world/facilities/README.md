@@ -6,6 +6,7 @@
 
 ## 当前文件
 
+- `initial_facilities.tscn`：当前地图的设施摆放容器；种植专注阶段只保留 `SleepPoint` 与 `WaterPump`，工作台、厨房和维修点以后可再放回。
 - `homestead_repair_point.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `initial_facilities.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
 - `kitchen.tscn`：可视化场景；节点结构、外观引用、碰撞和默认参数在编辑器中维护。
