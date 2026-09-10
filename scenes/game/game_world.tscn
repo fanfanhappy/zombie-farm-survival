@@ -30,6 +30,7 @@
 [ext_resource type="Script" path="res://scripts/world/environment/world_bounds_controller.gd" id="37_world_bounds"]
 [ext_resource type="TileSet" path="res://resources/tilesets/terrain_wooden_bridge_tileset.tres" id="38_bridge_tileset"]
 [ext_resource type="PackedScene" path="res://scenes/world/resources/initial_world_resources.tscn" id="39_world_resources"]
+[ext_resource type="Script" path="res://scripts/world/farming/farming_grid_layer.gd" id="40_farming_grid"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_world_horizontal"]
 size = Vector2(2016, 16)
@@ -125,6 +126,13 @@ tile_set = ExtResource("25_fence_tileset")
 [node name="WorldGridCursor" parent="GameWorld/TerrainLayers/WorldTileMap" unique_id=313056595 instance=ExtResource("33_grid_cursor_script")]
 
 [node name="LogicLayers" type="Node2D" parent="GameWorld" unique_id=926283075]
+
+[node name="FarmingGrid" type="TileMapLayer" parent="GameWorld/LogicLayers"]
+position = Vector2(-16, -16)
+scale = Vector2(2, 2)
+tile_set = ExtResource("22_grass_tileset")
+script = ExtResource("40_farming_grid")
+editor_description = "可选的可耕区域标记层。保持空白时，GroundLayer 草地默认可耕；绘制任意瓦片后，只有本层画过的格子允许开垦。运行游戏时自动隐藏。"
 
 [node name="WorldBoundaries" type="StaticBody2D" parent="GameWorld/LogicLayers" unique_id=1053664990]
 collision_mask = 0

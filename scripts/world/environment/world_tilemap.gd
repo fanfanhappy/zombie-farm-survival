@@ -14,6 +14,7 @@ const DEFAULT_WORLD_SETTINGS := preload("res://resources/settings/world_settings
 @onready var bridge_layer: TileMapLayer = $BridgeLayer
 @onready var fence_layer: TileMapLayer = $FenceLayer
 @onready var grid_cursor: WorldGridCursor = $WorldGridCursor
+@onready var farming_grid: TileMapLayer = get_node_or_null("../../LogicLayers/FarmingGrid") as TileMapLayer
 var cursor_hint := ""
 var connected_farm_cells: Array[Vector2i] = []
 var farm_plots_by_cell: Dictionary = {}
@@ -125,6 +126,8 @@ func get_till_block_reason(cell: Vector2i) -> String:
 		return "超出可操作的地图范围"
 	if not _layer_has_world_cell(ground_layer, world_position):
 		return "这里不是可开垦的草地"
+	if has_explicit_farming_grid() and not _layer_has_world_cell(farming_grid, world_position):
+		return "这里没有标记为可开垦区域"
 	if _layer_has_world_cell(hill_layer, world_position):
 		return "高地不能开垦"
 	if _layer_has_world_cell(path_layer, world_position):
@@ -145,6 +148,10 @@ func get_till_block_reason(cell: Vector2i) -> String:
 	if _has_blocking_world_object(world_position):
 		return "这里被建筑、设施或资源占用"
 	return ""
+
+
+func has_explicit_farming_grid() -> bool:
+	return is_instance_valid(farming_grid) and not farming_grid.get_used_cells().is_empty()
 
 
 func is_walkable_world_position(world_position: Vector2, clearance := 7.0) -> bool:

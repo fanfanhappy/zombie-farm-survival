@@ -6,12 +6,14 @@
 
 ## 当前文件
 
-- `farm_plot.tscn`：单个32×32逻辑格，包含浇水标记与悬停高亮；颜色和节点位置可视化维护。
+- `farm_plot.tscn`：单个动态农田逻辑格，记录开垦、作物、浇水和生长状态。
 - `initial_farm_plots.tscn`：空的运行时农田容器。不要在这里预放固定农田；玩家用锄头点击有效草地后，`FarmingSystem` 会按32像素世界网格创建 `farm_plot.tscn`。
+- `game_world.tscn/GameWorld/LogicLayers/FarmingGrid`：可选的可耕区域标记层，编辑器中以半透明红色预览，运行时自动隐藏。
 
 ## 可耕区域如何配置
 
-- 可耕基础范围来自 `game_world.tscn/WorldTileMap/GroundLayer`，在编辑器中绘制草地即可扩展。
+- `FarmingGrid` 完全空白时，可耕基础范围仍来自 `GroundLayer`，兼容当前地图。
+- 一旦在 `FarmingGrid` 绘制任意瓦片，就切换为严格模式：只有本层画过且同时存在草地的格子才能开垦。图块外观只用于编辑器标记，不会在游戏中显示。
 - `WaterLayer`、`PathLayer`、`FenceLayer` 会自动排除水体、道路和围栏格。
 - 建筑、设施、静态装饰、可采集资源和已放置物会通过图层占用或碰撞自动阻止开垦。
 - `FarmingTerrainLayer` 只显示已经开垦的格子，并读取 `farm_tilled_terrain.tres` 的 Terrain Set 自动拼接；不要手工绘制农田结果。

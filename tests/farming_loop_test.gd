@@ -11,6 +11,17 @@ func _init() -> void:
 	assert(get_nodes_in_group("farm_plots").is_empty())
 	var tillable_cell := _find_tillable_cell(game.world_tile_map)
 	assert(tillable_cell != Vector2i(-999, -999))
+	var ground_layer := game.world_tile_map.get_node("GroundLayer") as TileMapLayer
+	var farming_grid := game.get_node("GameWorld/LogicLayers/FarmingGrid") as TileMapLayer
+	assert(not game.world_tile_map.has_explicit_farming_grid())
+	var another_tillable_cell := _find_tillable_cell(game.world_tile_map, tillable_cell)
+	assert(another_tillable_cell != Vector2i(-999, -999))
+	farming_grid.set_cell(tillable_cell, ground_layer.get_cell_source_id(tillable_cell), ground_layer.get_cell_atlas_coords(tillable_cell), ground_layer.get_cell_alternative_tile(tillable_cell))
+	assert(game.world_tile_map.has_explicit_farming_grid())
+	assert(game.world_tile_map.is_cell_tillable(tillable_cell))
+	assert(not game.world_tile_map.is_cell_tillable(another_tillable_cell))
+	farming_grid.clear()
+	assert(not game.world_tile_map.has_explicit_farming_grid())
 	var plot_position: Vector2 = game.world_tile_map.farm_cell_to_world(tillable_cell)
 	var initial_seed_amount: int = game.inventory.get_amount("potato_seed")
 	var initial_potato_amount: int = game.inventory.get_amount("potato")
@@ -34,7 +45,6 @@ func _init() -> void:
 
 	# 水面现在是整张地图的视觉底图；只有上方存在草地的格子才是可开垦陆地。
 	var water_layer := game.world_tile_map.get_node("WaterLayer") as TileMapLayer
-	var ground_layer := game.world_tile_map.get_node("GroundLayer") as TileMapLayer
 	var water_only_cell := Vector2i(-999, -999)
 	for map_cell in water_layer.get_used_cells():
 		var world_position := water_layer.to_global(water_layer.map_to_local(map_cell))
@@ -129,10 +139,10 @@ func _init() -> void:
 	quit()
 
 
-func _find_tillable_cell(world_tile_map: WorldTileMap) -> Vector2i:
+func _find_tillable_cell(world_tile_map: WorldTileMap, excluded := Vector2i(-999, -999)) -> Vector2i:
 	for y in range(1, 24):
 		for x in range(1, 39):
 			var cell := Vector2i(x, y)
-			if world_tile_map.is_cell_tillable(cell):
+			if cell != excluded and world_tile_map.is_cell_tillable(cell):
 				return cell
 	return Vector2i(-999, -999)
