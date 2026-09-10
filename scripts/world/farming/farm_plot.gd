@@ -147,7 +147,8 @@ func water_from_rain() -> bool:
 
 
 func create_save_data() -> Dictionary:
-	var cell := WorldGrid.world_to_cell(global_position)
+	var world_tile_map := get_tree().get_first_node_in_group("world_tilemap") as WorldTileMap
+	var cell := world_tile_map.world_to_farm_cell(global_position) if is_instance_valid(world_tile_map) else WorldGrid.world_to_cell(global_position)
 	return {"cell_x": cell.x, "cell_y": cell.y, "state": state, "watered": watered, "growth_days": growth_days, "dry_days": dry_days, "crop_id": crop_id}
 
 

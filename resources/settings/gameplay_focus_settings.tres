@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="GameplayFocusSettings" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/gameplay_focus_settings.gd" id="1_focus"]
+[ext_resource type="Script" path="res://scripts/data/item_amount.gd" id="2_item"]
+
+[sub_resource type="Resource" id="Item_hoe"]
+script = ExtResource("2_item")
+item_id = &"stone_hoe"
+
+[sub_resource type="Resource" id="Item_water"]
+script = ExtResource("2_item")
+item_id = &"watering_can"
+
+[sub_resource type="Resource" id="Item_potato_seed"]
+script = ExtResource("2_item")
+item_id = &"potato_seed"
+amount = 8
+
+[sub_resource type="Resource" id="Item_carrot_seed"]
+script = ExtResource("2_item")
+item_id = &"carrot_seed"
+amount = 8
+
+[sub_resource type="Resource" id="Item_herb_seed"]
+script = ExtResource("2_item")
+item_id = &"herb_seed"
+amount = 8
+
+[resource]
+script = ExtResource("1_focus")
+farming_focus_enabled = true
+farming_starting_items = Array[ExtResource("2_item")]([SubResource("Item_hoe"), SubResource("Item_water"), SubResource("Item_potato_seed"), SubResource("Item_carrot_seed"), SubResource("Item_herb_seed")])

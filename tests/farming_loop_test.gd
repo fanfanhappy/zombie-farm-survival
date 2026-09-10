@@ -11,7 +11,7 @@ func _init() -> void:
 	assert(get_nodes_in_group("farm_plots").is_empty())
 	var tillable_cell := _find_tillable_cell(game.world_tile_map)
 	assert(tillable_cell != Vector2i(-999, -999))
-	var plot_position := WorldGrid.cell_to_world(tillable_cell)
+	var plot_position: Vector2 = game.world_tile_map.farm_cell_to_world(tillable_cell)
 	var initial_seed_amount: int = game.inventory.get_amount("potato_seed")
 	var initial_potato_amount: int = game.inventory.get_amount("potato")
 	var initial_experience: int = game.player.experience

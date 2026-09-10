@@ -54,6 +54,7 @@ var level := 1
 var experience := 0
 var environment_thirst_multiplier := 1.0
 var tool_action_time_left := 0.0
+var survival_needs_enabled := true
 
 
 func _ready() -> void:
@@ -76,7 +77,8 @@ func _physics_process(delta: float) -> void:
 	hurt_flash_left = maxf(hurt_flash_left - delta, 0.0)
 	var direction := input_component.get_move_direction(tool_action_time_left > 0.0)
 	var sprinting := input_component.is_sprint_requested(direction) and stamina > 0.0
-	survival_component.update_survival(self, delta, sprinting)
+	if survival_needs_enabled:
+		survival_component.update_survival(self, delta, sprinting)
 	var current_speed := move_speed * sprint_speed_multiplier if sprinting else move_speed
 	velocity = direction * current_speed
 	if sprinting:

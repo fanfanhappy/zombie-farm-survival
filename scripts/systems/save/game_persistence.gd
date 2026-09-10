@@ -51,11 +51,19 @@ func restore_save_data(game: Node, data: Dictionary) -> void:
 	game.player.equip_weapon(weapon_id, weapon_data.get("name", data.get("weapon", "木棒")), float(weapon_data.get("attack_damage", data.get("attack_damage", 25.0))))
 	game.homestead.health = clampf(float(data.get("homestead_health", game.homestead.max_health)), 1.0, game.homestead.max_health)
 	game.homestead.repair(0.0)
-	restore_defenses(game, data.get("defenses", []))
-	restore_storage_chests(game, data.get("storage_chests", []))
-	restore_snare_traps(game, data.get("snare_traps", []))
+	if game.has_method("is_farming_focus_mode") and game.is_farming_focus_mode():
+		_clear_group_immediately(game, "defenses")
+		_clear_group_immediately(game, "storage_chests")
+		_clear_group_immediately(game, "snare_traps")
+	else:
+		restore_defenses(game, data.get("defenses", []))
+		restore_storage_chests(game, data.get("storage_chests", []))
+		restore_snare_traps(game, data.get("snare_traps", []))
 	restore_ground_items(game, data.get("ground_items", []))
-	restore_enemies(game, data.get("enemies", []))
+	if game.has_method("is_farming_focus_mode") and game.is_farming_focus_mode():
+		_clear_group_immediately(game, "zombies")
+	else:
+		restore_enemies(game, data.get("enemies", []))
 	restore_farm_plots(game, data.get("farm_plots", []), int(data.get("version", 0)))
 	restore_chickens(game, data.get("chickens", []), int(data.get("version", 0)))
 	game.kills = int(data.get("kills", 0))

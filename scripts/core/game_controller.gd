@@ -1,6 +1,7 @@
 extends Node2D
 
 const DEFAULT_GAME_RULES := preload("res://resources/settings/game_rules.tres")
+const DEFAULT_GAMEPLAY_FOCUS := preload("res://resources/settings/gameplay_focus_settings.tres")
 const GROUND_ITEM_SCENE := preload("res://scenes/world/items/ground_item.tscn")
 const ZOMBIE_SCENE := preload("res://scenes/actors/zombies/zombie.tscn")
 const DEFAULT_ENEMY_DATABASE := preload("res://resources/enemies/enemy_database.tres")
@@ -8,6 +9,7 @@ const CRAFTING_RECIPE_ENTRY_SCENE := preload("res://scenes/ui/components/craftin
 
 @export var enemy_database: EnemyDatabase = DEFAULT_ENEMY_DATABASE
 @export var game_rules: Resource = DEFAULT_GAME_RULES
+@export var gameplay_focus: GameplayFocusSettings = DEFAULT_GAMEPLAY_FOCUS
 
 @onready var player: Player = $GameWorld/DynamicYSortGroup/Player
 @onready var darkness: CanvasModulate = $GameWorld/WorldLighting
@@ -93,6 +95,7 @@ func _ready() -> void:
 	player.action_failed.connect(show_message)
 	player.died.connect(_on_player_died)
 	_create_world_collisions()
+	_apply_gameplay_focus_mode()
 	$UI/Menus/CraftingPanel/Margin/Content/Close.pressed.connect(close_crafting)
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Resume.pressed.connect(_set_paused.bind(false))
 	$UI/Menus/PauseOverlay/PausePanel/Margin/Buttons/Save.pressed.connect(save_game)
@@ -122,10 +125,13 @@ func reset_for_new_game() -> void:
 	farming_system.reset_for_new_game()
 	for chicken in get_tree().get_nodes_in_group("chickens"): (chicken as Chicken).reset_for_new_game()
 	inventory.reset_for_new_game(starting_items)
-	inventory.assign_hotbar_item(0, "wooden_club")
-	inventory.assign_hotbar_item(1, "stone_axe")
+	if not is_farming_focus_mode():
+		inventory.assign_hotbar_item(0, "wooden_club")
+		inventory.assign_hotbar_item(1, "stone_axe")
 	inventory.assign_hotbar_item(2, "stone_hoe")
 	inventory.assign_hotbar_item(3, "watering_can")
+	if is_farming_focus_mode():
+		inventory.assign_hotbar_item(4, "potato_seed")
 	inventory_ui.reset_selection()
 	watering_can_water = watering_can_capacity
 	objective_system.reset_for_new_game()
@@ -138,7 +144,8 @@ func reset_for_new_game() -> void:
 	placement_system.cancel_placement()
 	_set_player_control(true)
 	_update_hud()
-	show_message("新游戏已重置：第一天，从零开始建设家园")
+	_apply_gameplay_focus_mode()
+	show_message("种田专注模式：开垦、播种、浇水、跨日生长、收获" if is_farming_focus_mode() else "新游戏已重置：第一天，从零开始建设家园")
 
 
 func _process(delta: float) -> void:
@@ -266,6 +273,8 @@ func _on_interaction_requested() -> void:
 
 
 func _on_attack_requested() -> void:
+	if is_farming_focus_mode():
+		return
 	var best_target: Zombie
 	var best_distance := 60.0
 	for node in get_tree().get_nodes_in_group("zombies"):
@@ -348,7 +357,10 @@ func _try_mouse_world_action(mouse_world_position: Vector2) -> void:
 		show_message("目标太远")
 		mouse_action_cooldown = 0.35
 		return
-	if player.try_mouse_attack(mouse_world_position): mouse_action_cooldown = player.attack_cooldown
+	if is_farming_focus_mode():
+		show_message("请选中锄头开垦草地，或点击已开垦的农田")
+		mouse_action_cooldown = 0.25
+	elif player.try_mouse_attack(mouse_world_position): mouse_action_cooldown = player.attack_cooldown
 	else: mouse_action_cooldown = 0.1
 
 
@@ -421,6 +433,8 @@ func get_objective_metric(type: String, target: String) -> int:
 
 
 func _spawn_night_threat() -> void:
+	if is_farming_focus_mode():
+		return
 	if day % 7 == 0:
 		horde_system.start_horde()
 		return
@@ -432,6 +446,8 @@ func _spawn_night_threat() -> void:
 
 
 func _spawn_zombie(enemy_kind: Variant = &"normal_infected", saved_position := Vector2.INF, saved_health := -1.0) -> void:
+	if is_farming_focus_mode():
+		return
 	var enemy_id := StringName("fast_infected" if enemy_kind is bool and enemy_kind else "normal_infected" if enemy_kind is bool else str(enemy_kind))
 	var enemy_definition := enemy_database.get_definition(enemy_id)
 	if enemy_definition == null:
@@ -495,7 +511,9 @@ func _update_lighting() -> void:
 func _update_hud() -> void:
 	if not is_instance_valid(player): return
 	status_hud.update_from_game(self)
-	if horde_system.active:
+	if is_farming_focus_mode():
+		horde_label.text = ""
+	elif horde_system.active:
 		horde_label.text = horde_system.get_status_text()
 	else:
 		var days_until_horde := 7 - (((day - 1) % 7) + 1)
@@ -513,6 +531,9 @@ func _resource_name(type: String) -> String:
 
 
 func open_crafting(station_type: String, display_name: String) -> void:
+	if is_farming_focus_mode():
+		show_message("种田专注阶段暂不开放制作")
+		return
 	if inventory_ui.is_backpack_open(): inventory_ui.close_backpack()
 	crafting_title.text = display_name
 	for child in recipe_list.get_children(): child.queue_free()
@@ -568,12 +589,18 @@ func load_game() -> void:
 		show_message("没有找到存档")
 		return
 	persistence.restore_save_data(self, data)
+	_apply_gameplay_focus_mode()
 	inventory_ui.reset_selection()
 	_update_hud()
 	show_message("存档已读取")
 
 
 func _on_inventory_item_use_requested(item_id: String) -> void:
+	if is_farming_focus_mode():
+		var category := str(inventory.get_item_data(item_id).get("category", ""))
+		if category in ["placeable", "weapon"]:
+			show_message("该物品所属玩法已暂时搁置")
+			return
 	item_use_system.handle_item_use(self, item_id)
 	inventory_ui.refresh()
 
@@ -611,12 +638,18 @@ func _spawn_ground_item(item_id: String, amount: int, at_position: Vector2) -> v
 
 
 func _try_dismantle_nearest() -> void:
+	if is_farming_focus_mode():
+		show_message("种田专注阶段暂不开放拆除")
+		return
 	var nearest := _get_nearest_defense()
 	if nearest: nearest.try_dismantle(self)
 	else: show_message("附近没有可拆除的防御设施")
 
 
 func _try_upgrade_nearest() -> void:
+	if is_farming_focus_mode():
+		show_message("种田专注阶段暂不开放防御升级")
+		return
 	var nearest := _get_nearest_defense()
 	if nearest: defense_upgrade_system.try_upgrade(nearest, self)
 	else: show_message("附近没有可升级的防御设施")
@@ -710,12 +743,43 @@ func _apply_game_rules() -> void:
 		push_error("Main 未配置 GameRulesDefinition")
 		return
 	starting_items = game_rules.get_starting_items()
+	if is_farming_focus_mode() and gameplay_focus != null:
+		starting_items = gameplay_focus.get_farming_starting_items()
 	player_home = game_rules.player_home
 	day_length_seconds = game_rules.day_length_seconds
 	day_start_progress = game_rules.get_day_start_progress()
 	watering_can_capacity = game_rules.watering_can_capacity
 	day_progress = day_start_progress
 	watering_can_water = watering_can_capacity
+
+
+func is_farming_focus_mode() -> bool:
+	return gameplay_focus != null and gameplay_focus.farming_focus_enabled
+
+
+func is_target_allowed_in_current_mode(target: Node) -> bool:
+	if not is_farming_focus_mode():
+		return true
+	return target is FarmPlot or target is WaterPump or target is SleepPoint
+
+
+func _apply_gameplay_focus_mode() -> void:
+	var focused := is_farming_focus_mode()
+	horde_system.cancel_horde()
+	for system in [crafting_system, placement_system, defense_upgrade_system, horde_system, objective_system]:
+		system.process_mode = Node.PROCESS_MODE_DISABLED if focused else Node.PROCESS_MODE_INHERIT
+	horde_label.visible = not focused
+	objective_label.visible = not focused
+	crafting_panel.visible = false if focused else crafting_panel.visible
+	animals_root.visible = not focused
+	animals_root.process_mode = Node.PROCESS_MODE_DISABLED if focused else Node.PROCESS_MODE_INHERIT
+	enemies_root.visible = not focused
+	enemies_root.process_mode = Node.PROCESS_MODE_DISABLED if focused else Node.PROCESS_MODE_INHERIT
+	player.survival_needs_enabled = not focused
+	if focused:
+		placement_system.cancel_placement()
+		for zombie in get_tree().get_nodes_in_group("zombies"):
+			zombie.queue_free()
 
 
 func _on_objective_text_changed(text: String) -> void:

@@ -8,6 +8,7 @@
 
 - `architecture_phase2_test.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 - `farming_loop_test.gd`：完整验证开垦、播种、浇水、缺水、降雨、生长、枯萎、收获、经验与存档闭环。
+- `farming_focus_mode_test.gd`：验证种田专注模式的模块隔离、初始农具种子、快捷栏和敌人屏蔽。
 - `resource_database_test.gd`：GDScript 逻辑；具体职责与文件名对应，公共接口需保持向后兼容。
 
 ## 关联与维护
