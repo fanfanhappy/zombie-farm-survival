@@ -9,7 +9,7 @@
 
 1. 创建物品种子定义并填写唯一 `crop_id`。
 2. 复制一种作物定义，设置 `seed_item_id`、`growth_days`、`dry_tolerance_days`、`harvest_experience` 和 `harvest`。
-3. 复制五阶段外观场景并重新选择每个阶段的图集区域。
+3. 复制一种作物外观场景，按 `Stage0`、`Stage1`……命名阶段节点并重新选择各自的图集区域；阶段数可以自由增减。
 4. 将定义加入总数据库，运行 `resource_database_test.gd` 检查物品引用。
 
 ## 生长规则

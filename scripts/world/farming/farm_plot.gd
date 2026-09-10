@@ -239,16 +239,23 @@ func _refresh_crop_visual() -> void:
 	var visual_scene := crop_data.get("visual_scene") as PackedScene
 	if visual_scene == null:
 		return
-	crop_visual = visual_scene.instantiate() as CropVisual
+	var visual_instance := visual_scene.instantiate()
+	crop_visual = visual_instance as CropVisual
+	if crop_visual == null:
+		visual_instance.free()
+		push_warning("作物 %s 的外观场景根节点必须使用 CropVisual 脚本" % crop_id)
+		return
 	add_child(crop_visual)
 	if state == PlotState.WITHERED:
 		crop_visual.show_withered()
 		return
 	var stage := 0
+	var final_stage := crop_visual.get_last_stage_index()
 	if state == PlotState.READY:
-		stage = 4
-	elif state == PlotState.GROWING:
-		stage = clampi(ceili(float(growth_days) / float(get_required_growth_days()) * 3.0), 1, 3)
+		stage = final_stage
+	elif state == PlotState.GROWING and final_stage > 1:
+		var growing_stage_count := maxi(final_stage - 1, 1)
+		stage = clampi(ceili(float(growth_days) / float(get_required_growth_days()) * growing_stage_count), 1, final_stage - 1)
 	crop_visual.show_stage(stage)
 
 

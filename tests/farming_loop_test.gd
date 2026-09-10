@@ -78,6 +78,7 @@ func _init() -> void:
 	plot.interact(game)
 	assert(plot.state == FarmPlot.PlotState.PLANTED)
 	assert(plot.crop_id == "potato")
+	assert(plot.crop_visual != null and plot.crop_visual.get_stage_count() == 5)
 	assert(game.inventory.get_amount("potato_seed") == initial_seed_amount - 1)
 	assert("0/2天" in plot.get_interaction_prompt())
 
