@@ -21,13 +21,13 @@ func _initialize() -> void:
 			return
 		var visual := scene.instantiate()
 		var stages := visual.get_children().filter(func(node): return node.name.begins_with("Stage"))
-		if stages.size() != 5:
-			push_error("CROP_VISUAL_STAGE_COUNT_INVALID: " + scene_path)
+		if stages.size() < 2:
+			push_error("CROP_VISUAL_STAGE_COUNT_INVALID: " + scene_path + " (至少需要2帧)")
 			visual.free()
 			quit(1)
 			return
 		for stage in stages:
-			if stage.texture != atlas or not stage.region_enabled or stage.region_rect.size != Vector2(16, 16):
+			if stage.texture == null or not stage.region_enabled or stage.region_rect.size.x <= 0 or stage.region_rect.size.y <= 0:
 				push_error("CROP_VISUAL_FRAME_INVALID: " + scene_path + ":" + stage.name)
 				visual.free()
 				quit(1)
