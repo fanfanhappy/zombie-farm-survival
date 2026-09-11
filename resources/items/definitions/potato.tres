@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ItemDefinition" format=3 uid="uid://4affiitl86ja"]
 
 [ext_resource type="Script" uid="uid://rwmy0edlk2yl" path="res://scripts/data/item_definition.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://sn3rpsmtu58l" path="res://assets/art/ui/icons/item_farming_icons.png" id="2_atlas"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/icons/item_farming_plants.png" id="2_atlas"]
 [ext_resource type="Script" uid="uid://bkxhv6f6td2qb" path="res://scripts/data/consumable_effect_definition.gd" id="3_effect"]
 
 [sub_resource type="Resource" id="ConsumableEffect"]
