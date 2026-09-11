@@ -23,6 +23,7 @@
   - 黄瓜（cucumber）：`y=192`
 - 项目旧版本的 `potato`、`medicinal_herb` ID 会保留作存档兼容别名；新场景与新种子按上述真实行顺序配置。
 - `scenes/world/farming/crops/` 中的作物场景通过 `Sprite2D.region_rect` 选择图集帧；阶段切换由 `CropVisual` 控制，素材本身不写入脚本。阶段节点支持 `Stage0`、`Stage1`……的可变数量，四帧、五帧或更多帧均可。
+- `CropVisual` 默认启用“贴地对齐”：会根据每个阶段实际框选高度自动调整 Sprite2D 的垂直位置，避免小尺寸帧悬空。需要手动微调时，在场景根节点关闭 `Auto Align To Ground`，再分别调整 Stage 节点的 Position。
 
 > `assets/art/characters/enemies/Farming Plants.png` 与本图集内容完全相同，属于重复副本，已移除。以后新增帧请直接替换本图集，或在对应作物场景中调整 `region_rect`。
 
