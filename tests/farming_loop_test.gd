@@ -102,9 +102,13 @@ func _init() -> void:
 	assert(plot.state == FarmPlot.PlotState.GROWING)
 	assert(plot.growth_days == 1 and plot.dry_days == 1)
 
-	# 降雨浇灌后，下一天成熟并可收获；种子能够自循环。
+	# 降雨浇灌后，持续每日浇水直到成熟；种子能够自循环。
 	assert(plot.water_from_rain())
-	assert(plot.advance_day() == FarmPlot.DayResult.READY_TO_HARVEST)
+	while plot.state != FarmPlot.PlotState.READY:
+		var day_result := plot.advance_day()
+		assert(day_result in [FarmPlot.DayResult.GREW, FarmPlot.DayResult.READY_TO_HARVEST])
+		if plot.state != FarmPlot.PlotState.READY:
+			assert(plot.water_from_rain())
 	assert(plot.state == FarmPlot.PlotState.READY)
 	plot.interact(game)
 	assert(plot.state == FarmPlot.PlotState.TILLED)

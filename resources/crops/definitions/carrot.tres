@@ -19,5 +19,6 @@ crop_id = &"carrot"
 display_name = "胡萝卜"
 seed_item_id = &"carrot_seed"
 visual_scene = ExtResource("2_visual")
+growth_days = 5
 harvest_experience = 6
 harvest = Array[ExtResource("3_item")]([SubResource("Harvest_0"), SubResource("Harvest_1")])

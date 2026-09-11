@@ -19,5 +19,5 @@ crop_id = &"potato"
 display_name = "土豆"
 seed_item_id = &"potato_seed"
 visual_scene = ExtResource("2_visual")
-growth_days = 2
+growth_days = 6
 harvest = Array[ExtResource("3_item")]([SubResource("Harvest_0"), SubResource("Harvest_1")])
